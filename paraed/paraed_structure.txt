@@ -1,0 +1,12 @@
+
+structure of editor
+
+states:
+wait for command
+drawing line0
+drawing pline0 - first point
+drawing pline1
+drawing circle0 - center
+
+input:
+

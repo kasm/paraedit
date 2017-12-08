@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<meta encoding = 'utf-8' />
+<head>
+<link href = 'paraed.css' rel='stylesheet'>
+
+ 
+
+</head><body><div>Finite Element Method online.
+<br>
+
+<button id=i1b onclick="onAddHLine()">HLine</button>
+
+<button id=i2b onclick="onAddVLine()">VLine</button>
+
+<button id=i3b onclick="onAddRect()">Rect</button>
+
+<button id=i4b onclick="onAddBound()">Bound</button>
+
+<button id=i5b onclick="onAddLoad()">Load</button>
+
+<button id=i6b onclick="stopEnteringpico()">Stop Enter</button>
+
+<button id=i7b onclick="cancelEnteringpico()">Cancel Enter</button>
+
+<button id=i8b onclick="onSendPic()">Send Pic</button>
+
+<button id=i9b onclick="onFileJSON()">Solve area</button>
+<form action='backend.php'>
+
+<input type = 'submit' name = 'name1' value='val12' method='POST' />
+
+</form>
+</div>
+<div>
+<canvas id='c1' width = 600; height =600; border=1></canvas>
+
+<br>
+<b id = 's2id' class="status1"></b>
+</div>
+	<div class="source1" id='s1id'>sdsd
+	</div>
+
+<div>
+
+Система прочностного анализа плоских конструкций online с помощью МКЭ.<br><br>
+
+Краткое описание системы.<br>
+Слева расположен редактор (область 300х300).<br> 
+Сверху кнопки управления.<br>
+Справа текстовое представление рисунка в формате JSON.<br>
+<br>
+Инструкция:<br>
+1. Задать набор горизонтальных линий (HLine button). По окончании нажимаем кнопку "Cancel Enter".<br>
+2. Задать набор вертикальных линий (VLine button). По окончании нажимаем кнопку "Cancel Enter".<br>
+3. Задать набор прямоугольников (Rect button). <br>
+По окончании нажимаем кнопку "Cancel Enter".<br>
+4. Задать набор граничных условий (Bound button). Граничное условие задается для стороны прямоугольника. <br>
+Пока что поддерживается не более одного граничного условия для одного прямоугольника.<br>
+По окончании нажимаем кнопку "Cancel Enter".<br>
+5. Задать набор нагрузок (Load button). <br>
+Нагрузка задается для стороны прямоугольника, затем выбирается величина и направление. <br>
+По окончании нажимаем кнопку "Cancel Enter".<br>
+6. Нажать кнопку "Solve area".<br>
+7. Подождать.<br>
+<br>
+PS: на сложных областях система глючит. <br>
+Но это не критично, для демонстрации на конференции годится, а затем<br>
+все равно модуль триангуляции придется переписывать, потому что без возможности задаваить более сложные области<br>
+система не представляет интереса.
+
+
+
+</div>
+
+
+
+<script src = 'paraed.js'></script>
+<?php
+file_put_contents("ttt\n", "paraed.log", FILE_APPEND);
+echo "from php";
+?>
+</body>
+</html>
+
