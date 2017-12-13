@@ -19,7 +19,7 @@ var doc_obj = {
             pnts: [[100, 20], ['mid', 'e1']]
         }
         ,
-        'e2': {
+        'e3': {
             type: 'line',
             pnts: [[100, 20], ['mid', 'e1']]
         }
@@ -29,16 +29,19 @@ var doc_obj = {
 var doc_obj2 = {
     pnts: {'p1': [10, 20], 'p2': [150, 50], 'p3': [40,190], 'p4': [10,203],
 
-        'p5': [100, 100], 'p6': [200,500]
+        'p5': [100, 100], 'p6': [200,500],
+        'p7': [200, 150], 'p8': [200,500]
     },
     els: {
         'e1': {type: 'line', pntids: ['p1', 'p2']},
         'e2': {type: 'line', pntids: ['p4', 'p3']},
-        'e3': {type: 'line', pntids: ['p5', 'p6']}
+        'e3': {type: 'line', pntids: ['p5', 'p6']},
+        'e4': {type: 'line', pntids: ['p7', 'p8']}
     },
     links: {
         'k1': {type: 'mid', linked: 'e2', main: 'e1'},
-        'k2': {type: 'mid', linked: 'e3', main: 'e2'}
+        'k2': {type: 'mid', linked: 'e3', main: 'e2'},
+        'k3': {type: 'per', linked: 'e4', main: 'e2'}
     }
 }
 function isSnapPnt(pnt) {
