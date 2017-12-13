@@ -19,14 +19,16 @@ var Line = function (els1) {
         cvc.lineTo(element.pnts[1][0], element.pnts[1][1]);
         cvc.stroke();
     },
-    getLinkPoint: function (link) { var rez;
+    getLinkPnt: function (link, pnts) { var rez;
+        console.log('getLinkPoint', link);
+        var t=22;
         linkedElement = els[link.linked];
         toElement = els[link.main];
         snapType = link.type;
     //snap: function (linkedElement, toElement, snapType) { var rez;        TODO: point number of linked element to snap
         if (snapType === 'mid') { rez = [
-            (toElement.pnts[0][0] + toElement.pnts[1][0]) / 2,
-            (toElement.pnts[0][1] + toElement.pnts[1][1]) / 2];
+            linkedElement.pnts[1][0] = (toElement.pnts[0][0] + toElement.pnts[1][0]) / 2,
+            linkedElement.pnts[1][1] = (toElement.pnts[0][1] + toElement.pnts[1][1]) / 2];
         }
         if (snapType === 'per') { rez = [
 

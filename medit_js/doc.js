@@ -13,7 +13,7 @@ links = {'s1': {'linked': 'e1', 'main': 'e2', type: 'mid'},
 var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
-    var links = doc_obj.snaps;
+    var links = doc_obj.links;
     console.log('els', els);
     return {
         fillElPnts: function () { var rez = {}; var i; var el;
@@ -44,6 +44,7 @@ var Doc = function (elfuncs, doc_obj) {
         getStaticIds: function () { var rez = {};
             for (elid in els) rez[elid]=5;
             for (linkid in links) rez[links[linkid].linked] = undefined;
+            return rez;
         },
         solveLink: function(id) {
             var linkedEl = els[links[id].linked];
@@ -51,14 +52,17 @@ var Doc = function (elfuncs, doc_obj) {
             var pnt = elfuncs[mainEl.type](links[id]);
             return pnt;
         },
-        reCalcAll: function () { var done=false; var linkCalced = {}; var elsSolved = [];
+        recalcAll: function () { var done=false; var linkCalced = {}; var elsSolved = [];
             for (linkid in links) linkCalced[linkid] = false;
             var solvedIds = this.getStaticIds();
             while(!done) {
+                console.log('while');
                 done = true;
                 for (linkid in links) {
+                    console.log('linkid', linkid, links[linkid]);
                     if (typeof solvedIds[links[linkid].main] != undefined) {
-                        solveLink(linkid);
+                        elfuncs[els[links[linkid].main].type].getLinkPnt(links[linkid], pnts);
+                        //solveLink(linkid);
                         solvedIds[linkid]=5;
                     }
 

@@ -6,7 +6,7 @@ var Doc = require('./doc.js');
 //var Line = require('./els/line.js');
 
 var elfuncs = [];
-elfuncs['line'] = require('./elements/line.js')();
+
 
 var doc_obj = {
     els: {
@@ -27,9 +27,19 @@ var doc_obj = {
 };
 
 var doc_obj2 = {
-    pnts: {'p1': [10, 20], 'p2': [50, 50], 'p3': [40,90]},
-    els: {'e1': {type: 'line', pntids: ['p1', 'p2']}},
-    links: {}
+    pnts: {'p1': [10, 20], 'p2': [150, 50], 'p3': [40,190], 'p4': [10,203],
+
+        'p5': [100, 100], 'p6': [200,500]
+    },
+    els: {
+        'e1': {type: 'line', pntids: ['p1', 'p2']},
+        'e2': {type: 'line', pntids: ['p4', 'p3']},
+        'e3': {type: 'line', pntids: ['p5', 'p6']}
+    },
+    links: {
+        'k1': {type: 'mid', linked: 'e2', main: 'e1'},
+        'k2': {type: 'mid', linked: 'e3', main: 'e2'}
+    }
 }
 function isSnapPnt(pnt) {
     return (typeof pnt[0] === 'string')
@@ -48,6 +58,7 @@ function getSnaps(doc) { var rez={};
 var Editor = function (cvc_par) {
     var doc = Doc(elfuncs, doc_obj2);
     var cvc = cvc_par;
+    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
     console.log('Edi');
     cvc.fillStyle = "#FFFFFF";
     cvc.strokeStyle = "#000000";
@@ -66,7 +77,7 @@ var Editor = function (cvc_par) {
         getdoc: function () {
             return doc;
         },
-        redraw: function () { var els = doc.getEls();
+        redraw: function () { var els = doc.getEls(); var pnts = doc.getPnts();
             var k = 5;
             for (el_id in els) {
                 console.log('el_id', el_id);
@@ -75,8 +86,17 @@ var Editor = function (cvc_par) {
 
                 //doc.els[el_id].draw(cvc);
             }
+            cvc.beginPath();
+            cvc.fillStyle = '#00f';
+            for (pntid in pnts) {
+                p = pnts[pntid];
+                cvc.fillText(pntid+'('+p[0]+','+p[1]+')', p[0], p[1]);
+
+            };
+            cvc.stroke();
         },
         recalc: function () { var el; var i; var tpnt; var els = doc.getEls();
+       /*
             for (el_id in els) { el = els[el_id];
                 //for (pnt in doc.els[el_id].pnts) {
                 for (i = 0; i< els[el_id].pnts.length; i++) { //} in doc.els[el_id].pnts) {
@@ -101,6 +121,7 @@ var Editor = function (cvc_par) {
                     }
                 }
             } // for el_id
+            */
         }
     }
 
@@ -109,4 +130,5 @@ var Editor = function (cvc_par) {
 var editor = Editor(document.getElementById('c1').getContext('2d'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
+editor.getdoc().recalcAll();
 editor.redraw();
