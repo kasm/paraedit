@@ -27,18 +27,20 @@ var Line = function (els1) {
         snapType = link.type;
     //snap: function (linkedElement, toElement, snapType) { var rez;        TODO: point number of linked element to snap
         if (snapType === 'mid') { rez = [
-            linkedElement.pnts[1][0] = (toElement.pnts[0][0] + toElement.pnts[1][0]) / 2,
-            linkedElement.pnts[1][1] = (toElement.pnts[0][1] + toElement.pnts[1][1]) / 2];
+            linkedElement.pnts[link.pnti][0] = (toElement.pnts[0][0] + toElement.pnts[1][0]) / 2,
+            linkedElement.pnts[link.pnti][1] = (toElement.pnts[0][1] + toElement.pnts[1][1]) / 2];
         }
         if (snapType === 'per') {
-            var x0 = linkedElement.pnts[0][0]; var y0 = linkedElement.pnts[0][1];
+            // linkedElement.pnts[link.pnti-1]  - perpendicular from prev point
+            var x0 = linkedElement.pnts[link.pnti-1][0];
+            var y0 = linkedElement.pnts[link.pnti-1][1];
             var x1 = toElement.pnts[0][0]; var y1 = toElement.pnts[0][1];
             var x2 = toElement.pnts[1][0]; var y2 = toElement.pnts[1][1];
             var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
             var cx1 = (x2-x1)/length; var cy1 = (y2-y1)/length;
             rez = [
-            linkedElement.pnts[1][0] = (cx1*cy1*(y0-y1)+x1*cy1*cy1+x0*cx1*cx1),
-            linkedElement.pnts[1][1] = (cx1*cy1*(x0-x1)+y0*cy1*cy1+y1*cx1*cx1)
+            linkedElement.pnts[link.pnti][0] = (cx1*cy1*(y0-y1)+x1*cy1*cy1+x0*cx1*cx1),
+            linkedElement.pnts[link.pnti][1] = (cx1*cy1*(x0-x1)+y0*cy1*cy1+y1*cx1*cx1)
         ]
 
         }
@@ -54,9 +56,9 @@ var Line = function (els1) {
 
             var x_int = ((e1y0 - e0y0)*dx0*dx1 + e0x0*dy0*dx1 - e1x0*dy1*dx0) / (dy0*dx1 - dy1*dx0);
             var y_int = (dy0/dx0)*x_int + e0y0 - dy0/dx0 * e0x0;
-            rez = []; linkedElement.pnts[1] = [];
-                linkedElement.pnts[1][0] = x_int;
-                linkedElement.pnts[1][1] = y_int;
+            rez = []; linkedElement.pnts[link.pnti] = [];
+                linkedElement.pnts[link.pnti][0] = x_int;
+                linkedElement.pnts[link.pnti][1] = y_int;
                 var t = 5;
             /*
             k0 = dy0 / dx0; k1 = dy1 / dx1;

@@ -27,24 +27,34 @@ var doc_obj = {
 };
 
 var doc_obj2 = {
-    pnts: {'p1': [10, 20], 'p2': [150, 50], 'p3': [40,190], 'p4': [10,203],
-
+    pnts: {'p1': [10, 20], 'p2': [150, 50],
+        'p3': [40,190], 'p4': [10,403],
         'p5': [100, 100], 'p6': [200,500],
         'p7': [200, 150], 'p8': [200,500],
         'p9': [300, 350], 'p10': [300,400],
+        'p11': [400, 350], 'p12': [400,400],
+        'p13': [200, 400], 'p14': [400, 250],
+        'p15': [200, 400], 'p16': [400, 250]
     },
     els: {
         'e1': {type: 'line', pntids: ['p1', 'p2']},
         'e2': {type: 'line', pntids: ['p4', 'p3']},
         'e3': {type: 'line', pntids: ['p5', 'p6']},
         'e4': {type: 'line', pntids: ['p7', 'p8']},
-        'e5': {type: 'line', pntids: ['p9', 'p10']}
+        'e5': {type: 'line', pntids: ['p9', 'p10']},
+        'e6': {type: 'line', pntids: ['p11', 'p12']},
+        'e7': {type: 'line', pntids: ['p13', 'p14']},
+        'e8': {type: 'line', pntids: ['p15', 'p16']}
     },
     links: {
-        'k1': {type: 'mid', linked: 'e2', main: 'e1'},
-        'k2': {type: 'mid', linked: 'e3', main: 'e2'},
-        'k3': {type: 'per', linked: 'e4', main: 'e2'},
-        'k4': {type: 'int', linked: 'e5', e0: 'e3', e1: 'e4'}
+        'k1': {type: 'mid', linked: 'e2', pnti: 1, main: 'e1'},
+        'k2': {type: 'mid', linked: 'e3', pnti: 1, main: 'e2'},
+        'k3': {type: 'per', linked: 'e4', pnti: 1, main: 'e2'},
+        'k4': {type: 'int', linked: 'e5', pnti: 1, e0: 'e3', e1: 'e4'},
+        'k5': {type: 'mid', linked: 'e6', pnti: 0, main: 'e5'},
+        'k6': {type: 'mid', linked: 'e6', pnti: 1, main: 'e4'},
+        'k7': {type: 'int', linked: 'e8', pnti: 0, e0: 'e1', e1: 'e3'},
+        'k8': {type: 'int', linked: 'e8', pnti: 1, e0: 'e5', e1: 'e7'}
     }
 }
 function isSnapPnt(pnt) {
@@ -97,8 +107,18 @@ var Editor = function (cvc_par) {
             for (pntid in pnts) {
                 p = pnts[pntid];
                 cvc.fillText(pntid+'('+p[0]+','+p[1]+')', p[0], p[1]);
-
             };
+            for (elid in els) {
+                el = els[elid]; x=0; y=0; count = 0;
+                for (p in el.pnts) {
+                    count++;
+                    x += el.pnts[p][0];
+                    y += el.pnts[p][1];
+                };
+                x = x/count - 15;
+                y = y/count;
+                cvc.fillText(elid, x, y);
+            }
             cvc.stroke();
         },
         recalc: function () { var el; var i; var tpnt; var els = doc.getEls();
