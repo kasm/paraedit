@@ -71,15 +71,55 @@ function getSnaps(doc) { var rez={};
     }
 }
 
-var Editor = function (cvc_par) {
+var Editor = function (canvasElement) {
     var doc = Doc(elfuncs, doc_obj2);
-    var cvc = cvc_par;
+    var cvc = canvasElement.getContext('2d');
+    var coords = canvasElement.getBoundingClientRect();
+    var holderSize = 5;
+    var selectedPoint;
+    var editorMode = '';
+
+
+    var mouseClick = function (e) {
+        if (editorMode === 'moving') {
+            editorMode = ''; return 0;
+        }
+        var x = parseInt(e.clientX - coords.left);
+        var y = parseInt(e.clientY - coords.top);
+        var pnts = doc.getPnts();
+        selectedPoint = '';
+        for (pid in pnts) {
+            diffx = Math.abs(pnts[pid][0]-x);
+            diffy = Math.abs(pnts[pid][1]-y);
+            if (diffx < holderSize && diffy < holderSize) {
+                selectedPoint = pid;
+                editorMode = 'moving';
+            }
+        }
+    };
+
+    var mouseMove = function (e) {
+        if (editorMode === 'moving') {
+            console.log('moving', e);
+            var x = parseInt(e.clientX - coords.left);
+            var y = parseInt(e.clientY - coords.top);
+            var pnts = doc.getPnts();
+            pnts[selectedPoint][0] = x;
+            pnts[selectedPoint][1] = y;
+            ret.getdoc().recalcAllEls();
+            ret.redraw();
+        }
+    }
+
+    window.addEventListener('click', mouseClick, false);
+    window.addEventListener('mousemove', mouseMove, false);
     elfuncs['line'] = require('./elements/line.js')(doc.getEls());
     console.log('Edi');
     cvc.fillStyle = "#FFFFFF";
     cvc.strokeStyle = "#000000";
     cvc.strokeStyle='green';
     cvc.lineWidth = 1;
+    var c1var = canvasElement.getBoundingClientRect();
     /*
     //cvc.fillRect(0,0,c1var.width,c1var.height);
     cvc.beginPath();
@@ -89,12 +129,21 @@ var Editor = function (cvc_par) {
     cvc.fill();
     cvc.fillRect(10, 10, 20, 20); cvc.fill();
 -*/
-    return {
+    var ret = {
         getdoc: function () {
             return doc;
         },
         redraw: function () { var els = doc.getEls(); var pnts = doc.getPnts();
             var k = 5;
+            cvc.fillStyle = "#FFFFFF";
+            cvc.strokeStyle = "#000000";
+            cvc.strokeStyle='green';
+            cvc.lineWidth = 1;
+            cvc.fillRect(0,0,c1var.width,c1var.height);
+
+
+
+
             for (el_id in els) {
                 console.log('el_id', el_id);
 
@@ -118,6 +167,14 @@ var Editor = function (cvc_par) {
                 x = x/count - 15;
                 y = y/count;
                 cvc.fillText(elid, x, y);
+            }
+            var ps = doc.getPnts();
+            for (i in ps) {
+                cvc.moveTo(pnts[i][0] - holderSize, pnts[i][1] - holderSize);
+                cvc.lineTo(pnts[i][0] + holderSize, pnts[i][1] - holderSize);
+                cvc.lineTo(pnts[i][0] + holderSize, pnts[i][1] + holderSize);
+                cvc.lineTo(pnts[i][0] - holderSize, pnts[i][1] + holderSize);
+                cvc.lineTo(pnts[i][0] - holderSize, pnts[i][1] - holderSize);
             }
             cvc.stroke();
         },
@@ -150,10 +207,10 @@ var Editor = function (cvc_par) {
             */
         }
     }
-
+return ret;
 };
 
-var editor = Editor(document.getElementById('c1').getContext('2d'));
+var editor = Editor(document.getElementById('c1'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
 editor.getdoc().recalcAllEls();

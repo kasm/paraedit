@@ -47,6 +47,10 @@ var Doc = function (elfuncs, doc_obj) {
             for (linkid in links) rez[links[linkid].linked] = undefined;
             return rez;
         },
+        getStaticPntIds: function () {
+
+
+        },
         solveLink: function(id) {
             var linkedEl = els[links[id].linked];
             var mainEl = els[links[id].main];
