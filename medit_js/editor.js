@@ -30,7 +30,8 @@ var doc_obj2 = {
     pnts: {'p1': [10, 20], 'p2': [150, 50], 'p3': [40,190], 'p4': [10,203],
 
         'p5': [100, 100], 'p6': [200,500],
-        'p7': [200, 150], 'p8': [200,500]
+        'p7': [200, 150], 'p8': [200,500],
+        'p9': [300, 350], 'p10': [300,400],
     },
     els: {
         'e1': {type: 'line', pntids: ['p1', 'p2']},
@@ -135,5 +136,5 @@ var Editor = function (cvc_par) {
 var editor = Editor(document.getElementById('c1').getContext('2d'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
-editor.getdoc().recalcAll();
+editor.getdoc().recalcAllEls();
 editor.redraw();

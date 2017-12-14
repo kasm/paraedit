@@ -6,9 +6,9 @@
 /*
 pnts = {'p1': [0,0], 'p2': [10,20]}
 els = {'e1': {type: 'line', pnts[pnts['p1'], pnts['p2']]} ... }
-links = {'s1': {'linked': 'e1', 'main': 'e2', type: 'mid'},
+links = {'s1': {'linked': 'e1', pnti: 0, main: 'e2', type: 'mid'},
 's2': {type: 'hor', p0: 'p5', p1: 'p9'},
-'s3': {type: 'int', e0: 'e5', e1: 'e8'}
+'s3': {linked: 'e2', type: 'int', e0: 'e5', e1: 'e8'}
  */
 
 var Doc = function (elfuncs, doc_obj) {
@@ -53,6 +53,24 @@ var Doc = function (elfuncs, doc_obj) {
             var pnt = elfuncs[mainEl.type](links[id]);
             return pnt;
         },
+        isLinkReadyToSolveId: function (id, solvedElIds) {
+            var solved = true;
+            var type = links[id].type;
+            //if (type == 'per' || type === 'mid')
+
+        },
+        isLinkSolvedById: function (id) {
+            return
+        },
+        linkGetMainElIds: function (link) { var rez = [];
+            if (link.type === 'mid' || link.type === 'per') rez.push(link.main);
+            if (link.type === 'int') {
+                rez.push(link.e0); rez.push(link.e1); };
+            return rez;
+        },
+        linkGetLinkedElIds: function (link) {
+            var rez = []; rez.push(link.linked); return rez;
+        },
         recalcAll: function () { var done=false; var linkCalced = {}; var elsSolved = [];
             for (linkid in links) linkCalced[linkid] = false;
             var solvedIds = this.getStaticIds();
@@ -74,6 +92,40 @@ var Doc = function (elfuncs, doc_obj) {
                 for (id in solvedIds) if (typeof solvedIds[id] === undefined) unsolvedLink++;
                 if (unsolvedLink > 0) done = false;
             }
+        },
+        recalcAllPnt: function () {
+            var done = false;
+            for (pntid in pnts) pnts[pntid].solved = true;
+            for (linkid in links) {
+
+            }
+        },
+        solveLink2: function (linkid) {
+            elfuncs['line'].getLinkPnt(links[linkid], pnts, els);
+        },
+        recalcAllEls: function () { // current !!!!!!!!!!!!!!!
+            var done = false;
+            for (elid in els) els[elid].solved = true;
+            for (linkid in links) { // mark all linked els as not solved yet
+                linkedEls = this.linkGetLinkedElIds(links[linkid]);
+                for (id in linkedEls) els[linkedEls[id]].solved = false;
+            };
+            while (!done) {
+                for (linkid in links) { isLinkReadyToSolve = true;
+                    mainEls = this.linkGetMainElIds(links[linkid]);
+                    for (elid in mainEls) {
+                        if (!els[mainEls[elid]].solved) isLinkReadyToSolve = false;
+                    };
+
+                if (isLinkReadyToSolve) {
+                    this.solveLink2(linkid);
+                    linkedEls= this.linkGetLinkedElIds(links[linkid]);
+                    for (elid in linkedEls) els[linkedEls[elid]].solved = true;
+                };
+                };
+                done = true;
+                for (id in els) if (!els[id].solved) done = false;
+            } // while
         }
 
 

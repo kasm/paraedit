@@ -54,7 +54,7 @@ var Line = function (els1) {
 
             var x_int = ((e1y0 - e0y0)*dx0*dx1 + e0x0*dy0*dx1 - e1x0*dy1*dx0) / (dy0*dx1 - dy1*dx0);
             var y_int = (dy0/dx0)*x_int + e0y0 - dy0/dx0 * e0x0;
-            rez = [];
+            rez = []; linkedElement.pnts[1] = [];
                 linkedElement.pnts[1][0] = x_int;
                 linkedElement.pnts[1][1] = y_int;
                 var t = 5;
