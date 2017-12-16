@@ -2,8 +2,66 @@
  * Created by Dima on 10.12.2017.
  */
 
+var Line = function () {
+    var a, b, c;
+    var type = 'line';
+    return {
+        setFromPoints: function(p0, p1) {
+            /*
+             X[0] = a = c * (y1-y0) / (x0*y1 - x1*y0)
+             X[1] = b = c * (x0 - x1) / (x0*y1 - x1*y0)
+             */
+            a = p1[1] - p0[1];
+            b = p0[0] - p1[0];
+            c = p0[0] * p1[1] - p1[0]*p0[1];
+        },
+        setFromCoefs: function (a1, b1, c1) {
+            a = a1; b = b1, c = c1;
+        },
+        setFromLineAndPoint: function (line, point) {
 
-var Line = function (els1) {
+        },
+        getIntersection: function (line) {
+            /*
+            lets solve system of 2 equations:
+            A*X = B
+            using matrix formula:
+            X = A-1 * B
+            [a11 a12] -1            1             [a22   - a12  ]
+            [a21 a22]     =   a11*a22 - a12*a21  [ -a21    + a11 ]
+
+            x1 = B1 * (a22 - a12) / D
+            x2 = B2 * (a11 - a21) / D
+
+            a0 * x + b0* y = c0
+            a1*x + b1*y = c1
+            d = a0*b1 - b0*a1;
+            x =  c0 * (b1 - b0) / d
+             y = c1 * (a0 - a1) / d
+             */
+            var d = a * line.b - b * line.a;
+            return [
+                c * (line.b - b) / d,
+                line.c * (a - line.a) / d
+            ]
+        },
+        getPerpendicularLine: function (pnt) {
+            var new_a = b;
+            var new_b = a;
+            var new_c = new_a * pnt[0] + new_b * pnt[1];
+            return [new_a, new_b, new_c]
+        },
+        getPerpendicularPoint: function (pnt) {
+            return this.getIntersection(this.getPerpendicularLine(pnt));
+        },
+        getNewCoords: function (pnt) { // use this line as X axe
+
+        }
+    }
+}
+
+
+var LineSeg = function (els1) {
     var els = els1;
     return {
     draw: function (cvc, element) {
@@ -86,6 +144,34 @@ var Line = function (els1) {
              mul all by (e1x1-e1x0)* (e0x1-e0x0)
              x_int ((e0y1-e0y0)*(e1x1-e1x0) - (e1y1-e1y0)*(e0x1-e0x1) =
                  (e1y0-e0y0)*(e1x1-e1x0)* (e0x1-e0x0) + e
+
+
+
+                 //    -------------  universal line equation
+                 ax + by = c
+                 x0, y0, x1, y1  - get a and b
+                 a*x0 + b*y0 = c
+                 a*x1 + b*y1 = c
+                 A * X = B
+                 a = (c - b*y0) / x0
+                 (c - b*y0) / x0 * x1 + b*y1 = c
+                 c*x1/x0 - b*y0*x1/x0 + b*y1 = c
+                 b * (y1 - y0*x1/x0) = c - c*x1/x0
+                 b = c*(1 - x1/x0) / (y1 - y0*x1/x0) = c * (x0 - x1) / (y1*x0 - y0*x1)
+                 a = (c - y0 *c* (x0 - x1) / (y1*x0 - y0*x1)) / x0 = (y1*x0 - y0*x1 - y0*(x0 - x1) ) / (x0 * (y1*x0-y0*x1))
+                 (k -  d * k * (a - c) / (d*a - b*c)) / a
+                 a = c * (1/x0 - y0/x0 * (x0 - x1) / (y1*x0 - y0*x1) = // mul x0 and mul by y1
+                 =
+                 [ x0  y0
+                   x1  y1
+                   A-1:
+                   det = 1 / (x0*y1 - x1*y0)
+                    [ y1   -y0
+                      -x1  x0 ]
+                  X = A-1 * B
+                  X[0] = a = c * (y1-y0) / (x0*y1 - x1*y0)
+                  X[1] = b = c * (x0 - x1) / (x0*y1 - x1*y0)
+
              */
 
 
@@ -95,4 +181,4 @@ var Line = function (els1) {
     }
 };
 
-module.exports = Line;
+module.exports = LineSeg;

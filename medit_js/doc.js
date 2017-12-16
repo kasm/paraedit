@@ -6,9 +6,11 @@
 /*
 pnts = {'p1': [0,0], 'p2': [10,20]}
 els = {'e1': {type: 'line', pnts[pnts['p1'], pnts['p2']]} ... }
+lines = {'i1': {a: 1, b: 1, c:1}}
 links = {'s1': {'linked': 'e1', pnti: 0, main: 'e2', type: 'mid'},
 's2': {type: 'hor', p0: 'p5', p1: 'p9'},
 's3': {linked: 'e2', type: 'int', e0: 'e5', e1: 'e8'}
+'k4': {linked: 'e4', type: 'coincidence', main: 'e15'} // for instance to line
  */
 
 var Doc = function (elfuncs, doc_obj) {
