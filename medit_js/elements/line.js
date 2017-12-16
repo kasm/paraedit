@@ -54,6 +54,12 @@ var Line = function () {
         getPerpendicularPoint: function (pnt) {
             return this.getIntersection(this.getPerpendicularLine(pnt));
         },
+        getParallelLine: function (pnt) {
+            var new_a = a;
+            var new_b = b;
+            var new_c = new_a * pnt[0] + new_b * pnt[1];
+            return [new_a, new_b, new_c]
+        },
         getNewCoords: function (pnt) { // use this line as X axe
 
         }
