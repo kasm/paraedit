@@ -86,7 +86,7 @@ var Doc = function (elfuncs, doc_obj) {
                 for (linkid in links) {
                     console.log('linkid', linkid, links[linkid]);
                     if (typeof solvedIds[links[linkid].main] != undefined) {
-                        elfuncs['line'].getLinkPnt(links[linkid], pnts, els);
+                        elfuncs['lineseg'].getLinkPnt(links[linkid], pnts, els);
                         //elfuncs[els[links[linkid].main].type].getLinkPnt(links[linkid], pnts);
                         //solveLink(linkid);
                         solvedIds[linkid]=5;
@@ -107,7 +107,7 @@ var Doc = function (elfuncs, doc_obj) {
             }
         },
         solveLink2: function (linkid) {
-            elfuncs['line'].getLinkPnt(links[linkid], pnts, els);
+            elfuncs['lineseg'].getLinkPnt(links[linkid], pnts, els);
         },
         recalcAllEls: function () { // current !!!!!!!!!!!!!!!
             var done = false;

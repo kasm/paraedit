@@ -37,14 +37,14 @@ var doc_obj2 = {
         'p15': [200, 400], 'p16': [400, 250]
     },
     els: {
-        'e1': {type: 'line', pntids: ['p1', 'p2']},
-        'e2': {type: 'line', pntids: ['p4', 'p3']},
-        'e3': {type: 'line', pntids: ['p5', 'p6']},
-        'e4': {type: 'line', pntids: ['p7', 'p8']},
-        'e5': {type: 'line', pntids: ['p9', 'p10']},
-        'e6': {type: 'line', pntids: ['p11', 'p12']},
-        'e7': {type: 'line', pntids: ['p13', 'p14']},
-        'e8': {type: 'line', pntids: ['p15', 'p16']}
+        'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
+        'e2': {type: 'lineseg', pntids: ['p4', 'p3']},
+        'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
+        'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
+        'e5': {type: 'lineseg', pntids: ['p9', 'p10']},
+        'e6': {type: 'lineseg', pntids: ['p11', 'p12']},
+        'e7': {type: 'lineseg', pntids: ['p13', 'p14']},
+        'e8': {type: 'lineseg', pntids: ['p15', 'p16']}
     },
     links: {
         'k1': {type: 'mid', linked: 'e2', pnti: 1, main: 'e1'},
@@ -114,6 +114,7 @@ var Editor = function (canvasElement) {
     window.addEventListener('click', mouseClick, false);
     window.addEventListener('mousemove', mouseMove, false);
     elfuncs['line'] = require('./elements/line.js')(doc.getEls());
+    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
     console.log('Edi');
     cvc.fillStyle = "#FFFFFF";
     cvc.strokeStyle = "#000000";
