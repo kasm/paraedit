@@ -107,6 +107,7 @@ var Doc = function (elfuncs, doc_obj) {
     var links = doc_obj.links;
     var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: []};
     var c2 = {type: 'circle', r: 50, pntids: ['pc2'], pnts: []};
+    var lines = elfuncs['line'].getTangentArray(c1, c2);
     els['e10'] = c1; els['e11'] = c2;
     console.log('els', els);
     return {

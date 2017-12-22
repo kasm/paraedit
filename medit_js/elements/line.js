@@ -82,10 +82,10 @@ var Line = function () {
                     c: r0 - (a*c0x + b*c0y)
                 }
             }
-            var c0x = circle0.center[0];
-            var c0y = circle0.center[1];
-            var c1x = circle1.center[0];
-            var c1y = circle1.center[1];
+            var c0x = circle0.pnts[0][0];
+            var c0y = circle0.pnts[0][1];
+            var c1x = circle1.pnts[0][0];
+            var c1y = circle1.pnts[0][1];
             var r0 = circle0.r;
             var r1 = circle1.r;
             dr = Math.abs(r0 - r1);

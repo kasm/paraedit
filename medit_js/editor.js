@@ -74,15 +74,16 @@ function getSnaps(doc) { var rez={};
 }
 
 var Editor = function (canvasElement) {
+    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
+    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
+    elfuncs['circle'] = require('./elements/circle.js')(doc.getEls());
+
     var doc = Doc(elfuncs, doc_obj2);
     var cvc = canvasElement.getContext('2d');
     var coords = canvasElement.getBoundingClientRect();
     var holderSize = 5;
     var selectedPoint;
     var editorMode = '';
-    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
-    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
-    elfuncs['circle'] = require('./elements/circle.js')(doc.getEls());
 
     var mouseClick = function (e) {
         if (editorMode === 'moving') {
