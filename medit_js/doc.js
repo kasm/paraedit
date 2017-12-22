@@ -11,6 +11,94 @@ links = {'s1': {'linked': 'e1', pnti: 0, main: 'e2', type: 'mid'},
 's2': {type: 'hor', p0: 'p5', p1: 'p9'},
 's3': {linked: 'e2', type: 'int', e0: 'e5', e1: 'e8'}
 'k4': {linked: 'e4', type: 'coincidence', main: 'e15'} // for instance to line
+
+
+API:
+lineseg.draw(context, element)
+line = lineseg.getLine(element)
+
+element = {'e1': {type: 'line', pnts
+elfuncs['lineseg'].draw(context, element)
+elfuncs['lineseg+line'].intersection(element, element]
+elfuncs['linkedto'](element) -> rez = [] for each link if
+
+
+doc.addElement
+doc.addLink(element, linkData) {
+    newId = linkPrefix + currentId;
+    currentId ++;
+    links[newid, linkData);
+    element.links.push(newid); };
+
+    /*************************
+doc.isNewLinkCorrect(element, linkData) {
+    for (i = 0; i<element.linkids.length; i++) {
+        if linkData.type == links[element.links[i].type &&
+            linkData.pnti == links[element.links[i].pnti return ('error: same link')
+        if constraintsQuantity['linkData.type'] + element.getCurrentConstraints > element.getMaxConstraints return ('error: too many constr')
+        if solveLink(element, linkData == 'error' return 'error: cant solve link'
+
+delete vs splice:
+ https://stackoverflow.com/questions/500606/deleting-array-elements-in-javascript-delete-vs-splice
+
+link types:
+distance (with side) - coinsindence, distance, tangent to specific circle
+orientation (parallel, perp)
+
+snap types:
+point = mid (toEl, point)
+point = per (point, line)
+line = per (point, line)
+line = parallel(point, line)
+lineseg = tangent(point, circle+ side)
+line = tangent(circle+side, circle+side)
+line = point, point
+lineseg = point, point
+lineseg = line, relCoord0, relCoord1
+circle = point, radius
+circle = TTR(line+side, line+side, radius)
+
+distance between line ax+by = c and point px, py
+from here:
+ http://2000clicks.com/mathhelp/GeometryPointsAndLines2.aspx
+ d = (a * py + b * px - c) / sqrt(a*a+b*b)      (5)
+ more squtable:
+ and canonical Ax+By+C  = 0
+ d*sqrt(a*a+b*b) = a*py + b*px + c
+
+
+conjugation of perpenducular and circle:
+perpendicular got specific a and b in equation ax+by = c
+thats why we can change only c in this equation to make like at distance
+So, we have a problem which requires finding the distance from a point to a plane
+we got a problem of get C such that line is at specific range from point
+from equation (5)
+c = d * sqrt(a*a+b*b) - a*py - b*px
+
+conjugation of line from specific point and circle:
+system:
+a*p0x + b*p0y + c = 0
+d*sqrt(a*a+b*b) = a*p1y + b*p1x + c
+line can have any cofficients (a, b, c) , but it pass through specific point p0x, p0y and from distance d from pcx, pcy
+more common problem: line from d0 from p0 and d1 from p1
+lets take a*a+b*b = 1
+so b = sqrt(1-a*a)
+d0 = a*p0y + sqrt(1-a*a)*p0x - c
+d1 = a*p1y + sqrt(1-a*a)*p1x - c
+d0 - a*p0y - sqrt(1-a*a)*p0x -d1 + a*p1y + p1x*sqrt(1-a*a) = 0
+d0-d1 + a*(p1y - p0y) + sqrt(1-a*a)* (p1x - p1y) = 0
+
+
+parametric form of line (luch)
+x = x0 + xt*t
+y = y0 + yt*t
+a * (x0 + xt*t) + b*(y0+yt*t) + c = 0
+
+ http://e-maxx.ru/algo/circle_tangents
+ https://en.wikipedia.org/wiki/Tangent_lines_to_circles#Tangent_lines_to_two_circles
+ http://www.mathelp.spb.ru/book1/line_on_plane.htm
+ http://www.math.com.ua/mathdir/uravneniya_pryamoy_rasstoyanie.html
+
  */
 
 var Doc = function (elfuncs, doc_obj) {

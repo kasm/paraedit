@@ -44,7 +44,8 @@ var doc_obj2 = {
         'e5': {type: 'lineseg', pntids: ['p9', 'p10']},
         'e6': {type: 'lineseg', pntids: ['p11', 'p12']},
         'e7': {type: 'lineseg', pntids: ['p13', 'p14']},
-        'e8': {type: 'lineseg', pntids: ['p15', 'p16']}
+        'e8': {type: 'lineseg', pntids: ['p15', 'p16']},
+        'e9': {type: 'line', a: 0.01, b: 1, c: -25, pnts: [], pntids: []}
     },
     links: {
         'k1': {type: 'mid', linked: 'e2', pnti: 1, main: 'e1'},
