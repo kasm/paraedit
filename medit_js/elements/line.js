@@ -54,25 +54,8 @@ var Line = function () {
             console.log('get instersectiron', line0, line1);
             var a = line0.a; var b = line0.b; var c = line0.c;
             /*
-            lets solve system of 2 equations:
-            A*X = B
-            using matrix formula:
-            X = A-1 * B
-            [a11 a12] -1            1             [a22   - a12  ]
-            [a21 a22]     =   a11*a22 - a12*a21  [ -a21    + a11 ]
-
-            x1 = B1 * (a22 - a12) / D
-            x2 = B2 * (a11 - a21) / D
-
-            a0 * x + b0* y = c0
-            a1*x + b1*y = c1
-            d = a0*b1 - b0*a1;
-            x =  c0 * (b1 - b0) / d
-             y = c1 * (a0 - a1) / d
-
-             new decision here:
              http://e-maxx.ru/algo/lines_intersection
-             d = a1*b2 - a2*b1
+             d = a1*b2 - a2*b1; // zero if parallel
              x = c1*b2 - c2*b1
              y = a1*c2 - a2*c1
              */
@@ -87,6 +70,36 @@ var Line = function () {
             var new_b = a;
             var new_c = new_a * pnt[0] + new_b * pnt[1];
             return [new_a, new_b, new_c]
+        },
+        getTangentArray: function (circle0, circle1) {
+            // method taken from english wiki
+            function dd() {
+                var a = R*X - k*Y / (1-R*R);
+                var b = R*Y + k*X / (1-R*R);
+                return {
+                    a: a,
+                    b: b,
+                    c: r0 - (a*c0x + b*c0y)
+                }
+            }
+            var c0x = circle0.center[0];
+            var c0y = circle0.center[1];
+            var c1x = circle1.center[0];
+            var c1y = circle1.center[1];
+            var r0 = circle0.r;
+            var r1 = circle1.r;
+            dr = Math.abs(r0 - r1);
+            dx = c1x - c0x;
+            dy = c1y - c0y;
+            d = Math.sqrt(dx*dx+dy*dy);
+            var X = dx / d; var Y = dy / d;
+            var R = dr / d;
+            var rez= [];
+            var k = 1;
+            rez.push(dd());
+            k = -1;
+            rez.push(dd());
+            return rez;
         },
         getPerpendicularPoint: function (pnt) {
             return this.getIntersection(this.getPerpendicularLine(pnt));
