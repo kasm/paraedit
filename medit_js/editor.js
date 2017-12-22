@@ -34,7 +34,8 @@ var doc_obj2 = {
         'p9': [300, 350], 'p10': [300,400],
         'p11': [400, 350], 'p12': [400,400],
         'p13': [200, 400], 'p14': [450, 250],
-        'p15': [200, 400], 'p16': [400, 250]
+        'p15': [200, 400], 'p16': [400, 250],
+        'pc1': [100, 100], 'pc2': [200, 200]
     },
     els: {
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
@@ -79,7 +80,9 @@ var Editor = function (canvasElement) {
     var holderSize = 5;
     var selectedPoint;
     var editorMode = '';
-
+    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
+    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
+    elfuncs['circle'] = require('./elements/circle.js')(doc.getEls());
 
     var mouseClick = function (e) {
         if (editorMode === 'moving') {
@@ -114,8 +117,6 @@ var Editor = function (canvasElement) {
 
     window.addEventListener('click', mouseClick, false);
     window.addEventListener('mousemove', mouseMove, false);
-    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
-    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
     console.log('Edi');
     cvc.fillStyle = "#FFFFFF";
     cvc.strokeStyle = "#000000";
@@ -148,6 +149,8 @@ var Editor = function (canvasElement) {
 
             for (el_id in els) {
                 console.log('el_id', el_id);
+                var dd = els[el_id];
+                var ddt = dd.type;
 
                 elfuncs[els[el_id].type].draw(cvc, els[el_id]);
 

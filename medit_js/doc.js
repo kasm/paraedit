@@ -105,6 +105,9 @@ var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
+    var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: []};
+    var c2 = {type: 'circle', r: 50, pntids: ['pc2'], pnts: []};
+    els['e10'] = c1; els['e11'] = c2;
     console.log('els', els);
     return {
         fillElPnts: function () { var rez = {}; var i; var el;
