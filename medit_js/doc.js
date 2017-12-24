@@ -105,7 +105,8 @@ var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
-    var c1 = {type: 'circle', r: 20, pntids: ['pc1'], pnts: [[100, 100]]};
+    console.log('c1 r:', els['c1']['r']);
+    var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: [[100, 100]]};
     var c2 = {type: 'circle', r: 120, pntids: ['pc2'], pnts: [[200, 300]]};
     var ltest = elfuncs['line'].setFromPoints([1, 2355], [22,1]);
     console.log('ltest--------------------------------------------------------', ltest);
@@ -166,11 +167,14 @@ var Doc = function (elfuncs, doc_obj) {
         isLinkSolvedById: function (id) {
             return
         },
-        linkGetMainElIds: function (link) { var rez = [];
+        linkGetMainElIds2: function (link) { var rez = [];
             if (link.type === 'mid' || link.type === 'per') rez.push(link.main);
             if (link.type === 'int') {
                 rez.push(link.e0); rez.push(link.e1); };
             return rez;
+        },
+        linkGetMainElIds: function (link) {
+            return link.main;
         },
         linkGetLinkedElIds: function (link) {
             var rez = []; rez.push(link.linked); return rez;

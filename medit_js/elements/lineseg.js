@@ -49,7 +49,7 @@ var LineSeg = function () {
             }
             if (snapType === 'int') {
                 // assume both elements are lines
-                var e0 = els[link.e0]; var e1 = els[link.e1];
+                var e0 = els[link.main[0]]; var e1 = els[link.main[1]];
                 var e0x0 = e0.pnts[0][0]; var e0y0 = e0.pnts[0][1];
                 var e0x1 = e0.pnts[1][0]; var e0y1 = e0.pnts[1][1];
                 var e1x0 = e1.pnts[0][0]; var e1y0 = e1.pnts[0][1];

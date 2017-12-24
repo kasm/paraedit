@@ -46,17 +46,25 @@ var doc_obj2 = {
         'e6': {type: 'lineseg', pntids: ['p11', 'p12']},
         'e7': {type: 'lineseg', pntids: ['p13', 'p14']},
         'e8': {type: 'lineseg', pntids: ['p15', 'p16']},
-        'e9': {type: 'line', a: -50, b: -20, c: -3000, pnts: [], pntids: []}
+        'e9': {type: 'line', a: -50, b: -20, c: -3000, pnts: [], pntids: []},
+        'e10': {type: 'line', a: 10, b: 10, c: -500, pnts: [], pntids: []},
+        'c0': {type: 'circle', pntids: ['pc1'], r: 30},
+        'c1': {type: 'circle', pntids: ['pc2'], r: 120}
     },
     links: {
-        'k1': {type: 'mid', linked: 'e2', pnti: 1, main: 'e1'},
-        'k2': {type: 'mid', linked: 'e3', pnti: 1, main: 'e2'},
-        'k3': {type: 'per', linked: 'e4', pnti: 1, main: 'e2'},
-        'k4': {type: 'int', linked: 'e5', pnti: 1, e0: 'e3', e1: 'e4'},
-        'k5': {type: 'mid', linked: 'e6', pnti: 0, main: 'e5'},
-        'k6': {type: 'mid', linked: 'e6', pnti: 1, main: 'e4'},
-        'k7': {type: 'int', linked: 'e8', pnti: 0, e0: 'e1', e1: 'e3'},
-        'k8': {type: 'int', linked: 'e8', pnti: 1, e0: 'e5', e1: 'e7'}
+        'k1': {type: 'mid', linked: 'e2', pnti: 1, main: ['e1']},
+        'k2': {type: 'mid', linked: 'e3', pnti: 1, main: ['e2']},
+        'k3': {type: 'per', linked: 'e4', pnti: 1, main: ['e2']},
+        'k4': {type: 'int', linked: 'e5', pnti: 1, main: ['e3', 'e4']},
+        'k5': {type: 'mid', linked: 'e6', pnti: 0, main: ['e5']},
+        'k6': {type: 'mid', linked: 'e6', pnti: 1, main: ['e4']},
+        'k7': {type: 'int', linked: 'e8', pnti: 0, main: ['e1', 'e3']},
+        'k8': {type: 'int', linked: 'e8', pnti: 1, main: ['e5', 'e7']},
+        'k9': {type: 'tangent', linked: 'e10', main: ['c0', 'c1'], ang0: 1, ang1: 1}
+    },
+    dist: {
+        'd1': 20,
+        'd2': {type: 'per', ids: ['p13', 'e5']}
     }
 }
 function isSnapPnt(pnt) {
@@ -86,6 +94,7 @@ var Editor = function (canvasElement) {
     var editorMode = '';
 
     var mouseClick = function (e) {
+        console.log('click');
         if (editorMode === 'moving') {
             editorMode = ''; return 0;
         }

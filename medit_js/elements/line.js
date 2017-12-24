@@ -70,9 +70,9 @@ var Line = function () {
             console.log('lx', lx);
 
             var ly = this.setFromPoints([0,0], [0, 1]);
-            var p0 = this.getIntersection(element, lx);
-            var p1 = this.getIntersection(element, ly);
-            console.log('p0, p1 ddd', p0, p1);
+            //var p0 = this.getIntersection(element, lx);
+            //var p1 = this.getIntersection(element, ly);
+            //console.log('p0, p1 ddd', p0, p1);
             console.log('bpnts', bpnts);
             cvc.moveTo(bpnts[0][0], bpnts[0][1]);
             cvc.lineTo(bpnts[1][0], bpnts[1][1]);
@@ -132,6 +132,7 @@ var Line = function () {
             return [new_a, new_b, new_c]
         },
         getTangentArray: function (circle0, circle1) {
+            console.log('get tangent array::::::::::::::', circle0, circle1);
             // method taken from english wiki
             function dd() {
                 console.log('R, X, k, Y', R, X, k, Y);
