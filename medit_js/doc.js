@@ -105,10 +105,16 @@ var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
-    var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: []};
-    var c2 = {type: 'circle', r: 50, pntids: ['pc2'], pnts: []};
+    var c1 = {type: 'circle', r: 20, pntids: ['pc1'], pnts: [[100, 100]]};
+    var c2 = {type: 'circle', r: 120, pntids: ['pc2'], pnts: [[200, 300]]};
+    var ltest = elfuncs['line'].setFromPoints([1, 2355], [22,1]);
+    console.log('ltest--------------------------------------------------------', ltest);
     var lines = elfuncs['line'].getTangentArray(c1, c2);
+    console.log('tangent lines:', lines);
+    lines[0].pnts = []; lines[0].pntids = []; lines[0].type = 'line';
+    lines[1].pnts = []; lines[1].pntids = []; lines[1].type = 'line';
     els['e10'] = c1; els['e11'] = c2;
+    els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
         fillElPnts: function () { var rez = {}; var i; var el;

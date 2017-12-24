@@ -35,7 +35,7 @@ var doc_obj2 = {
         'p11': [400, 350], 'p12': [400,400],
         'p13': [200, 400], 'p14': [450, 250],
         'p15': [200, 400], 'p16': [400, 250],
-        'pc1': [100, 100], 'pc2': [200, 200]
+        'pc1': [100, 100], 'pc2': [200, 300]
     },
     els: {
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
@@ -46,7 +46,7 @@ var doc_obj2 = {
         'e6': {type: 'lineseg', pntids: ['p11', 'p12']},
         'e7': {type: 'lineseg', pntids: ['p13', 'p14']},
         'e8': {type: 'lineseg', pntids: ['p15', 'p16']},
-        'e9': {type: 'line', a: 0.01, b: 1, c: -25, pnts: [], pntids: []}
+        'e9': {type: 'line', a: -50, b: -20, c: -3000, pnts: [], pntids: []}
     },
     links: {
         'k1': {type: 'mid', linked: 'e2', pnti: 1, main: 'e1'},
@@ -74,9 +74,9 @@ function getSnaps(doc) { var rez={};
 }
 
 var Editor = function (canvasElement) {
-    elfuncs['line'] = require('./elements/line.js')(doc.getEls());
-    elfuncs['lineseg'] = require('./elements/lineseg.js')(doc.getEls());
-    elfuncs['circle'] = require('./elements/circle.js')(doc.getEls());
+    elfuncs['line'] = require('./elements/line.js')();
+    elfuncs['lineseg'] = require('./elements/lineseg.js')();
+    elfuncs['circle'] = require('./elements/circle.js')();
 
     var doc = Doc(elfuncs, doc_obj2);
     var cvc = canvasElement.getContext('2d');
@@ -219,5 +219,6 @@ return ret;
 var editor = Editor(document.getElementById('c1'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
+console.log('fillElpnits');
 editor.getdoc().recalcAllEls();
 editor.redraw();

@@ -5,9 +5,9 @@
 // TODO: make array of link functions -  linkfuncs['line']['mid'] = function(el) { return a+b/2}
     // or linkfuncs['line_circle']['int'] = function(e0, e1) { .....}
     // linkfuncs['lineseg']['per'] = function(e, pnt) { line.setFromPoints(e.pnts[0], e.pnts[1]; line.getPerpPnt(pnt); };
-var LineSeg = function (els1) {
+var LineSeg = function () {
 
-    var els = els1;
+    //var els = els1;
     return {
         draw: function (cvc, element) {
             cvc.beginPath();
