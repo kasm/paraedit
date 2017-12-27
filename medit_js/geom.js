@@ -210,6 +210,16 @@ var Geom = function(defPoint) {
             return rez;
 
         },
+        'line_parallel_circle_coin_point': function (rez, elements) {
+            var c1 = elements[0];
+            var c0 = {type: 'circle', pnts: [elements[1]], r:0};
+                var trez = this.lines_parallel_circle_circle(c0, c1);
+            rez.a = trez[0].a;
+            rez.b = trez[0].b;
+            rez.c = trez[0].c;
+            return rez;
+
+        },
         'lines_parallel_circle_line': function (circle, line) {
         return this.lines_parallel_line_circle(line, circle);
         },

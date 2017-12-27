@@ -77,7 +77,8 @@ var doc_obj2 = {
     links: {
         'k1': {type: 'mid', linked: 'p3', main: ['e1']},
         'k2': {type: 'int', linked: 'p8', main: ['e1', 'e3']},
-        'k3': {type: 'parallel', linked: 'e6', main: ['c1']}
+        'k3': {type: 'parallel', linked: 'e6', main: ['c1']},
+        'k4': {type: 'coin', linked: 'e6', main: ['p15']}
     //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
   //      'k3': {type: 'per', linked: 'p8', main: ['e2']},
     //    'k4': {type: 'int', linked: 'p10', main: ['e3', 'e4']},
