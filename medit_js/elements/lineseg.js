@@ -2,6 +2,8 @@
  * Created by Dima on 16.12.2017.
  */
 
+var geom = require('../geom.js')();
+
 // TODO: make array of link functions -  linkfuncs['line']['mid'] = function(el) { return a+b/2}
     // or linkfuncs['line_circle']['int'] = function(e0, e1) { .....}
     // linkfuncs['lineseg']['per'] = function(e, pnt) { line.setFromPoints(e.pnts[0], e.pnts[1]; line.getPerpPnt(pnt); };
@@ -29,11 +31,16 @@ var LineSeg = function () {
             toElement = els[link.main];
             snapType = link.type;
             //snap: function (linkedElement, toElement, snapType) { var rez;        TODO: point number of linked element to snap
-            if (snapType === 'mid') { rez = [
+            if (snapType === 'mid') {
+/*
+                rez = [
                 linkedElement.pnts[link.pnti][0] = (toElement.pnts[0][0] + toElement.pnts[1][0]) / 2,
                 linkedElement.pnts[link.pnti][1] = (toElement.pnts[0][1] + toElement.pnts[1][1]) / 2];
+*/
+                rez = geom.point_mid_point_point(toElement.pnts[0], toElement.pnts[1]);
             }
             if (snapType === 'per') {
+
                 // linkedElement.pnts[link.pnti-1]  - perpendicular from prev point
                 var x0 = linkedElement.pnts[link.pnti-1][0];
                 var y0 = linkedElement.pnts[link.pnti-1][1];

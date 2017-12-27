@@ -27,9 +27,9 @@ var doc_obj = {
 };
 
 var doc_obj2 = {
-    pnts: {'p1': [10, 20], 'p2': [150, 50],
+    pnts: {'p1': [10, 20], 'p2': [350, 150],
         'p3': [40,190], 'p4': [10,403],
-        'p5': [100, 100], 'p6': [200,500],
+        'p5': [100, 10], 'p6': [200,500],
         'p7': [200, 150], 'p8': [200,500],
         'p9': [300, 350], 'p10': [300,400],
         'p11': [400, 350], 'p12': [400,400],
@@ -39,18 +39,27 @@ var doc_obj2 = {
     },
     els: {
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
+        'e2': {type: 'lineseg', pntids: ['p3', 'p4']},
+        'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
+        'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
+        'e5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
+        'c1': {type: 'circle', pntids: ['pc1'], r: 30}
+        /*
+        'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
         'e2': {type: 'lineseg', pntids: ['p4', 'p3']},
         'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
         'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
         'e5': {type: 'lineseg', pntids: ['p9', 'p10']},
         'e6': {type: 'lineseg', pntids: ['p11', 'p12']},
         'e7': {type: 'lineseg', pntids: ['p13', 'p14']},
-        'e8': {type: 'lineseg', pntids: ['p15', 'p16']},
-        'e9': {type: 'line', a: -50, b: -20, c: -3000, pnts: [], pntids: []},
-        'e10': {type: 'line', a: 10, b: 10, c: -500, pnts: [], pntids: []},
-        'c0': {type: 'circle', pntids: ['pc1'], r: 30},
-        'c1': {type: 'circle', pntids: ['pc2'], r: 120}
+        'e8': {type: 'lineseg', pntids: ['p15', 'p16']}
+    //    'e9': {type: 'line', a: -50, b: -20, c: -3000, pnts: [], pntids: []},
+   //     'e10': {type: 'line', a: 10, b: 10, c: -500, pnts: [], pntids: []},
+  //      'c0': {type: 'circle', pntids: ['pc1'], r: 30},
+  //      'c1': {type: 'circle', pntids: ['pc2'], r: 120}
+  */
     },
+    /*
     links: {
         'k1': {type: 'mid', linked: 'e2', pnti: 1, main: ['e1']},
         'k2': {type: 'mid', linked: 'e3', pnti: 1, main: ['e2']},
@@ -62,6 +71,20 @@ var doc_obj2 = {
         'k8': {type: 'int', linked: 'e8', pnti: 1, main: ['e5', 'e7']},
         'k9': {type: 'tangent', linked: 'e10', main: ['c0', 'c1'], ang0: 1, ang1: 1}
     },
+    */
+    links: {
+        'k1': {type: 'mid', linked: 'p3', main: ['e1']},
+        'k2': {type: 'int', linked: 'p8', main: ['e1', 'e3']}
+    //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
+  //      'k3': {type: 'per', linked: 'p8', main: ['e2']},
+    //    'k4': {type: 'int', linked: 'p10', main: ['e3', 'e4']},
+      //  'k5': {type: 'mid', linked: 'p11', main: ['e5']},
+      //  'k6': {type: 'mid', linked: 'p12', main: ['e4']},
+      //  'k7': {type: 'int', linked: 'p15', main: ['e1', 'e3']},
+      //  'k8': {type: 'int', linked: 'p16', main: ['e5', 'e7']}
+        //'k9': {type: 'tangent', linked: 'e10', main: ['c0', 'c1'], ang0: 1, ang1: 1}
+    },
+
     dist: {
         'd1': 20,
         'd2': {type: 'per', ids: ['p13', 'e5']}
@@ -94,7 +117,6 @@ var Editor = function (canvasElement) {
     var editorMode = '';
 
     var mouseClick = function (e) {
-        console.log('click');
         if (editorMode === 'moving') {
             editorMode = ''; return 0;
         }
@@ -120,7 +142,7 @@ var Editor = function (canvasElement) {
             var pnts = doc.getPnts();
             pnts[selectedPoint][0] = x;
             pnts[selectedPoint][1] = y;
-            ret.getdoc().recalcAllEls();
+            ret.getdoc().recalcAllObjs();
             ret.redraw();
         }
     }
@@ -229,5 +251,5 @@ var editor = Editor(document.getElementById('c1'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
 console.log('fillElpnits');
-editor.getdoc().recalcAllEls();
+editor.getdoc().recalcAllObjs();
 editor.redraw();

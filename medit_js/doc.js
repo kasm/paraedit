@@ -101,11 +101,14 @@ a * (x0 + xt*t) + b*(y0+yt*t) + c = 0
 
  */
 
+var Geom = require('./geom.js');
+
 var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
-    console.log('c1 r:', els['c1']['r']);
+    var geom = Geom();
+  //  console.log('c1 r:', els['c1']['r']);
     var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: [[100, 100]]};
     var c2 = {type: 'circle', r: 120, pntids: ['pc2'], pnts: [[200, 300]]};
     var ltest = elfuncs['line'].setFromPoints([1, 2355], [22,1]);
@@ -114,8 +117,8 @@ var Doc = function (elfuncs, doc_obj) {
     console.log('tangent lines:', lines);
     lines[0].pnts = []; lines[0].pntids = []; lines[0].type = 'line';
     lines[1].pnts = []; lines[1].pntids = []; lines[1].type = 'line';
-    els['e10'] = c1; els['e11'] = c2;
-    els['l1'] = lines[0]; els['l2'] = lines[1];
+   // els['e10'] = c1; els['e11'] = c2;
+  //  els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
         fillElPnts: function () { var rez = {}; var i; var el;
@@ -211,7 +214,75 @@ var Doc = function (elfuncs, doc_obj) {
         solveLink2: function (linkid) {
             elfuncs['lineseg'].getLinkPnt(links[linkid], pnts, els);
         },
-        recalcAllEls: function () { // current !!!!!!!!!!!!!!!
+        solveLink3: function (linkid, docObjs) {
+            var query = links[linkid].type + '_'
+            var linked = links[linkid].linked;
+            var ob = docObjs[linked];
+            var mainArray = [];
+            for (i=0; i<ob.main.length; i++) mainArray.push(docObjs[ob.main[i]].ob);
+            console.log('query', ob.query);
+
+            var rez = geom[ob.query](docObjs[linked].ob, mainArray);
+            var linkedObjectType = ob.type;
+            var linkType = links[linkid].type;
+            console.log('solveLink', pnts);
+
+        },
+        recalcAllObjs: function () { // current !!!!!!!!!!!!!!!
+            var linkQuery;
+            function addLinkToQuery(link) {
+
+            }
+            var docObjs = {};
+            for (id in pnts) {
+                docObjs[id] = {type: 'point', ob: pnts[id], id: id, solved: true, main: [], linkids: [], query: 'point'};
+            };
+            for (id in els) {
+                docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, main: [], linkids: [], query: els[id].type};
+            };
+            var done = false;
+            var link;
+            var ob;
+            var obt;
+            for (linkid in links) {
+                link = links[linkid];
+                ob = docObjs[link.linked];
+                ob.solved = false;
+                ob.query += '_'+link.type;
+                for (i=0; i<link.main.length; i++) {
+                    obt = docObjs[link.main[i]];
+                    ob.query+='_' + obt.type;
+                }
+                ob.linkids.push(linkid);
+                for (i=0; i<link.main.length; i++) {
+                    ob.main.push(link.main[i]);
+                };
+                //linkedIds = this.linkGetLinkedElIds(links[linkid]);
+                //for (id in linkedIds) docObjs[linkedIds[id]].solved = false;
+            };
+            console.log('DDDDDDDDDDD', docObjs);
+            while (!done) {
+                for (linkid in links) {
+                    var link = links[linkid];
+                    ob = docObjs[link.linked];
+                    isLinkReadyToSolve = true;
+                    mainIds = this.linkGetMainElIds(links[linkid]);
+                    for (id in mainIds) {
+                        if (!docObjs[mainIds[id]].solved) isLinkReadyToSolve = false;
+                    };
+
+                if (isLinkReadyToSolve) {
+                    this.solveLink3(linkid, docObjs);
+                    //throw new Error('link solved', linkid);
+                    ob.solved = true;
+                };
+                //debugger;
+                };
+                done = true;
+                for (id in docObjs) if (!docObjs[id].solved) done = false;
+            }
+
+/*
             var done = false;
             for (elid in els) els[elid].solved = true;
             for (linkid in links) { // mark all linked els as not solved yet
@@ -234,6 +305,9 @@ var Doc = function (elfuncs, doc_obj) {
                 done = true;
                 for (id in els) if (!els[id].solved) done = false;
             } // while
+            */
+
+
         }
 
 
