@@ -101,13 +101,14 @@ a * (x0 + xt*t) + b*(y0+yt*t) + c = 0
 
  */
 
-var Geom = require('./geom.js');
+
 
 var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
-    var geom = Geom();
+    var Geom = require('./geom.js');
+    var geom = Geom(pnts['defPoint']);
   //  console.log('c1 r:', els['c1']['r']);
     var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: [[100, 100]]};
     var c2 = {type: 'circle', r: 120, pntids: ['pc2'], pnts: [[200, 300]]};
@@ -229,6 +230,7 @@ var Doc = function (elfuncs, doc_obj) {
 
         },
         recalcAllObjs: function () { // current !!!!!!!!!!!!!!!
+            this.fillElPnts();
             var linkQuery;
             function addLinkToQuery(link) {
 

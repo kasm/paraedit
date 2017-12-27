@@ -27,7 +27,8 @@ var doc_obj = {
 };
 
 var doc_obj2 = {
-    pnts: {'p1': [10, 20], 'p2': [350, 150],
+    pnts: { 'defPoint': [50,50],
+        'p1': [10, 20], 'p2': [350, 150],
         'p3': [40,190], 'p4': [10,403],
         'p5': [100, 10], 'p6': [200,500],
         'p7': [200, 150], 'p8': [200,500],
@@ -43,7 +44,8 @@ var doc_obj2 = {
         'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
         'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
         'e5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
-        'c1': {type: 'circle', pntids: ['pc1'], r: 30}
+        'c1': {type: 'circle', pntids: ['pc1'], r: 10},
+        'e6': {type: 'line', a: 0.5, b: 1.5, c: -100, pntids: []}
         /*
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
         'e2': {type: 'lineseg', pntids: ['p4', 'p3']},
@@ -74,7 +76,8 @@ var doc_obj2 = {
     */
     links: {
         'k1': {type: 'mid', linked: 'p3', main: ['e1']},
-        'k2': {type: 'int', linked: 'p8', main: ['e1', 'e3']}
+        'k2': {type: 'int', linked: 'p8', main: ['e1', 'e3']},
+        'k3': {type: 'parallel', linked: 'e6', main: ['c1']}
     //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
   //      'k3': {type: 'per', linked: 'p8', main: ['e2']},
     //    'k4': {type: 'int', linked: 'p10', main: ['e3', 'e4']},
