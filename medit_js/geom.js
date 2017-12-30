@@ -14,7 +14,7 @@ var Geom = function(defPoint) {
             var line0 = lines[0]; var line1 = lines[1];
             var d = line1.a * line0.b - line0.a * line1.b;
             d = line0.a*line1.b - line0.b*line1.a;
-            if (d < this.eps) return 'error: lines are parallel';
+            if (Math.abs(d) < this.eps) return 'error: lines are parallel';
             var trez = [
                 (line1.b* (0 - line0.c) - line0.b * (0 - line1.c)) / d,
                 //(line1.a * ( 0 - line0.c) - line0.a* (0 - line1.c)) / d
@@ -64,6 +64,12 @@ var Geom = function(defPoint) {
             console.log('mid rez1', rez);
             return rez;
         },
+        'point_coin_point_per_line': function (rez, els) { // not needed because of rez point not coin to point
+            return this.point_per_point_line(rez, els);
+        },
+        'point_per_line_coin_point': function (rez, els) {
+            return this.point_per_point_line(rez, [els[1], els[0]]);
+        },
         'point_per_point_line': function (rez, els) {
             var point = els[0]; var line = els[1];
             var perLine = this.line_per_point_line(point, line);
@@ -73,9 +79,10 @@ var Geom = function(defPoint) {
         },
         'point_per_point_lineseg': function (rez, els) {
             var point = els[0]; var lineseg = els[1];
-            var line0 = {}; this.line_from_lineseg(line0, lineseg);
-            var line1 = {}; this.line_per_point_line(lin1, point, line0);
-            return this.point_int_line_line(rez, line0, line1);
+            var line0 = {}; this.line_from_lineseg(line0, [lineseg]);
+            var line1 = {}; this.line_coin_point_per_line(line1, [point, line0]);
+            console.log('line0, line1', line0, line1);
+            return this.point_int_line_line(rez, [line0, line1]);
         },
 
         'point_coin_line': function (rez, line) {
@@ -114,10 +121,14 @@ var Geom = function(defPoint) {
         'line_coin_point_per_line': function (rez, els) {
             var point = els[0]; var line = els[1];
             var a = line.b;
-            var b = line.a;
+            var b = -line.a;
             var c = 0 - (point[0]*a + point[1]*b);
             rez.a = a; rez.b = b; rez.c = c;
             return rez;
+        },
+        'line_per_line_coin_point': function (rez, els) {
+            console.log('line_per_line_coin_point -------------------------------------------------------------------');
+            return this.line_coin_point_per_line(rez, [els[1], els[0]]);
         },
         'line_point_point': function (rez, points) {
             //var line = {};
@@ -134,7 +145,8 @@ var Geom = function(defPoint) {
         },
         'line_from_lineseg': function (rez, els) {
             var lineseg = els[0];
-        return this.line_from_point_point(lineseg.pnts[0], lineseg.pnts[1]);
+        //return this.line_from_point_point(lineseg.pnts[0], lineseg.pnts[1]);
+            return this.line_coin_point_coin_point(rez, [lineseg.pnts[0], lineseg.pnts[1]]);
         },
         'line_coin_point_parallel_line': function (rez, els) {
             var point = els[0]; var line = els[1];

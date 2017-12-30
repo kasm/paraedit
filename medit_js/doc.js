@@ -221,12 +221,12 @@ var Doc = function (elfuncs, doc_obj) {
             var ob = docObjs[linked];
             var mainArray = [];
             for (i=0; i<ob.main.length; i++) mainArray.push(docObjs[ob.main[i]].ob);
-            console.log('query', ob.query);
+            console.log('query', linkid, ob.query, mainArray, '================================================================================');
 
             var rez = geom[ob.query](docObjs[linked].ob, mainArray);
             var linkedObjectType = ob.type;
             var linkType = links[linkid].type;
-            console.log('solveLink', pnts);
+            console.log('solveLink', rez);
 
         },
         recalcAllObjs: function () { // current !!!!!!!!!!!!!!!

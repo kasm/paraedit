@@ -36,7 +36,9 @@ var doc_obj2 = {
         'p11': [400, 350], 'p12': [400,400],
         'p13': [200, 400], 'p14': [450, 250],
         'p15': [200, 400], 'p16': [400, 250],
-        'pc1': [100, 100], 'pc2': [200, 300]
+        'p17': [200, 400], 'p18': [400, 250],
+        'pc1': [100, 100], 'pc2': [200, 300],
+
     },
     els: {
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
@@ -47,7 +49,10 @@ var doc_obj2 = {
         'c1': {type: 'circle', pntids: ['pc1'], r: 30},
         'e6': {type: 'line', a: 0.5, b: 1.5, c: -100, pntids: []},
         'c2': {type: 'circle', pntids: ['pc2'], r: 20},
-        'l3': {type: 'line', a: 1, b: 1, c: -200, pntids: []}
+        'l3': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
+        'l4': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
+        's7': {type: 'lineseg', pntids: ['p17', 'p18']}
+
         /*
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
         'e2': {type: 'lineseg', pntids: ['p4', 'p3']},
@@ -82,7 +87,12 @@ var doc_obj2 = {
         'k3': {type: 'parallel', linked: 'e6', main: ['c1']},
         'k4': {type: 'coin', linked: 'e6', main: ['p15']},
         'k5': {type: 'parallel', linked: 'l3', main: ['c2']},
-        'k6': {type: 'parallel', linked: 'l3', main: ['c1']}
+        'k6': {type: 'parallel', linked: 'l3', main: ['c1']},
+
+        'k8': {type: 'coin', linked: 'l4', main: ['pc2']},
+        'k7': {type: 'per', linked: 'l4', main: ['l3']},
+        'k9': {type: 'int', linked: 'p17', main: ['l3', 'e6']},
+        'k10': {type: 'per', linked: 'p18', main: ['p17', 'e3']}
     //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
   //      'k3': {type: 'per', linked: 'p8', main: ['e2']},
     //    'k4': {type: 'int', linked: 'p10', main: ['e3', 'e4']},
@@ -144,7 +154,6 @@ var Editor = function (canvasElement) {
 
     var mouseMove = function (e) {
         if (editorMode === 'moving') {
-            console.log('moving', e);
             var x = parseInt(e.clientX - coords.left);
             var y = parseInt(e.clientY - coords.top);
             var pnts = doc.getPnts();
