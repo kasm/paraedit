@@ -107,9 +107,12 @@ var Doc = function (elfuncs, doc_obj) {
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
+    var dists = doc_obj.dist;
     var Geom = require('./geom.js');
     var geom = Geom(pnts['defPoint']);
   //  console.log('c1 r:', els['c1']['r']);
+
+    /*
     var c1 = {type: 'circle', r: 30, pntids: ['pc1'], pnts: [[100, 100]]};
     var c2 = {type: 'circle', r: 120, pntids: ['pc2'], pnts: [[200, 300]]};
     var ltest = elfuncs['line'].setFromPoints([1, 2355], [22,1]);
@@ -118,16 +121,21 @@ var Doc = function (elfuncs, doc_obj) {
     console.log('tangent lines:', lines);
     lines[0].pnts = []; lines[0].pntids = []; lines[0].type = 'line';
     lines[1].pnts = []; lines[1].pntids = []; lines[1].type = 'line';
+    */
+
    // els['e10'] = c1; els['e11'] = c2;
   //  els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
         fillElPnts: function () { var rez = {}; var i; var el;
             for (id in els) {
-                els[id].pnts = []; el = els[id];
+                if (els[id].pnts === undefined) els[id].pnts = [];
+                //if (!els[id].pnts.isArray()) els[id].pnts = [];
+                el = els[id];
                 //for (pid in els[id].pntids) {
                 for (i=0; i<el.pntids.length; i++) {
-                    el.pnts.push(pnts[el.pntids[i]]);
+                    el.pnts[i] = pnts[el.pntids[i]];
+                    //el.pnts.push(pnts[el.pntids[i]]);
                 }
             }
         },
@@ -241,6 +249,9 @@ var Doc = function (elfuncs, doc_obj) {
             };
             for (id in els) {
                 docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, main: [], linkids: [], query: els[id].type};
+            };
+            for (id in dists) {
+                docObjs[id] = {type: 'distance', ob: dists[id], id: id, solved: true, main: [], linkids: [], query: 'distance'};
             };
             var done = false;
             var link;

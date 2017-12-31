@@ -12,11 +12,8 @@ var Line = function () {
         var sorted = false;
         while (!sorted) {
             sorted = true;
-            console.log('sorting ...' , tosort);
             for (i = 0; i<tosort.length-1; i++) {
-                console.log('ssss');
                 if (parseFloat(tosort[i]) > parseFloat(tosort[i+1])) {
-
                     t = tosort[i];
                     tosort[i] = tosort[i+1];
                     tosort[i+1] = t;
@@ -28,7 +25,7 @@ var Line = function () {
 
     return {
         getLineBounds: function(line, bounds) {
-            console.log('line bounds:::::::::::::', line, bounds);
+         //   console.log('line bounds:::::::::::::', line, bounds);
             // bounds: left, right, top, bottom
             var lines = [];
             lines.push(this.setFromPoints([bounds.left, bounds.top], [bounds.right, bounds.top]));
@@ -42,7 +39,6 @@ var Line = function () {
             };
             xmid = (bounds.left + bounds.right) / 2.;
             ymid = (bounds.top + bounds.bottom) / 2.;
-            console.log('xmid, ymid', xmid, ymid);
             sortedPoints = {};
             sortedDistances = [];
             for (i=0; i<points.length; i++) {
@@ -53,27 +49,20 @@ var Line = function () {
                 sortedPoints[dist] = points[i];
             };
             sort(sortedDistances);
-            console.log('sorted idst:', sortedDistances);
-            console.log('sorted poinst:', sortedPoints);
+      //      console.log('sorted idst:', sortedDistances);
+        //    console.log('sorted poinst:', sortedPoints);
             var rez = [sortedPoints[sortedDistances[0].toString()], sortedPoints[sortedDistances[1].toString()]];
-            console.log('getLine bounds', rez);
+            line.pnts = [];
+            line.pnts[0] = rez[0];
+            line.pnts[1] = rez[1];
+          //  console.log('getLine bounds', rez);
             return(rez);
         },
         draw: function (cvc, element) {
             cvc.beginPath();
             bpnts = this.getLineBounds(element, {left: 0, top: 0, right: 450, bottom: 550});
-
-            //var element = this.setFromPoints([0, 300], [10, 250]);
-            console.log('element line2', element);
-
             var lx = this.setFromPoints([0,0], [1,0]);
-            console.log('lx', lx);
-
             var ly = this.setFromPoints([0,0], [0, 1]);
-            //var p0 = this.getIntersection(element, lx);
-            //var p1 = this.getIntersection(element, ly);
-            //console.log('p0, p1 ddd', p0, p1);
-            console.log('bpnts', bpnts);
             cvc.moveTo(bpnts[0][0], bpnts[0][1]);
             cvc.lineTo(bpnts[1][0], bpnts[1][1]);
             cvc.stroke();
@@ -89,7 +78,6 @@ var Line = function () {
             a = p0[1] - p1[1];
             b = p1[0] - p0[0];
             c = p0[0]*p1[1] - p1[0]*p0[1];
-            console.log('setfrom points', a, b, c);
             return {a: a, b: b, c: c};
         },
         setFromCoefs: function (a1, b1, c1) {
@@ -107,15 +95,16 @@ var Line = function () {
         getABC: function () {
             return [a, b, c];
         },
+
         getIntersection: function (line0, line1) {
-            console.log('get instersectiron', line0, line1);
+            //console.log('get instersectiron', line0, line1);
             var a = line0.a; var b = line0.b; var c = line0.c;
-            /*
-             http://e-maxx.ru/algo/lines_intersection
-             d = a1*b2 - a2*b1; // zero if parallel
-             x = c1*b2 - c2*b1
-             y = a1*c2 - a2*c1
-             */
+
+            // http://e-maxx.ru/algo/lines_intersection
+            // d = a1*b2 - a2*b1; // zero if parallel
+            // x = c1*b2 - c2*b1
+            // y = a1*c2 - a2*c1
+
             //var d = a * line1.b - b * line1.a;
             var d = line1.a * line0.b - line0.a * line1.b;
             d = line0.a*line1.b - line0.b*line1.a;
@@ -125,6 +114,7 @@ var Line = function () {
                 (line0.a * ( 0 - line1.c) - line1.a* (0 - line0.c)) / d
             ]
         },
+            /*
         getPerpendicularLine: function (pnt) {
             var new_a = b;
             var new_b = a;
@@ -173,6 +163,7 @@ var Line = function () {
             var new_c = new_a * pnt[0] + new_b * pnt[1];
             return [new_a, new_b, new_c]
         },
+    */
         getNewCoords: function (pnt) { // use this line as X axe
 
         },

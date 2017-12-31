@@ -290,6 +290,32 @@ var Geom = function(defPoint) {
             return rez;
         },
 
+        'circles_parallel_line_parallel_line_radius_distance': function (rez, els) {
+            var line0 = els[0]; var line1 = els[1]; r = els[2];
+            line0.c += r; line1.c += r;
+            var point00 = []; this.point_int_line_line(point00, [line0, line1]);
+            line1.c -= 2*r;
+            var point01 = []; this.point_int_line_line(point01, [line0, line1]);
+            line0.c -= 2*r; line1.c += 2*r;
+            var point10 = []; this.point_int_line_line(point10, [line0, line1]);
+            line1.c -= 2*r;
+            line0.c += r; line1.c += r;  // because line0 & line1 are references !!!
+            var point11 = []; this.point_int_line_line(point11, [line0, line1]);
+            rez.push({type: 'circle', pnts: [point00], r: r});
+            rez.push({type: 'circle', pnts: [point01], r: r});
+            rez.push({type: 'circle', pnts: [point10], r: r});
+            rez.push({type: 'circle', pnts: [point11], r: r});
+            return rez;
+        },
+        'circle_parallel_line_parallel_line_radius_distance': function (rez, els) {
+            var trez = [];
+            this.circles_parallel_line_parallel_line_radius_distance(trez, els);
+            rez.pnts[0][0] = trez[0].pnts[0][0];
+            rez.pnts[0][1] = trez[0].pnts[0][1];
+            rez.r = trez[0].r;
+            return rez;
+        },
+
 
 
         solveGeom: function(task, data) {

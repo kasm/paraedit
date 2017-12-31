@@ -38,6 +38,7 @@ var doc_obj2 = {
         'p15': [200, 400], 'p16': [400, 250],
         'p17': [200, 400], 'p18': [400, 250],
         'pc1': [100, 100], 'pc2': [200, 300],
+        'pc3': [200, 360]
 
     },
     els: {
@@ -49,6 +50,7 @@ var doc_obj2 = {
         'c1': {type: 'circle', pntids: ['pc1'], r: 30},
         'e6': {type: 'line', a: 0.5, b: 1.5, c: -100, pntids: []},
         'c2': {type: 'circle', pntids: ['pc2'], r: 20},
+        'c5': {type: 'circle', pntids: ['pc3'], pnts: [[20, 30]], r: 8},
         'l3': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
         'l4': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
         's7': {type: 'lineseg', pntids: ['p17', 'p18']}
@@ -93,6 +95,13 @@ var doc_obj2 = {
         'k7': {type: 'per', linked: 'l4', main: ['l3']},
         'k9': {type: 'int', linked: 'p17', main: ['l3', 'e6']},
         'k10': {type: 'per', linked: 'p18', main: ['p17', 'e3']}
+
+        ,
+        'k11': {type: 'parallel', linked: 'c5', main: ['l3']},
+        'k12': {type: 'parallel', linked: 'c5', main: ['e6']},
+        'k13': {type: 'radius', linked: 'c5', main: ['d3']}
+
+
     //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
   //      'k3': {type: 'per', linked: 'p8', main: ['e2']},
     //    'k4': {type: 'int', linked: 'p10', main: ['e3', 'e4']},
@@ -105,7 +114,8 @@ var doc_obj2 = {
 
     dist: {
         'd1': 20,
-        'd2': {type: 'per', ids: ['p13', 'e5']}
+        'd2': {type: 'per', ids: ['p13', 'e5']},
+        'd3': 25
     }
 }
 function isSnapPnt(pnt) {
