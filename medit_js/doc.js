@@ -110,6 +110,9 @@ var Doc = function (elfuncs, doc_obj) {
     var dists = doc_obj.dist;
     var Geom = require('./geom.js');
     var geom = Geom(pnts['defPoint']);
+    var tid = 1000;
+    var docObjs = {};
+
   //  console.log('c1 r:', els['c1']['r']);
 
     /*
@@ -127,9 +130,24 @@ var Doc = function (elfuncs, doc_obj) {
   //  els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
+        addObjs: function (objs) { var ob; var rez = [];
+        console.log('addObjs', objs);
+            for (i=0; i<objs.length; i++) {
+                ob = objs[i];
+                if (ob.type == 'point') { rez.push('ap'+i); pnts['ap'+i] = objs[i]}
+                else if (ob.type == 'distance') {rez.push('ad'+i); dists['ad' + i] = ob[i]}
+                else { rez.push('ae'+i); els['ae'+i] = objs[i] };
+            }
+            return rez;
+        },
+        addLink: function (link) {
+            links[tid] = link;
+            tid++;
+        },
         fillElPnts: function () { var rez = {}; var i; var el;
             for (id in els) {
                 if (els[id].pnts === undefined) els[id].pnts = [];
+                if (els[id].pntids === undefined) els[id].pntids = [];
                 //if (!els[id].pnts.isArray()) els[id].pnts = [];
                 el = els[id];
                 //for (pid in els[id].pntids) {
@@ -228,7 +246,13 @@ var Doc = function (elfuncs, doc_obj) {
             var linked = links[linkid].linked;
             var ob = docObjs[linked];
             var mainArray = [];
-            for (i=0; i<ob.main.length; i++) mainArray.push(docObjs[ob.main[i]].ob);
+            for (i=0; i<ob.main.length; i++) {
+                if (typeof ob.main[i] == 'string') {
+                    mainArray.push(docObjs[ob.main[i]].ob);
+                } else {
+                    mainArray.push(ob.main[i]);
+                }
+            }
             console.log('query', linkid, ob.query, mainArray, '================================================================================');
 
             var rez = geom[ob.query](docObjs[linked].ob, mainArray);
@@ -237,7 +261,120 @@ var Doc = function (elfuncs, doc_obj) {
             console.log('solveLink', rez);
 
         },
+        fillLinksData: function () {
+            for (id in links) {
+                link = links[id];
+                link.main = [];
+                mainids = link.mainid;
+                linked = docObjs[link.linked];
+                linked.mainid = [];
+                linked.links = [];
+                linked.main = [];
+                for (i = 0; i< mainids.length; i++) {
+                    linked.links.push(link);
+                    if (typeof mainids[i] == 'string') {
+                        link.main.push(docObjs[mainids[i]].ob);
+                        linked.mainid.push(mainids[i]);  // for use to scan dependencies
+                    } else {
+                        link.main.push(mainids[i]);
+                    }
+                }
+            }
+        },
+        fillDocObjs: function () { // current, fill without calculation
+            var docObjs = {};
+            for (id in pnts) {
+                docObjs[id] = {type: 'point', ob: pnts[id], id: id, solved: true, mainid: [], linkids: [], links: [], query: 'point'};
+            };
+            for (id in els) {
+                docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, main: [], linkids: [], links: [], query: els[id].type};
+            };
+            for (id in dists) {
+                docObjs[id] = {type: 'distance', ob: dists[id], id: id, solved: true, main: [], linkids: [], links: [], query: 'distance'};
+            };
+            this.fillLinksData();
+            for (id in docObjs) {
+
+            }
+
+        },
         recalcAllObjs: function () { // current !!!!!!!!!!!!!!!
+            this.fillElPnts();
+            var linkQuery;
+            function addLinkToQuery(link) {
+
+            }
+            var done = false;
+            var link;
+            var ob;
+            var obt;
+            for (linkid in links) {
+                link = links[linkid];
+                ob = docObjs[link.linked];
+                ob.solved = false;
+                ob.query += '_'+link.type;
+                for (i=0; i<link.main.length; i++) {
+                    obt = docObjs[link.main[i]];
+                    ob.query+='_' + obt.type;
+                }
+                ob.linkids.push(linkid);
+                for (i=0; i<link.main.length; i++) {
+                    ob.main.push(link.main[i]);
+                };
+                //linkedIds = this.linkGetLinkedElIds(links[linkid]);
+                //for (id in linkedIds) docObjs[linkedIds[id]].solved = false;
+            };
+            console.log('DDDDDDDDDDD', docObjs);
+            while (!done) {
+                for (linkid in links) {
+                    var link = links[linkid];
+                    ob = docObjs[link.linked];
+                    isLinkReadyToSolve = true;
+                    mainIds = this.linkGetMainElIds(links[linkid]);
+                    for (id in mainIds) {
+                        if (!docObjs[mainIds[id]].solved) isLinkReadyToSolve = false;
+                    };
+
+                    if (isLinkReadyToSolve) {
+                        this.solveLink3(linkid, docObjs);
+                        //throw new Error('link solved', linkid);
+                        ob.solved = true;
+                    };
+                    //debugger;
+                };
+                done = true;
+                for (id in docObjs) if (!docObjs[id].solved) done = false;
+            }
+
+            /*
+             var done = false;
+             for (elid in els) els[elid].solved = true;
+             for (linkid in links) { // mark all linked els as not solved yet
+             linkedEls = this.linkGetLinkedElIds(links[linkid]);
+             for (id in linkedEls) els[linkedEls[id]].solved = false;
+             };
+             while (!done) {
+             for (linkid in links) { isLinkReadyToSolve = true;
+             mainEls = this.linkGetMainElIds(links[linkid]);
+             for (elid in mainEls) {
+             if (!els[mainEls[elid]].solved) isLinkReadyToSolve = false;
+             };
+
+             if (isLinkReadyToSolve) {
+             this.solveLink2(linkid);
+             linkedEls= this.linkGetLinkedElIds(links[linkid]);
+             for (elid in linkedEls) els[linkedEls[elid]].solved = true;
+             };
+             };
+             done = true;
+             for (id in els) if (!els[id].solved) done = false;
+             } // while
+             */
+
+
+        },
+
+        recalcAllObjsOld1: function () {
             this.fillElPnts();
             var linkQuery;
             function addLinkToQuery(link) {

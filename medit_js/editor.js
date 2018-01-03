@@ -27,6 +27,8 @@ var doc_obj = {
 };
 
 var doc_obj2 = {
+    curid: 100,
+
     pnts: { 'defPoint': [50,50],
         'p1': [10, 20], 'p2': [350, 150],
         'p3': [40,190], 'p4': [10,403],
@@ -46,7 +48,7 @@ var doc_obj2 = {
         'e2': {type: 'lineseg', pntids: ['p3', 'p4']},
         'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
         'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
-        'e5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
+        'le5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
         'c1': {type: 'circle', pntids: ['pc1'], r: 30},
         'e6': {type: 'line', a: 0.5, b: 1.5, c: -100, pntids: []},
         'c2': {type: 'circle', pntids: ['pc2'], r: 20},
@@ -99,7 +101,14 @@ var doc_obj2 = {
         ,
         'k11': {type: 'parallel', linked: 'c5', main: ['l3']},
         'k12': {type: 'parallel', linked: 'c5', main: ['e6']},
-        'k13': {type: 'radius', linked: 'c5', main: ['d3']}
+        'k13': {type: 'radius', linked: 'c5', main: ['d3']},
+
+        // 'k15': {linked: 'c5', type: parallelLineSideDistance, mainid: ['l6', -1, 'd12']}
+        // 'ak15': {linked: c5obj, type: parallelLineSideDistance, main: [lineObjRef, side, distanceRef]}
+
+
+
+        // 'k101: {type: 'ttrs', linked: 'c8', main: ['l1', 'l2', 'd3', [0, 0]]}
 
 
     //    'k2': {type: 'mid', linked: 'p6', main: ['e2']},
@@ -115,7 +124,7 @@ var doc_obj2 = {
     dist: {
         'd1': 20,
         'd2': {type: 'per', ids: ['p13', 'e5']},
-        'd3': 25
+        'd3': 45
     }
 }
 function isSnapPnt(pnt) {
@@ -136,8 +145,39 @@ var Editor = function (canvasElement) {
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
+    var geom = require('./geom.js')([300, 300]);
 
     var doc = Doc(elfuncs, doc_obj2);
+    var els = doc.getEls();
+    var signs = [1, 1];
+
+    /*
+    for (i=0; i<2; i++) for (j=0; j<2; j++) {
+        signs[0] = 2*i - 1;
+        signs[1] = 2*j - 1;
+        circle1 = geom['circle_blank']();
+        geom.circle_parallel_line_parallel_line_radius_distance_signs(circle1, [els['l3'], els['le5'], 10], signs);
+        console.log('add circle:', circle1);
+        doc.addObjs([circle1]);
+    };
+*/
+
+    for (i=0; i<2; i++) for (j=0; j<2; j++) {
+        signs[0] = 2*i - 1;
+        signs[1] = 2*j - 1;
+        circle1 = geom['circle_blank']();
+        console.log('added circle, :', circle1);
+
+        geom.circle_parallel_line_parallel_line_signs_radius_distance(circle1, [els['l3'], els['le5'], signs, 10]);
+        tid = doc.addObjs([circle1]);
+     //   doc.addLink({type: 'parallel_line_parallel_line_signs', linked: tid, main: ['l3', 'le5', [1-2*i, 1-2*j]]});
+    };
+
+    /*
+    var circles = [];
+    geom.circles_parallel_line_parallel_line_radius_distance(circles, [els['l3'], els['le5'], 10]);
+    doc.addObjs(circles);
+    */
     var cvc = canvasElement.getContext('2d');
     var coords = canvasElement.getBoundingClientRect();
     var holderSize = 5;

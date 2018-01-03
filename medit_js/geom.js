@@ -23,6 +23,7 @@ var Geom = function(defPoint) {
             rez[0] = trez[0]; rez[1] = trez[1];
             return rez;
         },
+
         'point_coin_line_coin_line': function (rez, lines) {
             return this.point_int_line_line(rez, lines);
         },
@@ -159,6 +160,30 @@ var Geom = function(defPoint) {
             return this.line_coin_point_parallel_line(rez, [point, line]);
         },
 
+        'line_parallel_circle': function (rez, elements) {
+            var c1 = elements[0];
+            var c0 = {type: 'circle', pnts: [defaultPoint], r: 0};
+            var trez = this.lines_parallel_circle_circle(c0, c1);
+            rez.a = trez[0].a;
+            rez.b = trez[0].b;
+            rez.c = trez[0].c;
+            return rez;
+
+        },
+        'line_parallel_circle_coin_point': function (rez, elements) {
+            var c1 = elements[0];
+            var c0 = {type: 'circle', pnts: [elements[1]], r:0};
+            var trez = this.lines_parallel_circle_circle(rez, [c0, c1]);
+            rez.a = trez[0].a;
+            rez.b = trez[0].b;
+            rez.c = trez[0].c;
+            return rez;
+        },
+        'line_parallelSideDistance_line': function (rez, els) {
+            var line = els[0]; var dist = els[1]; var side = els[2];
+            rez.c = line.c + dist*side;
+            return rez;
+        },
 
         //                                                     DISTANCE
         'distance_point_line': function (point, line) {
@@ -219,27 +244,7 @@ var Geom = function(defPoint) {
             {a: an, b: bn, c: cn - circle.r}
         ];
         },
-        'line_parallel_circle': function (rez, elements) {
-            var c1 = elements[0];
-            var c0 = {type: 'circle', pnts: [defaultPoint], r: 0};
-            var trez = this.lines_parallel_circle_circle(c0, c1);
-            rez.a = trez[0].a;
-            rez.b = trez[0].b;
-            rez.c = trez[0].c;
-            return rez;
-
-        },
-        'line_parallel_circle_coin_point': function (rez, elements) {
-            var c1 = elements[0];
-            var c0 = {type: 'circle', pnts: [elements[1]], r:0};
-                var trez = this.lines_parallel_circle_circle(rez, [c0, c1]);
-            rez.a = trez[0].a;
-            rez.b = trez[0].b;
-            rez.c = trez[0].c;
-            return rez;
-
-        },
-        'lines_parallel_circle_line': function (circle, line) {
+       'lines_parallel_circle_line': function (circle, line) {
         return this.lines_parallel_line_circle(line, circle);
         },
         'line_parallel_circle_parallel_circle': function (rez, els) {
@@ -310,10 +315,34 @@ var Geom = function(defPoint) {
         'circle_parallel_line_parallel_line_radius_distance': function (rez, els) {
             var trez = [];
             this.circles_parallel_line_parallel_line_radius_distance(trez, els);
-            rez.pnts[0][0] = trez[0].pnts[0][0];
-            rez.pnts[0][1] = trez[0].pnts[0][1];
+            rez.pnts[0][0] = trez[1].pnts[0][0];
+            rez.pnts[0][1] = trez[1].pnts[0][1];
             rez.r = trez[0].r;
             return rez;
+        },
+        'circle_parallel_line_parallel_line_signs': function (rez, els) {
+            var r = rez.r; var signs = els[2];
+            //var r = els[2];
+            var line0 = {a: els[0].a, b: els[0].b, c: els[0].c + signs[0]*r};
+            var line1 = {a: els[1].a, b: els[1].b, c: els[1].c + signs[1]*r};
+            var center = []; this.point_int_line_line(center, [line0, line1]);
+            rez.pnts[0] = center[0];
+            rez.pnts[1] = center[1];
+            rez.r = r;
+        },
+        'point_parallelSideDistance_line_parallelSideDistance_line': function (rez, e) {
+            // should be created references to values
+            // https://stackoverflow.com/questions/5823870/javascript-how-to-create-reference
+
+        },
+        'circle_parallel_line_parallel_line_signs_radius_distance': function (rez, els) {
+            rez.r = els[2].r;
+            return this.circle_parallel_line_parallel_line_signs(rez, els);
+
+        },
+        'circle_blank': function () {
+            var c = {type: 'circle', pnts: [0, 0], pntids: [], r: 10};
+            return c;
         },
 
 
