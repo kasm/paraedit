@@ -261,20 +261,25 @@ var Doc = function (elfuncs, doc_obj) {
             console.log('solveLink', rez);
 
         },
+
+        solveObject: function (ob) {
+            var rez = geom[ob.query](ob.links);
+        },
         fillLinksData: function () {
             for (id in links) {
                 link = links[id];
                 link.main = [];
-                mainids = link.mainid;
+                mainids = link.mainids;
                 linked = docObjs[link.linked];
-                linked.mainid = [];
+                linked.mainids = [];
                 linked.links = [];
                 linked.main = [];
                 for (i = 0; i< mainids.length; i++) {
                     linked.links.push(link);
                     if (typeof mainids[i] == 'string') {
                         link.main.push(docObjs[mainids[i]].ob);
-                        linked.mainid.push(mainids[i]);  // for use to scan dependencies
+                        linked.mainids.push(mainids[i]);  // for use to scan dependencies
+                        linked.solved = false;
                     } else {
                         link.main.push(mainids[i]);
                     }
@@ -284,94 +289,57 @@ var Doc = function (elfuncs, doc_obj) {
         fillDocObjs: function () { // current, fill without calculation
             var docObjs = {};
             for (id in pnts) {
-                docObjs[id] = {type: 'point', ob: pnts[id], id: id, solved: true, mainid: [], linkids: [], links: [], query: 'point'};
+                docObjs[id] = {type: 'point', ob: pnts[id], id: id, solved: true, mainids: [], linkids: [], links: [], query: 'point_links'};
             };
             for (id in els) {
-                docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, main: [], linkids: [], links: [], query: els[id].type};
+                docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, mainids: [], linkids: [], links: [], query: els[id].type+'_links'};
             };
             for (id in dists) {
-                docObjs[id] = {type: 'distance', ob: dists[id], id: id, solved: true, main: [], linkids: [], links: [], query: 'distance'};
+                docObjs[id] = {type: 'distance', ob: dists[id], id: id, solved: true, mainids: [], linkids: [], links: [], query: 'distance_links'};
             };
             this.fillLinksData();
+
+            // make query string
             for (id in docObjs) {
-
-            }
-
+                ob = docObjs[id];
+                for (linkid in ob.links) ob.query += '_' + links[linkid]
+            };
         },
         recalcAllObjs: function () { // current !!!!!!!!!!!!!!!
+            /*
+            changed link format to specify DETAILED link type
+            to simplify processing, because of too complex analisys
+             and generating query of links like
+             'line_parallelLineSideDistance'.
+             So I decided to just store
+              type: parallelLineSideDistance
+              in link body
+
+              Also had to change geom engine API format to
+              geom.func1(rez, arrayOfLinks)
+              because of complex structure of links data (for instance distance and side)
+
+             */
             this.fillElPnts();
-            var linkQuery;
-            function addLinkToQuery(link) {
-
-            }
+            this.fillDocObjs();
             var done = false;
-            var link;
-            var ob;
-            var obt;
-            for (linkid in links) {
-                link = links[linkid];
-                ob = docObjs[link.linked];
-                ob.solved = false;
-                ob.query += '_'+link.type;
-                for (i=0; i<link.main.length; i++) {
-                    obt = docObjs[link.main[i]];
-                    ob.query+='_' + obt.type;
-                }
-                ob.linkids.push(linkid);
-                for (i=0; i<link.main.length; i++) {
-                    ob.main.push(link.main[i]);
-                };
-                //linkedIds = this.linkGetLinkedElIds(links[linkid]);
-                //for (id in linkedIds) docObjs[linkedIds[id]].solved = false;
-            };
-            console.log('DDDDDDDDDDD', docObjs);
             while (!done) {
-                for (linkid in links) {
-                    var link = links[linkid];
-                    ob = docObjs[link.linked];
-                    isLinkReadyToSolve = true;
-                    mainIds = this.linkGetMainElIds(links[linkid]);
-                    for (id in mainIds) {
-                        if (!docObjs[mainIds[id]].solved) isLinkReadyToSolve = false;
-                    };
 
-                    if (isLinkReadyToSolve) {
-                        this.solveLink3(linkid, docObjs);
-                        //throw new Error('link solved', linkid);
-                        ob.solved = true;
+                for (id in docObjs) {
+
+                    isObjectReadyToSolve = true;
+                    ob = docObjs[id];
+                    for (mid in ob.mainids) {
+                        if (!docObjs[mid].solved) isObjectReadyToSolve = false;
                     };
-                    //debugger;
+                    if (ob.mainids.length > 0 && isObjectReadyToSolve) {
+                        var rez = geom[ob.query](ob.links);
+                        ob.solved = true;
+                    }
                 };
                 done = true;
                 for (id in docObjs) if (!docObjs[id].solved) done = false;
             }
-
-            /*
-             var done = false;
-             for (elid in els) els[elid].solved = true;
-             for (linkid in links) { // mark all linked els as not solved yet
-             linkedEls = this.linkGetLinkedElIds(links[linkid]);
-             for (id in linkedEls) els[linkedEls[id]].solved = false;
-             };
-             while (!done) {
-             for (linkid in links) { isLinkReadyToSolve = true;
-             mainEls = this.linkGetMainElIds(links[linkid]);
-             for (elid in mainEls) {
-             if (!els[mainEls[elid]].solved) isLinkReadyToSolve = false;
-             };
-
-             if (isLinkReadyToSolve) {
-             this.solveLink2(linkid);
-             linkedEls= this.linkGetLinkedElIds(links[linkid]);
-             for (elid in linkedEls) els[linkedEls[elid]].solved = true;
-             };
-             };
-             done = true;
-             for (id in els) if (!els[id].solved) done = false;
-             } // while
-             */
-
-
         },
 
         recalcAllObjsOld1: function () {

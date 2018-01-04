@@ -1,0 +1,68 @@
+2017-01-04
+Starting this daybook. Here I try to order my thoughts about JS parametric editor
+At this moment I decided to use next API for geom engine:
+Lines and points are arrays.
+Lines are normalized when created. No need to check in functions.
+
+It will be CORE:
+'core_point_int_line_line': function(rez, line0, line1) {
+    bla bla
+    return rez;
+}
+core_mid_point_point(rez, point, point);
+core_point_per_point_line(rez, point, line);
+core_point_line_circle_number(rez, line, circle, sign); // number of point if 2
+
+core_line_lsd           (rez, line, side, distance);
+core_line_point_point   (rez, point, point);
+core_line_lineseg       (rez, lineseg); // lineseg.pnts
+core_line_parallel_point_line   (rez, point, line)
+core_line_per_point_line    (rez, point, line);
+core_paramline_line     (rez, line)   // paramline[pnt, a, b]
+    a*x+b*y+c=0  x=0, y=-c/b
+    x=x0+ax*t
+    y=y0+ay*t
+    t=-x0/ax
+    y = y0+ay*(-x0/ax)
+    -c/b = y0 - ay*x0/ax
+
+    a = -ay; b = ax; c = -(a*x0+b*y0);
+
+core_line_circle_side_circle_side(rez, c0, s0, c1, s1); // empty array line if cant create
+core_line_circle_line_side(rez, c0, l0, side); // line tangent to circle and parallel to line
+    lcenter = core_line_parallel_point_line(lcenter, c0.pnts[0], l0);
+    core_line_lsd(rez, lcenter, side, c0.r);
+
+core_circle_tstsr(line,side, line,side, radius); // TTR with sides - intersection of 2 lsd lines
+core_circle_tangent_circle_side_tangent_line_side_ipoint_radius(rez, c0, cside, l0, lside, ipoint, radius); // or empty array
+core_circle_tangent_circle_side_tangent_circle_side_ipoint_radius
+
+core_points_line_circle(rez, line, circle); // push only existing points
+core_lines_circle_circle(rez, circle0, circle1);
+
+
+
+
+'point=parallel(line,side,distance)&parallel('
+
+'line=parallel(line,side,distance)' = function(rez, link) {
+    line0 = link.main[0]; side0 = link.main[1];
+
+'point=int(line,line)' = function(rez, link) {
+    line0 = link.main[0];
+}
+
+'circle=TTR(line,side,line,side,radius)' = function(rez, link) {
+    line0 = link.main[0]
+}
+
+'point=per(point, line)' = function(rez, link) {
+
+}
+
+'circle=tangent(line, side)&tangent(lineseg, side)&radius': function(rez, links) {
+    line0 = links[0].main[0]; side0 = links[0].main[1];
+    lineseg1 = links[1].main[0]; side1 = links[1].main[1];
+     r = links[2].main[0];
+     line0s = []; line0s = this['line=parallel(line,side,distance)'](line0s,
+}

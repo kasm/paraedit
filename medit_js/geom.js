@@ -27,6 +27,13 @@ var Geom = function(defPoint) {
         'point_coin_line_coin_line': function (rez, lines) {
             return this.point_int_line_line(rez, lines);
         },
+        'point_links_coinLine_coinLine': function (rez, links) { /////////                          LINKS AS PARAMS
+            var line0 = links[0].main[0];
+            var line1 = links[1].main[0];
+            return this.point_int_line_line(rez, [line0, line1]);
+        },
+
+
         'point_int_lineseg_lineseg': function (rez, linesegs) {
             var lineseg0 = linesegs[0]; var lineseg1 = linesegs[1];
             var l0 = {}; this.line_point_point(l0, [lineseg0.pnts[0], lineseg0.pnts[1]]);
