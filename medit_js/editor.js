@@ -43,12 +43,46 @@ var doc_obj2 = {
         'pc3': [200, 360]
 
     },
+    lines: {
+        //'l0': [0.5, 1, -100, x0, y0, x1, y1], // TODO for faster drawing
+        'l0': [0.5, 1, -100],
+        'l1': [3, 1, - 500],
+        'l2': els['l2'].data
+    },
+    linesegs: {
+        ls0: [[20, 30], [100, 30]],
+        ls1: [[20, 100], [100, 110]],
+        ls2: [pnts['p3'], pnts['p4']]
+    },
+    circles: {
+        c0: [[20,30], [40]],
+        c1: [pnts['pc1'], dist['d1']]
+        c2: [els['c2'].adata]      // weak because here will be link to COPY of data['pc1', 20] >>> adata[pnts['pc1'], 20]
+        c21: // also data[pnts['pc1'], 20] is weak because of we lose name of 'pc1'
+        c3: [pnts['pc3'], els['c3'].data[2]]  // data[2] === [20]
+    },
+
     els: {
+        'e1': {type: 'lineseg', data: ['p1', 'p2']},
+        'le5': {type: 'line', data: [0.5, 1, -100]},
+        'c1': {type: 'circle', data: ['pc1', 'd20']}, // convert d20 to dist['d20']=[20]
+        'c2': {type: 'circle', data: ['pc1', 20]}, // put it to circles array
+        'c3': {type: 'circle', data: ['pc1', [20]]}
+        'r1': {type: 'rectang', data: ['pc1', [20, 30]]}   // left corner and [width, height]
+        // circles and other elements are created by
+    },
+
+    links: {
+        'l1': {type: 'data', data: ['c0', 1, 'dist15']},   // set raidus of circle 'c1' to 'dist15'
+    }
+
+    els_old: {
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
         'e2': {type: 'lineseg', pntids: ['p3', 'p4']},
         'e3': {type: 'lineseg', pntids: ['p5', 'p6']},
         'e4': {type: 'lineseg', pntids: ['p7', 'p8']},
-        'le5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
+        'le5': {type: 'line', data: [0.5, 1, -100]},
+        //'le5': {type: 'line', a: 0.5, b: 1, c: -100, pntids: []},
         'c1': {type: 'circle', pntids: ['pc1'], r: 30},
         'e6': {type: 'line', a: 0.5, b: 1.5, c: -100, pntids: []},
         'c2': {type: 'circle', pntids: ['pc2'], r: 20},
@@ -56,6 +90,9 @@ var doc_obj2 = {
         'l3': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
         'l4': {type: 'line', a: 1, b: 1, c: -200, pntids: []},
         's7': {type: 'lineseg', pntids: ['p17', 'p18']}
+    },
+
+
 
         /*
         'e1': {type: 'lineseg', pntids: ['p1', 'p2']},
@@ -71,7 +108,7 @@ var doc_obj2 = {
   //      'c0': {type: 'circle', pntids: ['pc1'], r: 30},
   //      'c1': {type: 'circle', pntids: ['pc2'], r: 120}
   */
-    },
+
     /*
     links: {
         'k1': {type: 'mid', linked: 'e2', pnti: 1, main: ['e1']},

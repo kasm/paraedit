@@ -112,6 +112,11 @@ var Doc = function (elfuncs, doc_obj) {
     var geom = Geom(pnts['defPoint']);
     var tid = 1000;
     var docObjs = {};
+    var pntid = 1000;
+    var elid = 1000;
+    var distid = 1000;
+    var lineid = 1000;
+    var linesegid = 1000;
 
   //  console.log('c1 r:', els['c1']['r']);
 
@@ -130,6 +135,18 @@ var Doc = function (elfuncs, doc_obj) {
   //  els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
+        addObj: function (type, obj) {
+            if (type == 'point') {
+                pnts['pnt'+pntid] = obj;
+                pntid++;
+            } else if (type =='distance') {
+                dists['dist'+distid] = obj;
+                distid++;
+            } else {
+                els['el'+elid] = {type: type, data: obj}
+            }
+        },
+
         addObjs: function (objs) { var ob; var rez = [];
         console.log('addObjs', objs);
             for (i=0; i<objs.length; i++) {
@@ -140,6 +157,7 @@ var Doc = function (elfuncs, doc_obj) {
             }
             return rez;
         },
+
         addLink: function (link) {
             links[tid] = link;
             tid++;

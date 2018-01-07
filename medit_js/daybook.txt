@@ -66,3 +66,22 @@ core_lines_circle_circle(rez, circle0, circle1);
      r = links[2].main[0];
      line0s = []; line0s = this['line=parallel(line,side,distance)'](line0s,
 }
+
+2017-01-05
+changed document format. Each element type should be stored in its object (map ?)
+ document format is 2 layered.
+ 1st layer is user-oriented. It stores symbolic links for objects etc.
+ 2nd layer is built from 1st and stored memory references for objects
+ points and distances are stored in it's arrays and only 1 layer for them.
+
+ add_object(type, ob) {
+    if circle {
+        pnts[pntid][0] = ob.x;
+        pnts[pntid][1] = ob.y;
+        dist[distid] = [ob.r]; // every dist element is an array
+        el[elid] = {type: 'circle', data: ['pntid', distid]}
+        pntid++; distid++; elid++;
+    }
+    if line el[elid] = {type: 'line', data: [ob[0], ob[1], ob[2]]};
+
+ }

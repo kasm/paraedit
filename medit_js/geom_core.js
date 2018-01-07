@@ -4,8 +4,8 @@
 
 
 
-var GeomCore = function(defPoint) {
-    var defaultPoint = defPoint;
+var GeomCore = function() {
+
     return {
         'eps': 0.000000001,
 
@@ -56,6 +56,9 @@ var GeomCore = function(defPoint) {
             rez[0] = a; rez[1] = b; rez[2] = c;
             return rez;
         },
+        'line_lineseg': function (rez, ls) {
+            return this.line_point_point(rez, ls.pnts[0], ls.pnts[1]);
+        }
 
 
 
