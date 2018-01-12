@@ -52,15 +52,23 @@ var doc_obj2 = {
     linesegs: {
         ls0: [[20, 30], [100, 30]],
         ls1: [[20, 100], [100, 110]],
-        ls2: [pnts['p3'], pnts['p4']]
+        ls2: [pnts['p3'], pnts['p4']]  // seems best variant also could be els['ls2'].adata  or  els['ls2'].pnts
     },
     circles: {
         c0: [[20,30], [40]],
-        c1: [pnts['pc1'], dist['d1']]
+        c1: [pnts['pc1'], dist['d1']] // simply place links to the circle structure is weak, because we are loosing 'pc1' name
         c2: [els['c2'].adata]      // weak because here will be link to COPY of data['pc1', 20] >>> adata[pnts['pc1'], 20]
         c21: // also data[pnts['pc1'], 20] is weak because of we lose name of 'pc1'
         c3: [pnts['pc3'], els['c3'].data[2]]  // data[2] === [20]
     },
+
+/*
+maybe it should be API to element, like
+circleGetR(c1) {
+    return c1[1][0]
+    }
+
+ */
 
     els: {
         'e1': {type: 'lineseg', data: ['p1', 'p2']},

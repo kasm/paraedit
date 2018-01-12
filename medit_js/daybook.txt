@@ -85,3 +85,13 @@ changed document format. Each element type should be stored in its object (map ?
     if line el[elid] = {type: 'line', data: [ob[0], ob[1], ob[2]]};
 
  }
+
+2017-01-11
+Варианты названия диплома
+Графический редактор с поддрежкой параметризации на базе HTML5
+Разработка графического редактора с поддержкой геометрических взаимосвязей на базе HTML5
+
+2017-01-12
+
+The development of web based parametric 2D graphics editor
+Разработка параметрического редактора 2D графики на базе веб-технологий.
