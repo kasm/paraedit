@@ -58,6 +58,16 @@ var GeomCore = function() {
         },
         'line_lineseg': function (rez, ls) {
             return this.line_point_point(rez, ls.pnts[0], ls.pnts[1]);
+        },
+        
+        
+        'get_points': function (type, ob) {
+            switch (type) {
+                case 'lineseg': return ob; break;
+                case 'line': return []; break;
+                case 'circle': return [ob[0]]; break;
+                default: return []; break;
+            }
         }
 
 

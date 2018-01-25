@@ -95,3 +95,88 @@ changed document format. Each element type should be stored in its object (map ?
 
 The development of web based parametric 2D graphics editor
 Разработка параметрического редактора 2D графики на базе веб-технологий.
+
+Принципы работы геом ядра
+every size of geom element should be potentially independent in case link will be removed
+circleGetRadius(circle) { return circle[1][0]; };
+every element contains data[ [points], [distances, angles, sides]]
+this data CAN be substituted with other points or changed via links
+link format:
+{type: 'mid', linkedid: 'c1', linkedparam: 'circle_center', mainid: 'seg1'}
+{type: 'mid', linkedid: 'c1.circle_center', mainid: 'seg1'}
+param = docObjs.ob[first_part[pn[second_part]]]
+c1.circle_center = mid(seg1)
+{type: 'int', linkedid: 'p2', linkedparam: [], mainid: ['seg1', 'line2']}
+p2 = int(seg1, line2)
+
+{type: 'per_point_line', linkedid: 'line2', mainid: ['p1', 'line1']}
+line2 = per_point_line(p1,line1)
+
+line2 = horizontal()
+line2 = coin(p3)  // will be converted to 'line_links_horizontal_coin_point'
+{type: 'horizontal', linkedid: 'line2', mainid: []},
+{type: 'coin', linkedid: 'line2', mainid: ['p3']}
+
+line2 = tangent_circle_side_tangent_circle_side(c1, 1, c2, -1)
+{type: 'tanget_circle ..', linkedid: 'line2', mainid: ['c1', 'c2'], data: [1, -1]}
+
+line2 = tangent_circle_side('c1', 1)
+line2 = coin_point('p1')
+
+c5 = tstsr('line1', 1, line2, -1, 10)
+
+
+param_names = {'circle_center': 0, 'circle_radius': 1}
+
+2018-01-13
+New idea - configuration of elements will be solved using hard links and 'soft' links - user input
+when user creates element first time. Soft links will be used to make definition if hard links is not
+enough.
+Last entered soft links will have prioirity over first entered soft links.
+seg(p1, p2)
+
+p1.0 = 5 // soft (initial links)
+p1.1 = 10
+p1 = coin(line1) // hard link
+
+p3 = mid(p1, p2)
+p
+
+2018-01-20
+Element language
+p1 = pnt(20,30)
+ls1= lineseg([20,20], p1)
+ls2 = lineseg(ls1.p0, p1)
+c1 = circle(p1, 10)
+c1.c = mid([20,30], ls2.p0)
+l1 = line([20, 30, 40])
+l1 = coin(ls1)
+
+2018-01-25
+getpoints = function(type, data) {
+    switch(type) {
+        case: 'lineseg': return(data);
+        case: 'circle': return([data[0]]); // returns array with only 1 point
+    }
+}
+
+move = function(ob, moveVec) {
+    var t = getpoints(ob);
+    for (i=0; i<t.length; i++) {
+        t[i][0]+=moveVec[0];
+        t[i][1]+=moveVec[1];
+    }
+}
+
+scale = function(ob, base, scale) {
+    var ps = getpoints(ob);
+    var ls = getlength(ob);
+    for (i=0; i<ps.length; i++) {
+        d[0] = ps[i][0] - base[0]
+        ps[i][0] = base[0] + d[0]*scale;
+    }
+    for (i=0; i<ls.length; i++) ls[i]*=scale;
+}
+
+equation of bisector line:
+http://www.math-only-math.com/equations-of-the-bisectors-of-the-angles-between-two-straight-lines.html
