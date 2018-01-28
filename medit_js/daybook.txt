@@ -149,11 +149,15 @@ ls1= lineseg([20,20], p1)
 ls2 = lineseg(ls1.p0, p1)
 c1 = circle(p1, 10)
 c1.c = mid([20,30], ls2.p0)
-l1 = line([20, 30, 40])
+l1 = line([20, 30, 40]) // will be normalized to a^2 + b^2 == 1 at creation time
 l1 = coin(ls1)
+a1 = arc('c1', [ang1, ang2]) // will create full structure like at the next line
+a1 = [[els['c1'][0]], els['c1'][1], [ang1, ang2]]
+a2 = arc([pnts['p1']], [50], [0, pi/2]); // array of points, array of length, array of angles, array sides
 
 2018-01-25
-getpoints = function(type, data) {
+getpoints = function(ob) {
+    type = ob.type; data = ob.data;
     switch(type) {
         case: 'lineseg': return(data);
         case: 'circle': return([data[0]]); // returns array with only 1 point
@@ -180,3 +184,77 @@ scale = function(ob, base, scale) {
 
 equation of bisector line:
 http://www.math-only-math.com/equations-of-the-bisectors-of-the-angles-between-two-straight-lines.html
+
+2018-01-26
+Creation of element:
+
+p1 = pnt(20,30)
+
+Its time to determine base terminology of editor:
+what objects, what actions, at what coditions etc
+
+it will be:
+1. objects (points, elements, distances)
+2. relationships (mid, per, coin, equal etc)
+
+with all these will be next actions:
+1. fillLinks (prepare links to calculate specific coordinates)
+2. calcObjects (calc all dependent coordinates)
+3. add new object or new link
+4. remove object or link (in future)
+
+2018-01-27
+To create array of elements (dependent) its requires to create
+each element separately and create link to the first element
+c5.x = add(c1.x, 5)
+
+New format of objects structure:
+in each object will be stored reference to the function to solve this object.
+Name of function will be calculated when scanning list of links,
+because one function can solve several links (through point and parallel line)
+OLD:
+docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, mainids: [], linkids: [], links: [], query: els[id].type+'_links'};
+NEW:
+docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, mainids: [], linkids: [], ****mains[], links: [], query: els[id].type+'_links', *****func: ''};
+while solving cycle:
+if readyto solve && not solved
+    ob.func(ob.els[id], ob.mains)
+    ob.solved = true;
+
+also scale, movement and rotation can be done with affine matrixes in homogenius coordinates
+for instance array 1..3 will look
+c1 = [[20,30], [50]]
+c2 = transform(c1, 'move', [20, 0])
+c3 = copy(c1, [40, 0]);
+
+copyOb = function(ob) { var rez = [];
+    for (i=0; i<; i++) {
+        rez[i] = [];
+        for (j=0; j<ob[i].length; i++) {
+            rez[i][j] = ob[i][j];
+        }
+        }
+    }
+}
+
+copy = function(ob, vec) {
+    pnts = get_points(ob)
+    for (i=0; i<pnts.length; i++) pnts[i][0]+=ob[0] ...
+}
+
+2018-01-28
+If links is not enough to solve element, information will be taken from
+PNTS array of element data structure
+This will be detected when there are no functions to solve element
+Then to solution query will be added 'coin_point' and search again
+IMPORTANT:
+This requires all solution functions will fill result after
+all solution have done.
+PS: 'coin_point' to circle and arc means that point coin with center
+
+To not make me crazy, access to the element's structure will be using API,
+getPoints, getDists, getAngles, getDirs (arrays of directional cosines), getSides, getTexts, getData
+All these functions must return arrays of appropirate data, when given object's data.
+
+NEW line format:
+[[a,b], c]

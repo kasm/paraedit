@@ -283,7 +283,10 @@ var Doc = function (elfuncs, doc_obj) {
         solveObject: function (ob) {
             var rez = geom[ob.query](ob.links);
         },
-        fillLinksData: function () {
+
+
+
+        fillLinksData: function () { // current
             for (id in links) {
                 link = links[id];
                 link.main = [];

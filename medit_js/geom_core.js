@@ -68,6 +68,36 @@ var GeomCore = function() {
                 case 'circle': return [ob[0]]; break;
                 default: return []; break;
             }
+        },
+        'apply_matrix3': function (point_rez, matrix, point) {
+            // points can be same thats why using temp vars
+            // https://www.youtube.com/watch?v=DWNWLF5Hxcs
+            var x, y;
+            x = point[0]*matrix[0][0] + point[1]*matrix[1][0] + 1 * matrix[2][0];
+            y = point[0]*matrix[0][1] + point[1]*matrix[1][1] + 1 * matrix[2][1];
+            point_rez[0] = x;
+            point_rez[1] = y;
+            return point_rez;
+        },
+
+
+
+        'rotate_point': function (base, point, angle) { // maybe to store angles as [cos, sin]
+            var co = Math.cos(angle); var si = Math.sin(angle);
+            var d0 = point[0] - base[0];
+            var d1 = point[1] = base[1];
+            point[0] = base[0] + d0*co - d1*si;
+            point[1] = base[1] + d0*si + d1*co;
+        },
+        'scale_point': function (base, ob, koef) {
+
+        },
+        'scale_circle': function (base, ob, koef) {
+
+
+        },
+        'scale_lineseg': function (base, ob, koef) {
+
         }
 
 
