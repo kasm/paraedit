@@ -69,6 +69,14 @@ var GeomCore = function() {
                 default: return []; break;
             }
         },
+        'get_lens': function (type, ob) {
+            switch (type) {
+                case 'lineseg': return []; break;
+                case 'line': return []; break;
+                case 'circle': return ob[1]; break;
+                default: return []; break;
+            }
+        },
         'apply_matrix3': function (point_rez, matrix, point) {
             // points can be same thats why using temp vars
             // https://www.youtube.com/watch?v=DWNWLF5Hxcs
@@ -82,19 +90,40 @@ var GeomCore = function() {
 
 
 
-        'rotate_point': function (base, point, angle) { // maybe to store angles as [cos, sin]
-            var co = Math.cos(angle); var si = Math.sin(angle);
+        'rotate_point': function (point_rez, base, point, angleOrDir) { // maybe to store angles as [cos, sin]
+            var co, si;
+            if (Array.isArray(angleOrDir)) {
+                co = angleOrDir[0];
+                si = angleOrDir[1];
+            } else {
+                co = Math.cos(angleOrDir);
+                si = Math.sin(angleOrDir);
+            };
             var d0 = point[0] - base[0];
             var d1 = point[1] = base[1];
             point[0] = base[0] + d0*co - d1*si;
             point[1] = base[1] + d0*si + d1*co;
         },
-        'scale_point': function (base, ob, koef) {
+        'rotate_common': function (base, ob, angleOrDir) {
+            var co, si;
+            if (Array.isArray(angleOrDir)) {
+                co = angleOrDir[0];
+                si = angleOrDir[1];
+            } else {
+                co = Math.cos(angleOrDir);
+                si = Math.sin(angleOrDir);
+            };
+            for (i=0; i<ob.pnts.length; i++) {
+                this.rotate_point(ob.pnts[i], base, ob.pnts[i], [co, si])
+            };
+        },
+        'scale_point': function (point_rez, base, point, koef) {
 
         },
-        'scale_circle': function (base, ob, koef) {
-
-
+        'scale_circle': function (ob_rez, base, ob, koef) {  // specific object OR ob.ob ???
+            this.scale_point(ob_rez[0], base, ob[0], koef);
+            ob_rez[1] = ob[1] * koef;
+            return ob_rez;
         },
         'scale_lineseg': function (base, ob, koef) {
 

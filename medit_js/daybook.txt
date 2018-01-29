@@ -143,7 +143,7 @@ p3 = mid(p1, p2)
 p
 
 2018-01-20
-Element language
+                                        Element language
 p1 = pnt(20,30)
 ls1= lineseg([20,20], p1)
 ls2 = lineseg(ls1.p0, p1)
@@ -216,6 +216,7 @@ OLD:
 docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, mainids: [], linkids: [], links: [], query: els[id].type+'_links'};
 NEW:
 docObjs[id] = {type: els[id].type, ob: els[id], id: id, solved: true, mainids: [], linkids: [], ****mains[], links: [], query: els[id].type+'_links', *****func: ''};
+pnts, lens, angles, dirs, sides
 while solving cycle:
 if readyto solve && not solved
     ob.func(ob.els[id], ob.mains)
@@ -253,8 +254,25 @@ all solution have done.
 PS: 'coin_point' to circle and arc means that point coin with center
 
 To not make me crazy, access to the element's structure will be using API,
+-------------------------------------------------------------------------------------------
 getPoints, getDists, getAngles, getDirs (arrays of directional cosines), getSides, getTexts, getData
 All these functions must return arrays of appropirate data, when given object's data.
 
 NEW line format:
 [[a,b], c]
+CORRECTION:
+it is no need to make [[a,b],c]
+because it can be processed [a, b, c] without problem
+
+internally all angles will be in sin/cos
+
+2018-01-29
+Main idea is to create special functions for specific cases and if no special function,
+then use common function, for instance, common scale is to move points from base.
+This general idea could also be used even for links, for instance, link 'coin'
+can be implemented by putting perpendicular from all points to main line.
+Also 'stupid perpendicular' can be implemented by putting point1 to main line,
+using point0 as base. Thats all. Ignore point2, point3 etc.
+
+Also, copy operation COULD also copy links (optionally). It can be useful when creating arrays.
+
