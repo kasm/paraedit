@@ -276,3 +276,47 @@ using point0 as base. Thats all. Ignore point2, point3 etc.
 
 Also, copy operation COULD also copy links (optionally). It can be useful when creating arrays.
 
+2018-02-03
+c1 = scale('c1', [50, 30], 1.5)
+c1 = scale('c1', 'p5', 1.5)
+c2 = scale(c1, p5, 1.5)/link
+
+general architercture
+UI > text > parser > structure
+editing will be to text, then reparse
+structure:
+each type will be in separate array,
+all elements/points/distances will be in Big Objects Array
+links will be in links array OR maybe parser will parse link/linkset to functions
+and set functions to objects
+
+when creating complex elements, like lineseg, it should to create simple elements
+like 'lineseg1.p0' and set link to them from 'lineseg1'
+reason:
+1. can be programmatically (and even from text) accessed parts of complex elements,
+for set links (or references) to/from these parts
+2. unified API to every element (simple 1 dimentional object)
+cons:
+still no easy way to set links to non-referenced parameters, like circle radius
+every time when distance 'c1.r' changes it should be changed at 'c1' object via link solver
+
+c1.r = distance(p1,p5)  // will create two links - 'distance(p1,p5)' will be linked to distance between points
+and 'c1.r' will be linked to 'distance(p1,p5)'
+c1.r = c2.r // simple link equal (copy value from one to another)
+ls1.p0.x = ls2.p1.y // link between two distances and then link to ls1.p0  !!!!!!!!!!!!!!!!!!!!!!
+p3 = mid(p1,p2) // will create new object
+ls1.p1=mid(p1,p2) // modify existing (add link) to point ls1.p1
+
+should be object values accessor -
+acor.get(obdata, type, prop) {
+    var func_name = type + '_get_' + prop;
+    return acor[func_name](obdata);
+}
+acor.set(obdata, type, propName, propValue) {
+    var func_name = type + '_set_' + propName;
+    return acor[func_name](obdata, propValue);
+}
+
+use JSON.parse:
+p1 = pnt([2,3])
+p1.x = p2.x+5

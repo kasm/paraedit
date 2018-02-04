@@ -118,11 +118,20 @@ var GeomCore = function() {
             };
         },
         'scale_point': function (point_rez, base, point, koef) {
-
+            var dx = point[0] - base[0]; var dy = point[1] - base[1];
+            point_rez[0] = base[0] + koef* dx;
+            point_rez[1] = base[1] + koef * dy;
+            return point_rez;
         },
         'scale_circle': function (ob_rez, base, ob, koef) {  // specific object OR ob.ob ???
             this.scale_point(ob_rez[0], base, ob[0], koef);
             ob_rez[1] = ob[1] * koef;
+            return ob_rez;
+        },
+        'scale_common': function(ob_rez, base, ob, koef) {
+            for (i=0; i<ob.pnts.length; i++) {
+                this.scale_point(ob_rez.pnts[i], base, ob.pnts[i], koef);
+            }
             return ob_rez;
         },
         'scale_lineseg': function (base, ob, koef) {

@@ -363,6 +363,31 @@ var Doc = function (elfuncs, doc_obj) {
             }
         },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         recalcAllObjsOld1: function () {
             this.fillElPnts();
             var linkQuery;
