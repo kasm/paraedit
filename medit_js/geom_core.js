@@ -42,7 +42,7 @@ var GeomCore = function() {
             rez[2] = 0 - (line[0] * point[0] + line[1]*point[1]);
             return rez;
         },
-        'line_parallel_lsd': function(rez, line, side, distance) {
+        'line_parallel_lsd': function(rez, line, side, distance) { // also can be lpd lPointd
             rez[0] = line[0]; rez[1] = line[1];
             rez[2] = line[2] + side * distance;
             return rez;

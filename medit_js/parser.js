@@ -1,6 +1,7 @@
 
 
 var Parser = function (doc) {
+    var gl = require('/geom_links.js')();
     return {
         obCreateDefault: function () {
             return {type: '', id: '', solved: true, mainIds: [], linkIds: [], mains: [], links: [], query: '', solvers: []};
@@ -15,6 +16,12 @@ var Parser = function (doc) {
                 return doc.objs[id];
             }
         },
+        paramTypesString: function (parIds) { var rez = '';
+            for (i=0; i<parIds.length; i++) {
+                rez += '_' + doc.obsj[parIds[i]].type;
+            };
+            return rez;
+        },
         parseLine: function (line) {
             var a1 = line.split('=');
             var a2 = a1[1].split('(');
@@ -22,6 +29,7 @@ var Parser = function (doc) {
             var rez = a1[0];
             var func = a2[0];
             var params = a3[0].split(',');
+            var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
             switch (func) {
                 case 'point': doc.pnts[rez] = [this.parseVal(params[0]), this.parseVal(params[1])];
                     doc.objs[rez] = this.obCreateDefault();
@@ -39,11 +47,15 @@ var Parser = function (doc) {
                     if (doc.objs[rez]) {
                         // if object already exists
                     } else {
-                        doc.objs[rez] = this.obCreateDefault();
+                        doc.objs[rez] = this.obCreateIfNot();
+                        //doc.objs[rez] = this.obCreateDefault();
                     };
+                    var query = 'point_mid' + queryParams;
                     doc.objs[rez].mainIds[0] = params[0];
+                    doc.objs[rez].mainIds[1] = params[1];
                     doc.objs[rez].mains[0] = doc.objs[params[0]].ob;
-
+                    doc.objs[rez].mains[1] = doc.objs[params[1]].ob;
+                    doc.objs[rez].func = gl.query;
                     break;
                 case 'per':
 

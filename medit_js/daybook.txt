@@ -320,3 +320,29 @@ acor.set(obdata, type, propName, propValue) {
 use JSON.parse:
 p1 = pnt([2,3])
 p1.x = p2.x+5
+
+2018-02-09
+Should be more functionality in parser:
+1. subsitution p1[0] instead of p1.x
+2. add doc.objs['p1'] instaed of simply 'p1'
+OR it should add a function
+'p1.x+p2y' = [add, 'p1.x', 'p2.x']
+add = function(v1, v2) { return doc.objs[v1].ob+doc.objs[v2] }
+'mid(p1,p2)' = [mid, 'p1', 'p2']
+mid = function(v1, v2) {
+ var x, y;
+ x= (doc.objs[v1].ob[0] + doc.objs[v2].ob[0])/2;
+ y= (doc.objs[v1].ob[1] + doc.objs[v2].ob[1])/2;
+ return [x,y];
+}
+
+p1 = int(l1, l2)
+// function set explisitly and pars are passed by IDs
+doc.objs['p1'].link = [int_line_line, ['p1', 'l1', 'l2']]    // its easy to do links[0] later, but I think its enough just 1
+when called it will be:
+var pars = [];
+var parids = doc.objs['p1'].link[1];
+for (i=0; i<parids.length; i++) {
+    pars.push(doc.objs[parids[i]].ob)
+}
+doc.objs['p1'].link[0].apply(this, pars);  // will be passed like  --- mid(p1, p2) // no ids, just data
