@@ -346,3 +346,34 @@ for (i=0; i<parids.length; i++) {
     pars.push(doc.objs[parids[i]].ob)
 }
 doc.objs['p1'].link[0].apply(this, pars);  // will be passed like  --- mid(p1, p2) // no ids, just data
+
+2018-02-10
+For scalar data types (length, side) will be reference format:
+[array, index]
+for points, and more complex objects will be usual reference for array/object
+this reference will be used this way:
+add = funciton(rez, a, b) { // maybe params will be in array ...
+    rez[0][rez[1]]=a[0][a[1]] + b[0][b[1]];
+    return rez; // will return same reference with new data
+}
+in the objs array for scalar data it will be stored in typed arrays (pnts, dists, circles)
+
+ls1.0.1 // ls1.p0.y
+OF CAUSE, if using .0, number should be converted to int with parseInt
+to get reference for y simply take nearest parent and index:
+var t = ls1['p0']
+t['y']  OR
+var t = ls1[0];
+t[1]  // short name to access
+
+// example of using
+var trez = ls2[1]; // second point of line segment
+var t1 = p5;
+var dist1 = objs.ob.dist1
+add([trez,1], [t1, 1], [dist1, 0]);
+when parsing and placing links it will be caclulated 'short references'
+[ref, index]
+and placed to links data for function processing
+I hope I can use same syntax for integer and string indexes // just checked - should work
+
+to not forget: points we getting using geom_core.get_points
