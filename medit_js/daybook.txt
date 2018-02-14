@@ -412,3 +412,11 @@ we dealing with scalar data in more complex objects
 
 if type is standalone scalar (dist etc), store it in 1 item array and using [dist_array, 0]
 
+2018-02-14
+Lets try to implement lineseg and mid
+When create element, first, create simply using given points, even if links are specified
+At the next string of CLI specify link:
+ls2=lineseg(ls2.0, ls2.1)
+ls2.1=mid(ls1.0,ls1.1)
+
+At first time all CLI commands will be very detailed

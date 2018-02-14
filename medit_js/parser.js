@@ -16,21 +16,26 @@ var Parser = function (doc) {
                 return doc.objs[id];
             }
         },
+        // get string like: '_point_line'
         paramTypesString: function (parIds) { var rez = '';
             for (i=0; i<parIds.length; i++) {
                 rez += '_' + doc.obsj[parIds[i]].type;
             };
             return rez;
         },
+        // return ref or [parentRef, index]
         parseParam: function (paramString) { var rez;
             var t = paramString.split('.');
-            if (doc.objs.hasOwnProperty(params[i])) {
-                rez = doc.objs[params[i]].ob;
-            } else {
+            if (doc.objs.hasOwnProperty(paramString) {
+                rez = doc.objs[paramsString].ob;
+            } else if (isNaN(parseInt(paramString))) {
                 s='';
                 for (j=0; j<t.length-1; j++) s+=t[j]+'.';
                 rez=[doc.objs[s].ob, parseInt(t[t.length-1])];
+            } else {
+                rez=parseInt(paramString);
             };
+            return rez;
         },
         parseLine: function (line) { // creating objects (elements, points, etc) and/or setting links
             var a1 = line.split('=');
@@ -68,14 +73,14 @@ OLD
 
             var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
             switch (func) {
-                case 'point': doc.pnts[rez] = [this.parseVal(params[0]), this.parseVal(params[1])];
+                case 'point': doc.pnts[rez] = [this.parseParam(params[0]), this.parseParam(params[1])];
                     doc.objs[rez] = this.obCreateDefault();
                     doc.objs[rez].ob = doc.pnts[rez];
                     doc.objs[rez].type = 'point';
                     break;
                 case 'line': doc.lines[rez] = [];
                     break;
-                case 'lineseg': doc.linesegs[rez] = [doc.pnts[params[0]], doc.pnts[params[1]]];
+                case 'lineseg': doc.linesegs[rez] = [doc.pnts[params[0]], doc.pnts[params[1]]]; // parseParam in future
                     doc.objs[rez] = this.obCreateDefault();
                     doc.objs[rez].ob = this.linesegs[rez];
                     doc.objs[rez].type = 'lineseg';
@@ -87,6 +92,7 @@ OLD
                         doc.objs[rez] = this.obCreateIfNot();
                         //doc.objs[rez] = this.obCreateDefault();
                     };
+                    var queryParams = this.paramTypesString(params);
                     var query = 'point_mid' + queryParams;
                     doc.objs[rez].mainIds[0] = params[0];
                     doc.objs[rez].mainIds[1] = params[1];
