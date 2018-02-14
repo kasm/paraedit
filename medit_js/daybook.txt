@@ -377,3 +377,38 @@ and placed to links data for function processing
 I hope I can use same syntax for integer and string indexes // just checked - should work
 
 to not forget: points we getting using geom_core.get_points
+
+2018-02-11
+Its time to get something working:
+points, lines, linesegs, dists
+
+ways to manage refs:
+if point, ref to point
+if line, ref to line
+if point coord, ref to [point, number]
+if dist - dist is array of one element // maybe should be 'scalar' type - for dists, angles, sides
+so, its will be scalarref - access via scalarref[0]
+type of ref will be known when placing link functions. Each link function is specific to specific types
+of arguments and results.
+RESUME: [ref, number] will be used only for points at this time. Later maybe array of scalars
+
+NEW:
+ls1.p0.x
+c1.center.x
+c1.r / c1[1]
+arc1.c1.center.x
+arc1.c1.r
+IDEA:
+till the last dot, objects will store in appropirate arrays, for instance
+it will be point
+pnts['c1.center'] = [20, 30];
+or circles['arc1.circle'] = [pnts['c1.center'], 50];
+arcs['arc1'] = [circles['arc1.center'], [p2/4, pi/2]];
+Because ID at typed arrays and object array are same, we can easily get type of every object.
+So we getting type of ID and if its not scalar, we using ref to object.
+If type is absent (for instance coordinate of point dosnt have individual record), we using parent
+object (get it by trimmed ID) and using [pnt, coord_number] for later using obj[index]. Therefore
+we dealing with scalar data in more complex objects
+
+if type is standalone scalar (dist etc), store it in 1 item array and using [dist_array, 0]
+

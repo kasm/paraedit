@@ -22,7 +22,17 @@ var Parser = function (doc) {
             };
             return rez;
         },
-        parseLine: function (line) {
+        parseParam: function (paramString) { var rez;
+            var t = paramString.split('.');
+            if (doc.objs.hasOwnProperty(params[i])) {
+                rez = doc.objs[params[i]].ob;
+            } else {
+                s='';
+                for (j=0; j<t.length-1; j++) s+=t[j]+'.';
+                rez=[doc.objs[s].ob, parseInt(t[t.length-1])];
+            };
+        },
+        parseLine: function (line) { // creating objects (elements, points, etc) and/or setting links
             var a1 = line.split('=');
             var a2 = a1[1].split('(');
             var a3 = a2[1].split(')');
@@ -33,18 +43,29 @@ var Parser = function (doc) {
             var paramsrefs = [];
             for (i=0; i<params.length; i++) {
                 paramsids[i] = [];
-                var t = params[i].split('.');
+                paramsrefs[i]=this.parseParam(param[i]);
+
+
+/*
+OLD
                 for (j=0; j<t.length; j++) {
                     // if digit then convert to integer
-                    paramsids[i][j] = t[j];
+                    if (parseInt(t[j].charAt(0))==NaN) {
+                        paramsids[i][j] = t[j];
+                    } else {
+                        paramsids[i][j] = parseInt(t[j]);
+                    }
                 };
-                var ref = doc.objs; // actually should consider .ob
+                var ref = doc.objs[t[0]].ob; // actually should consider .ob
                 for (j=0; j<t.length-1; j++) {
-                    ref = ref[t[j]];
+                    ref = ref[paramsids[i][j]];
                 };
                 // do not foget case when no children, must be something to manage it
                 paramsrefs[i] = [ref, paramsids[i][paramsids[i].length]];
-            }
+                */
+            }; // params
+            var rezref = this.parseParam(a1[0]);
+
             var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
             switch (func) {
                 case 'point': doc.pnts[rez] = [this.parseVal(params[0]), this.parseVal(params[1])];
