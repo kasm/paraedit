@@ -1,7 +1,7 @@
 /**
  * Created by Dima on 09.12.2017.
  */
-
+document.getElementById('t1').innerHTML='ddd';
 var Doc = require('./doc.js');
 //var Line = require('./els/line.js');
 
@@ -42,13 +42,30 @@ function getSnaps(doc) { var rez={};
     }
 }
 
+var doctext =
+    "ls1.0=point(20,30)\n\
+ls1.1=point(120, 50)\n\
+ls1=lineseg(ls1.0,ls1.1)";
+var doc2={objs: {},
+pnts: {},
+    linesegs: {}
+};
+
 var Editor = function (canvasElement) {
+    document.getElementById('t1').innerHTML='ddd';
+    var Parser = require('./parser.js');
+    parser = Parser(doc2);
+    parser.parseText(doctext);
+    document.getElementById('t1').innerHTML='ddd';
+
+
+
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
     var geom = require('./geom.js')([300, 300]);
 
-    var doc = Doc(elfuncs, doc_obj2);
+    var doc = Doc(elfuncs, doc2);
     var els = doc.getEls();
     var signs = [1, 1];
 
@@ -66,11 +83,11 @@ var Editor = function (canvasElement) {
     for (i=0; i<2; i++) for (j=0; j<2; j++) {
         signs[0] = 2*i - 1;
         signs[1] = 2*j - 1;
-        circle1 = geom['circle_blank']();
-        console.log('added circle, :', circle1);
+        //circle1 = geom['circle_blank']();
+        //console.log('added circle, :', circle1);
 
-        geom.circle_parallel_line_parallel_line_signs_radius_distance(circle1, [els['l3'], els['le5'], signs, 10]);
-        tid = doc.addObjs([circle1]);
+        //geom.circle_parallel_line_parallel_line_signs_radius_distance(circle1, [els['l3'], els['le5'], signs, 10]);
+        //tid = doc.addObjs([circle1]);
      //   doc.addLink({type: 'parallel_line_parallel_line_signs', linked: tid, main: ['l3', 'le5', [1-2*i, 1-2*j]]});
     };
 
@@ -136,17 +153,30 @@ var Editor = function (canvasElement) {
         getdoc: function () {
             return doc;
         },
-        redraw: function () { var els = doc.getEls(); var pnts = doc.getPnts();
+        redraw: function () { var els = doc.getToRedraw(); var pnts = doc.getPnts();
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
             cvc.strokeStyle = "#000000";
             cvc.strokeStyle='green';
             cvc.lineWidth = 1;
             cvc.fillRect(0,0,c1var.width,c1var.height);
+            //var elrecs = doc.getElsToRedraw();
+            console.log('general redraw');
+            console.log(JSON.stringify(els));
+            var elrec;
+            for (i=0; i<els.length; i++) {
+                elrec = els[i];
+                elfuncs[elrec.type].draw(cvc, elrec.ob);
+            };
+/*
+            for (elrecId in els) {
+                elrec = doc.docObjs[elrecId];
+                elfuncs[elrec.type].draw(cvc, elrec.ob);
+            };
+*/
 
 
-
-
+/*
             for (el_id in els) {
                 console.log('el_id', el_id);
                 var dd = els[el_id];
@@ -156,6 +186,7 @@ var Editor = function (canvasElement) {
 
                 //doc.els[el_id].draw(cvc);
             }
+            */
             cvc.beginPath();
             cvc.fillStyle = '#00f';
             for (pntid in pnts) {

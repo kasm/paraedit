@@ -111,7 +111,7 @@ var Doc = function (elfuncs, doc_obj) {
     var Geom = require('./geom.js');
     var geom = Geom(pnts['defPoint']);
     var tid = 1000;
-    var docObjs = {};
+    var docObjs = doc_obj.objs;  // this is current, not parameter !!
     var pntid = 1000;
     var elid = 1000;
     var distid = 1000;
@@ -135,6 +135,7 @@ var Doc = function (elfuncs, doc_obj) {
   //  els['l1'] = lines[0]; els['l2'] = lines[1];
     console.log('els', els);
     return {
+        docObjs: docObjs,
         addObj: function (type, obj) {
             if (type == 'point') {
                 pnts['pnt'+pntid] = obj;
@@ -177,6 +178,17 @@ var Doc = function (elfuncs, doc_obj) {
         },
         getPnts: function () { return pnts; },
         getEls: function () { return els; },
+        getToRedraw: function () { var rez = [];
+        var obrec, obrec_id;
+            console.log('getTo redraw --------------------------------------');
+            console.log(JSON.stringify(docObjs));
+            for (obrec_id in docObjs) {
+                obrec = docObjs[obrec_id];
+                if (obrec.type != 'point' && obrec.type != 'dist') rez.push(obrec);
+            }
+            console.log('rez'+ JSON.stringify(rez));
+            return rez;
+        },
         getLinks: function() {
             return links;
         },
@@ -350,10 +362,10 @@ var Doc = function (elfuncs, doc_obj) {
 
                     isObjectReadyToSolve = true;
                     ob = docObjs[id];
-                    for (mid in ob.mainids) {
+                    for (mid in ob.mainIds) {
                         if (!docObjs[mid].solved) isObjectReadyToSolve = false;
                     };
-                    if (ob.mainids.length > 0 && isObjectReadyToSolve) {
+                    if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
                         var rez = geom[ob.query](ob.links);
                         ob.solved = true;
                     }

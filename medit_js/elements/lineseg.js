@@ -12,6 +12,7 @@ var LineSeg = function () {
     //var els = els1;
     return {
         draw: function (cvc, element) {
+            console.log('lineseg draw', element);
             cvc.beginPath();
             if (element.hasOwnProperty('pntsCalc')) {
                 pnts=element.pntsCalc;
@@ -20,8 +21,12 @@ var LineSeg = function () {
             }
             //cvc.moveTo(element.pntsCalc[0][0], element.pntsCalc[0][1]);
             //cvc.lineTo(element.pntsCalc[1][0], element.pntsCalc[1][1]);
-            cvc.moveTo(element.pnts[0][0], element.pnts[0][1]);
-            cvc.lineTo(element.pnts[1][0], element.pnts[1][1]);
+
+            //cvc.moveTo(element.pnts[0][0], element.pnts[0][1]);
+            //cvc.lineTo(element.pnts[1][0], element.pnts[1][1]);
+            cvc.moveTo(element[0][0], element[0][1]);
+            cvc.lineTo(element[1][0], element[1][1]);
+
             cvc.stroke();
         },
         getLinkPnt: function (link, pnts, els) { var rez;
