@@ -168,25 +168,7 @@ var Editor = function (canvasElement) {
                 elrec = els[i];
                 elfuncs[elrec.type].draw(cvc, elrec.ob);
             };
-/*
-            for (elrecId in els) {
-                elrec = doc.docObjs[elrecId];
-                elfuncs[elrec.type].draw(cvc, elrec.ob);
-            };
-*/
 
-
-/*
-            for (el_id in els) {
-                console.log('el_id', el_id);
-                var dd = els[el_id];
-                var ddt = dd.type;
-
-                elfuncs[els[el_id].type].draw(cvc, els[el_id]);
-
-                //doc.els[el_id].draw(cvc);
-            }
-            */
             cvc.beginPath();
             cvc.fillStyle = '#00f';
             for (pntid in pnts) {
@@ -215,32 +197,6 @@ var Editor = function (canvasElement) {
             cvc.stroke();
         },
         recalc: function () { var el; var i; var tpnt; var els = doc.getEls();
-       /*
-            for (el_id in els) { el = els[el_id];
-                //for (pnt in doc.els[el_id].pnts) {
-                for (i = 0; i< els[el_id].pnts.length; i++) { //} in doc.els[el_id].pnts) {
-                    pnt = els[el_id].pnts[i];
-                    console.log('pnt:', pnt);
-                    if (isSnap(pnt)) {
-                        console.log('snap', pnt);
-                        snapType = pnt[0];
-                        toElement = els[pnt[1]];
-                        tpnt = elfuncs[toElement.type].snap(el, toElement, snapType);
-                        el.pntsCalc[i][0] = tpnt[0];
-                        el.pntsCalc[i][1] = tpnt[1];
-                        //elfuncs[el.type].snap;
-                    } else {
-                        el.pntsCalc = [];
-                        el.pntsCalc[0] = [];
-                        el.pntsCalc[1] = [];
-                        el.pntsCalc[0][0] = el.pnts[0][0];
-                        el.pntsCalc[0][1] = el.pnts[0][1];
-                        el.pntsCalc[1][0] = el.pnts[1][0];
-                        el.pntsCalc[1][1] = el.pnts[1][1];
-                    }
-                }
-            } // for el_id
-            */
         }
     }
 return ret;

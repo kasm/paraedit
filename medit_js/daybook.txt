@@ -429,3 +429,9 @@ move(el, p0, p1)
 
 2018-02-20
 format of
+
+done first draw (without snap)
+
+2018-02-21
+continuing to clean and create the app.
+Try to implement 'mid'
