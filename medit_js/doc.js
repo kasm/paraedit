@@ -223,28 +223,7 @@ var Doc = function (elfuncs, doc_obj) {
         linkGetLinkedElIds: function (link) {
             var rez = []; rez.push(link.linked); return rez;
         },
-        recalcAll: function () { var done=false; var linkCalced = {}; var elsSolved = [];
-            for (linkid in links) linkCalced[linkid] = false;
-            var solvedIds = this.getStaticIds();
-            while(!done) {
-                console.log('while');
-                done = true;
-                for (linkid in links) {
-                    console.log('linkid', linkid, links[linkid]);
-                    if (typeof solvedIds[links[linkid].main] != undefined) {
-                        elfuncs['lineseg'].getLinkPnt(links[linkid], pnts, els);
-                        //elfuncs[els[links[linkid].main].type].getLinkPnt(links[linkid], pnts);
-                        //solveLink(linkid);
-                        solvedIds[linkid]=5;
-                    }
-// TODO make array of main (to what linked) elements in link object to iterate
-                    // are they solved
-                };
-                unsolvedLink = 0;
-                for (id in solvedIds) if (typeof solvedIds[id] === undefined) unsolvedLink++;
-                if (unsolvedLink > 0) done = false;
-            }
-        },
+
         recalcAllPnt: function () {
             var done = false;
             for (pntid in pnts) pnts[pntid].solved = true;
@@ -340,17 +319,22 @@ var Doc = function (elfuncs, doc_obj) {
             this.fillElPnts();
             this.fillDocObjs();
             var done = false;
+            var rez;
+            var mains;
             while (!done) {
-
                 for (id in docObjs) {
-
                     isObjectReadyToSolve = true;
                     ob = docObjs[id];
-                    for (mid in ob.mainIds) {
+                    rez = ob.ob;  // will be [array, index] at scalar values
+                    mains = [rez];
+                    for (mi in ob.mainIds) {
+                        mid = ob.mainIds[mi];
+                        mains.push(docObjs[mid].ob);
                         if (!docObjs[mid].solved) isObjectReadyToSolve = false;
                     };
                     if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
-                        var rez = geom[ob.query](ob.links);
+                        //rez = geom[ob.query](ob.links);
+                        rez = ob.func.apply(this, mains);
                         ob.solved = true;
                     }
                 };

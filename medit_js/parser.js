@@ -21,7 +21,7 @@ var Parser = function (doc) {
         // get string like: '_point_line'
         paramTypesString: function (parIds) { var rez = '';
             for (i=0; i<parIds.length; i++) {
-                rez += '_' + doc.obsj[parIds[i]].type;
+                rez += '_' + doc.objs[parIds[i]].type;
             };
             return rez;
         },
@@ -115,11 +115,14 @@ OLD
                     };
                     var queryParams = this.paramTypesString(params);
                     var query = 'point_mid' + queryParams;
+                    console.log('queryParams', queryParams);
+                    doc.objs[rez].ob.query = query;
+                    console.log(gl);
                     doc.objs[rez].mainIds[0] = params[0];
                     doc.objs[rez].mainIds[1] = params[1];
                     doc.objs[rez].mains[0] = doc.objs[params[0]].ob;
                     doc.objs[rez].mains[1] = doc.objs[params[1]].ob;
-                    doc.objs[rez].func = gl.query;
+                    doc.objs[rez].func = gl[query];
                     break;
                 case 'add':
                     doc.objs[rez] = this.obCreateIfNot(id);
