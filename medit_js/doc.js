@@ -329,12 +329,12 @@ var Doc = function (elfuncs, doc_obj) {
                     mains = [rez];
                     for (mi in ob.mainIds) {
                         mid = ob.mainIds[mi];
-                        mains.push(docObjs[mid].ob);
+                        //mains.push(docObjs[mid].ob);
                         if (!docObjs[mid].solved) isObjectReadyToSolve = false;
                     };
                     if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
                         //rez = geom[ob.query](ob.links);
-                        rez = ob.func.apply(this, mains);
+                        rez = ob.func.apply(this, ob.mains);
                         ob.solved = true;
                     }
                 };

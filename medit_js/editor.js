@@ -28,6 +28,8 @@ ls1=lineseg(ls1.0,ls1.1)\n\
 ls2.0=point(50,50)\n\
 ls2.1=point(100,100)\n\
 ls2=lineseg(ls2.0,ls2.1)\n\
+p0=point(10,120)\n\
+p0.0=eq(ls1.1.0)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},

@@ -21,27 +21,42 @@ var Parser = function (doc) {
         // get string like: '_point_line'
         paramTypesString: function (parIds) { var rez = '';
             for (i=0; i<parIds.length; i++) {
-                rez += '_' + doc.objs[parIds[i]].type;
+                rez += '_' + doc.objs[parIds[i].id].type;
             };
             return rez;
         },
-        // return ref or [parentRef, index]
-        parseParam: function (paramString) { var rez;
+        // return ref or [parentRef, index] // old
+        // ret - {id: id, ref: ref, index: index or -1}
+        parseParam: function (paramString) { var rez = {};
             var t = paramString.split('.');
+            var ts = '';
+            var i;
+            for (i=0; i<t.length-1; i++) {
+                ts+=t[i];
+                if (i<t.length-2) ts+='.';
+            };
             if (doc.objs.hasOwnProperty(paramString)) {
-                rez = doc.objs[paramString].ob;
-            } else if (isNaN(parseInt(paramString))) {
+                rez.ref = doc.objs[paramString].ob;
+                rez.id=paramString;
+            } else if (doc.objs.hasOwnProperty(ts)) {
+                var index = parseInt(t[t.length-1]);
+                rez.ref = [doc.objs[ts].ob, index];
+                rez.id = ts;
+                rez.index=parseInt(t[t.length-1]);
+            } else if (isNaN(parseInt(paramString))) { // from here not using for some time
                 s='';
-                this.obCreateIfNot(paramString);
+                rez.ref = this.obCreateIfNot(paramString);
+                rez.id = paramString;
                 for (j=0; j<t.length-1; j++) { s+=t[j]; if (j<t.length-2) s+='.'};
                 this.obCreateIfNot(s);
-                rez=[doc.objs[s].ob, parseInt(t[t.length-1])];
+                //rez=[doc.objs[s].ob, parseInt(t[t.length-1])];
             } else {
                 rez=parseInt(paramString);
             };
+            console.log('parseParam', paramString, rez);
             return rez;
             document.getElementById('t1').innerHTML=JSON.parse(rez);
-            console.log('parseParam', rez);
+
         },
         parseText: function(text) {
             var i;
@@ -58,80 +73,73 @@ var Parser = function (doc) {
             var a1 = line.split('=');
             var a2 = a1[1].split('(');
             var a3 = a2[1].split(')');
-            var rez = a1[0];
+            var rezText = a1[0];
             var func = a2[0];
             console.log('a3 0:', JSON.stringify(a3[0]));
-            var params = a3[0].split(',');
-            var paramsids = []; // 2d array to store parent line for each of params
-            var paramsrefs = [];
+            var paramsText = a3[0].split(',');
+            var params = [];
+
+            var r = {};
             //alert('params:', JSON.stringify(params));
             console.log('a1:'+ JSON.stringify(a1)+ 'a2:'+ JSON.stringify(a2)+ 'tt a3:'+ JSON.stringify(a3));
             console.log('params:', JSON.stringify(params));
-            for (i=0; i<params.length; i++) {
-                paramsids[i] = [];
-                paramsrefs[i]=this.parseParam(params[i]);
-
-
-/*
-OLD
-                for (j=0; j<t.length; j++) {
-                    // if digit then convert to integer
-                    if (parseInt(t[j].charAt(0))==NaN) {
-                        paramsids[i][j] = t[j];
-                    } else {
-                        paramsids[i][j] = parseInt(t[j]);
-                    }
-                };
-                var ref = doc.objs[t[0]].ob; // actually should consider .ob
-                for (j=0; j<t.length-1; j++) {
-                    ref = ref[paramsids[i][j]];
-                };
-                // do not foget case when no children, must be something to manage it
-                paramsrefs[i] = [ref, paramsids[i][paramsids[i].length]];
-                */
+            for (i=0; i<paramsText.length; i++) {
+                console.log('parse param cycle');
+                params[i] = this.parseParam(paramsText[i]);
             }; // params
-            var rezref = this.parseParam(a1[0]);
+            //var rez = this.parseParam(a1[0]);
 
-            var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
+            //var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
             switch (func) {
-                case 'point': doc.pnts[rez] = [this.parseParam(params[0]), this.parseParam(params[1])];
-                    doc.objs[rez] = this.obCreateIfNot(rez);
-                    doc.objs[rez].ob = doc.pnts[rez];
-                    doc.objs[rez].type = 'point';
+                case 'point': doc.pnts[rezText] = [params[0], params[1]];
+                    doc.objs[rezText] = this.obCreateIfNot(rezText);
+                    doc.objs[rezText].ob = doc.pnts[rezText];
+                    doc.objs[rezText].type = 'point';
                     break;
                 case 'line': doc.lines[rez] = [];
                     break;
-                case 'lineseg': doc.linesegs[rez] = [doc.pnts[params[0]], doc.pnts[params[1]]]; // parseParam in future
-                    this.obCreateIfNot(rez);
-                    doc.objs[rez].ob = doc.linesegs[rez];
-                    doc.objs[rez].type = 'lineseg';
+                case 'lineseg': doc.linesegs[rezText] = [doc.pnts[params[0].id], doc.pnts[params[1].id]]; // parseParam in future
+                    this.obCreateIfNot(rezText);
+                    doc.objs[rezText].ob = doc.linesegs[rezText];
+                    doc.objs[rezText].type = 'lineseg';
                     break;
                 case 'mid':
-                    if (doc.objs[rez]) {
+                    if (doc.objs[rezText]) {
                         // if object already exists
                     } else {
-                        doc.objs[rez] = this.obCreateIfNot();
+                        doc.objs[rezText] = this.obCreateIfNot();
                         //doc.objs[rez] = this.obCreateDefault();
                     };
                     var queryParams = this.paramTypesString(params);
                     var query = 'point_mid' + queryParams;
                     console.log('queryParams', queryParams);
-                    doc.objs[rez].ob.query = query;
+                    doc.objs[rezText].ob.query = query;
                     console.log(gl);
-                    doc.objs[rez].mainIds[0] = params[0];
-                    doc.objs[rez].mainIds[1] = params[1];
-                    doc.objs[rez].mains[0] = doc.objs[params[0]].ob;
-                    doc.objs[rez].mains[1] = doc.objs[params[1]].ob;
-                    doc.objs[rez].func = gl[query];
+                    doc.objs[rezText].mainIds[0] = params[0].id;
+                    doc.objs[rezText].mainIds[1] = params[1].id;
+                    doc.objs[rezText].mains[0] = doc.objs[rezText].ob;
+                    doc.objs[rezText].mains[1] = doc.objs[params[0].id].ob;
+                    doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
+                    doc.objs[rezText].func = gl[query];
                     break;
                 case 'add':
                     doc.objs[rez] = this.obCreateIfNot(id);
-
+                    break;
+                case 'eq':
+                    //this.obCreateIfNot(rez);
+                    var r;
+                    r = this.parseParam(rezText);
+                    doc.objs[r.id].query='scalar_eq_scalar';
+                    doc.objs[r.id].mainIds[0]=params[0].id;
+                    doc.objs[r.id].mains[1]=params[0].ref; //doc.objs[params[0]].ob;
+                    doc.objs[r.id].mains[0] = r.ref;
+                    doc.objs[r.id].func = gl[doc.objs[r.id].query];
+                    break;
                 case 'per':
 
 
             }
-        console.log('parseLine', JSON.stringify(doc));
+        console.log('parseLine', doc);
 
         }, // parseLine
         parse: function (lines) {
