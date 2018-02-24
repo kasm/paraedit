@@ -22,7 +22,7 @@ function getSnaps(doc) { var rez={};
 }
 
 var doctext =
-    "ls1.0=point(20,30)\n\
+    "ls1.0=point(270,130)\n\
 ls1.1=point(120, 50)\n\
 ls1=lineseg(ls1.0,ls1.1)\n\
 ls2.0=point(50,50)\n\
@@ -30,6 +30,12 @@ ls2.1=point(100,100)\n\
 ls2=lineseg(ls2.0,ls2.1)\n\
 p0=point(10,120)\n\
 p0.0=eq(ls1.1.0)\n\
+ls3.0=point(260,40)\n\
+\ls3.1=point(100,280)\n\
+\ls3=lineseg(ls3.0,ls3.1)\n\
+\p1=point(10,10)\n\
+\p1=int(ls1,ls3)\n\
+\ls4=lineseg(p0,p1)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},
@@ -103,6 +109,13 @@ var Editor = function (canvasElement) {
             return doc;
         },
         redraw: function () { var els = doc.getToRedraw(); var pnts = doc.getPnts();
+            var tt = document.getElementById('t1'); var s='<font size="2">';
+            var k = Object.keys(doc.docObjs);
+            for (i=0; i<k.length; i++) {
+                s+= JSON.stringify(doc.docObjs[k[i]]) + '<br>';
+            };
+            tt.innerHTML=s+'</>';
+
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
             cvc.strokeStyle = "#000000";
@@ -141,7 +154,7 @@ var Editor = function (canvasElement) {
                 cvc.lineTo(pnts[i][0] - holderSize, pnts[i][1] - holderSize);
             }
             cvc.stroke();
-        },
+        }, // redraw
         recalc: function () { var el; var i; var tpnt; var els = doc.getEls();
         }
     }

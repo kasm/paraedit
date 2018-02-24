@@ -164,10 +164,11 @@ var Doc = function (elfuncs, doc_obj) {
         getEls: function () { return els; },
         getToRedraw: function () { var rez = [];
         var obrec, obrec_id;
-            console.log('getTo redraw --------------------------------------');
-            console.log(JSON.stringify(docObjs));
+            //console.log('getTo redraw --------------------------------------');
+            //console.log(JSON.stringify(docObjs, null, 10));
             for (obrec_id in docObjs) {
                 obrec = docObjs[obrec_id];
+                //if (obrec.type != 'dist') rez.push(obrec);
                 if (obrec.type != 'point' && obrec.type != 'dist') rez.push(obrec);
             }
             console.log('rez'+ JSON.stringify(rez));

@@ -136,6 +136,19 @@ var Parser = function (doc) {
                     doc.objs[r.id].func = gl[doc.objs[r.id].query];
                     break;
                 case 'per':
+                    break;
+                case 'int':
+                    var qparams = this.paramTypesString(params);
+                    var query = 'point_int'+ qparams;
+                    doc.objs[rezText].query = query;
+                    doc.objs[rezText].mainIds[0] = params[0].id;
+                    doc.objs[rezText].mainIds[1] = params[1].id;
+                    doc.objs[rezText].mains[0] = doc.objs[rezText].ob;
+                    doc.objs[rezText].mains[1] = doc.objs[params[0].id].ob;
+                    doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
+                    doc.objs[rezText].func = gl[query];
+                    break;
+
 
 
             }

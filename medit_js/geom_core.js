@@ -12,11 +12,13 @@ var GeomCore = function() {
         //                                                                  POINT
         'point_int_line_line': function (rez, line0, line1) {
             var a0 = line0[0]; var b0=line0[1]; var c0=line0[2];
-            var a1 = line1[0]; var b1=line0[1]; var c1=line0[2];
+            var a1 = line1[0]; var b1=line1[1]; var c1=line1[2];
             var d = a0*b1 - b0*a1;
             if (Math.abs(d) < this.eps) return 'error: lines are parallel';
-            rez[0] = (b1*(0-c0) - b0*(0-c1))/d;
-            rez[1] = (a0*(0-c1) - a1*(0-c0))/d;
+            //rez[0] = (b1*(0-c0) - b0*(0-c1))/d;
+            rez[0] = 0 - (b1*(c0) - b0*(c1))/d;
+            //rez[1] = (a0*(0-c1) - a1*(0-c0))/d;
+            rez[1] = 0 - (a0*(c1) - a1*(c0))/d;
             return rez;
         },
         'point_mid_point_point': function(rez, p0, p1) {
