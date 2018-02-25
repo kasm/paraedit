@@ -36,6 +36,9 @@ ls3.0=point(260,40)\n\
 \p1=point(10,10)\n\
 \p1=int(ls1,ls3)\n\
 \ls4=lineseg(p0,p1)\n\
+\ls5.1=point(100,300)\n\
+\ls5.1=per(ls3.1,ls1)\n\
+\ls5=lineseg(ls3.1,ls5.1)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},
@@ -164,6 +167,5 @@ return ret;
 var editor = Editor(document.getElementById('c1'));
 //editor.recalc();
 editor.getdoc().fillElPnts();
-console.log('fillElpnits');
 editor.getdoc().recalcAllObjs();
 editor.redraw();

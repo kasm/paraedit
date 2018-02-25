@@ -435,3 +435,9 @@ done first draw (without snap)
 2018-02-21
 continuing to clean and create the app.
 Try to implement 'mid'
+
+2018-02-24
+New architecture is slowly have been fulfilled.
+Implemented mid, eq, int types of links. Next step is light refactoring of the parser.
+
+Equation of line, perpendicular to line and through point

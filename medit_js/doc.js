@@ -117,7 +117,6 @@ var Doc = function (elfuncs, doc_obj) {
     var distid = 1000;
     var lineid = 1000;
     var linesegid = 1000;
-    console.log('els', els);
     return {
         docObjs: docObjs,
         addObj: function (type, obj) {
@@ -133,7 +132,6 @@ var Doc = function (elfuncs, doc_obj) {
         },
 
         addObjs: function (objs) { var ob; var rez = [];
-        console.log('addObjs', objs);
             for (i=0; i<objs.length; i++) {
                 ob = objs[i];
                 if (ob.type == 'point') { rez.push('ap'+i); pnts['ap'+i] = objs[i]}
@@ -171,7 +169,6 @@ var Doc = function (elfuncs, doc_obj) {
                 //if (obrec.type != 'dist') rez.push(obrec);
                 if (obrec.type != 'point' && obrec.type != 'dist') rez.push(obrec);
             }
-            console.log('rez'+ JSON.stringify(rez));
             return rez;
         },
         getLinks: function() {
@@ -247,12 +244,10 @@ var Doc = function (elfuncs, doc_obj) {
                     mainArray.push(ob.main[i]);
                 }
             }
-            console.log('query', linkid, ob.query, mainArray, '================================================================================');
 
             var rez = geom[ob.query](docObjs[linked].ob, mainArray);
             var linkedObjectType = ob.type;
             var linkType = links[linkid].type;
-            console.log('solveLink', rez);
 
         },
 

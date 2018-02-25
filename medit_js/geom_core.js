@@ -28,14 +28,18 @@ var GeomCore = function() {
         },
         'point_per_point_line': function(rez, point, line) {
             var line1 = []; this.line_per_point_line(line1, point, line);
+            console.log('GC point per point line', rez, point, line);
             return this.point_int_line_line(rez, line, line1);
         },
 
         //                                                                      LINE
         'line_per_point_line': function(rez, point, line) {
             var a = line[0]; var b = line[1]; var c = line[2];
+            //rez[0] = b; rez[1] = a;
             rez[0] = b; rez[1] = -a;
-            rez[2] = 0 - (point[0]*a + point[1]*b);
+            rez[2] = 0 - (point[0]*rez[0] + point[1]*rez[1]);
+            console.log('line_per_point_line', rez, point, line);
+            console.log('per line', rez);
             return rez;
         },
         'line_parallel_point_line': function(rez, point, line) {
@@ -59,7 +63,7 @@ var GeomCore = function() {
             return rez;
         },
         'line_lineseg': function (rez, ls) {
-            return this.line_point_point(rez, ls.pnts[0], ls.pnts[1]);
+            return this.line_point_point(rez, ls[0], ls[1]);
         },
         
         

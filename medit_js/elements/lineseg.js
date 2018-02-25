@@ -12,7 +12,6 @@ var LineSeg = function () {
     //var els = els1;
     return {
         draw: function (cvc, element) {
-            console.log('lineseg draw', element);
             cvc.beginPath();
             if (element.hasOwnProperty('pntsCalc')) {
                 pnts=element.pntsCalc;
@@ -30,7 +29,6 @@ var LineSeg = function () {
             cvc.stroke();
         },
         getLinkPnt: function (link, pnts, els) { var rez;
-            console.log('getLinkPoint', link);
             var t=22;
             linkedElement = els[link.linked];
             toElement = els[link.main];
