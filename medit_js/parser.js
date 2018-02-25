@@ -1,6 +1,7 @@
 
 
 var Parser = function (doc) {
+    console.log('parser doc', doc);
     var GL0 = require('./geom_links.js');
     var gl = GL0();
     return {
@@ -96,6 +97,11 @@ var Parser = function (doc) {
                     this.obCreateIfNot(rezText);
                     doc.objs[rezText].ob = doc.linesegs[rezText];
                     doc.objs[rezText].type = 'lineseg';
+                    break;
+                case 'circle': doc.circles[rezText] = [doc.pnts[params[0].id],params[1]];
+                    this.obCreateIfNot(rezText);
+                    doc.objs[rezText].ob = doc.circles[rezText];
+                    doc.objs[rezText].type = 'circle';
                     break;
                 case 'mid':
                     if (doc.objs[rezText]) {

@@ -8,7 +8,7 @@ var Circle = function () {
     return {
         draw: function (cvc, circle) {
             cvc.beginPath();
-            cvc.arc(circle.pnts[0][0], circle.pnts[0][1], circle.r, 0, Math.PI * 2);
+            cvc.arc(circle[0][0], circle[0][1], circle[1], 0, Math.PI * 2);
             cvc.stroke();
         }
     }

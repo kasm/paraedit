@@ -39,10 +39,15 @@ ls3.0=point(260,40)\n\
 \ls5.1=point(100,300)\n\
 \ls5.1=per(ls3.1,ls1)\n\
 \ls5=lineseg(ls3.1,ls5.1)\n\
+\c1.c=point(100,100)\n\
+\c1=circle(c1.c,50)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},
-    linesegs: {}
+    linesegs: {},
+    lines: {},
+    circles: {},
+    scalars: {}
 };
 
 var Editor = function (canvasElement) {
