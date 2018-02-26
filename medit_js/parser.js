@@ -3,7 +3,9 @@
 var Parser = function (doc) {
     console.log('parser doc', doc);
     var GL0 = require('./geom_links.js');
+    var GC = require('./geom_core.js');
     var gl = GL0();
+    var gc = GC();
     return {
         obCreateDefault: function () {
             return {type: '', id: '', solved: true, mainIds: [], linkIds: [], mains: [], links: [], query: '', solvers: []};
@@ -91,7 +93,11 @@ var Parser = function (doc) {
                     doc.objs[rezText].ob = doc.pnts[rezText];
                     doc.objs[rezText].type = 'point';
                     break;
-                case 'line': doc.lines[rez] = [];
+                case 'line':
+                    doc.lines[rezText] = []; gc.line_point_point(doc.lines[rezText], doc.objs[params[0].id].ob, doc.objs[params[1].id].ob);
+                    doc.objs[rezText] = this.obCreateIfNot(rezText);
+                    doc.objs[rezText].ob = doc.lines[rezText];
+                    doc.objs[rezText].type = 'line';
                     break;
                 case 'lineseg': doc.linesegs[rezText] = [doc.pnts[params[0].id], doc.pnts[params[1].id]]; // parseParam in future
                     this.obCreateIfNot(rezText);
@@ -156,6 +162,18 @@ var Parser = function (doc) {
                     doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
                     doc.objs[rezText].func = gl[query];
                     break;
+                case 'coin':
+                    var qparams = this.paramTypesString(params);
+                    var query = 'line_coin' + qparams;
+                    doc.objs[rezText].query = query;
+                    doc.objs[rezText].mainIds[0] = params[0].id;
+                    doc.objs[rezText].mainIds[1] = params[1].id;
+                    doc.objs[rezText].mains[0] = doc.objs[rezText].ob;
+                    doc.objs[rezText].mains[1] = doc.objs[params[0].id].ob;
+                    doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
+                    doc.objs[rezText].func = gl[query];
+                    break;
+
 
 
 

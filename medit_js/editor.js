@@ -41,6 +41,8 @@ ls3.0=point(260,40)\n\
 \ls5=lineseg(ls3.1,ls5.1)\n\
 \c1.c=point(100,100)\n\
 \c1=circle(c1.c,50)\n\
+\l1=line(ls3.0,c1.c)\n\
+\l1=coin(ls3.0,c1.c)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},
@@ -56,8 +58,6 @@ var Editor = function (canvasElement) {
     parser = Parser(doc2);
     parser.parseText(doctext);
     document.getElementById('t1').innerHTML='ddd';
-
-
 
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
@@ -117,6 +117,7 @@ var Editor = function (canvasElement) {
             return doc;
         },
         redraw: function () { var els = doc.getToRedraw(); var pnts = doc.getPnts();
+            var i;
             var tt = document.getElementById('t1'); var s='<font size="2">';
             var k = Object.keys(doc.docObjs);
             for (i=0; i<k.length; i++) {

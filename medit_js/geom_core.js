@@ -65,7 +65,13 @@ var GeomCore = function() {
         'line_lineseg': function (rez, ls) {
             return this.line_point_point(rez, ls[0], ls[1]);
         },
-        
+
+
+        //                                                  CIRCLE
+
+
+
+        //                                                  MISC
         
         'get_points': function (type, ob) {
             switch (type) {

@@ -6,6 +6,7 @@ var medit = {};
 medit.eps = 0.00000001;
 
 var Line = function () {
+    var gc = require('../geom_core')();
     var a, b, c;
     var type = 'line';
     function sort(tosort) {
@@ -27,15 +28,20 @@ var Line = function () {
         getLineBounds: function(line, bounds) {
          //   console.log('line bounds:::::::::::::', line, bounds);
             // bounds: left, right, top, bottom
-            var lines = [];
+            var lines = []; var i;
             lines.push(this.setFromPoints([bounds.left, bounds.top], [bounds.right, bounds.top]));
             lines.push(this.setFromPoints([bounds.left, bounds.top], [bounds.left, bounds.bottom]));
             lines.push(this.setFromPoints([bounds.right, bounds.top], [bounds.right, bounds.bottom]));
             lines.push(this.setFromPoints([bounds.right, bounds.bottom], [bounds.left, bounds.bottom]));
             var points = [];
+
             for (i=0 ; i<lines.length; i++) {
-                t = this.getIntersection(line, lines[i]);
-                points.push(t);
+                points[i] = [];
+
+                t = gc.point_int_line_line(points[i], line, lines[i]);
+                //t = this.getIntersection(line, lines[i]);
+                points[i][0] = t[0];
+                points[i][1] = t[1];
             };
             xmid = (bounds.left + bounds.right) / 2.;
             ymid = (bounds.top + bounds.bottom) / 2.;
@@ -49,12 +55,12 @@ var Line = function () {
                 sortedPoints[dist] = points[i];
             };
             sort(sortedDistances);
-      //      console.log('sorted idst:', sortedDistances);
-        //    console.log('sorted poinst:', sortedPoints);
+            //      console.log('sorted idst:', sortedDistances);
+            console.log('sorted poinst:', sortedPoints);
             var rez = [sortedPoints[sortedDistances[0].toString()], sortedPoints[sortedDistances[1].toString()]];
-            line.pnts = [];
-            line.pnts[0] = rez[0];
-            line.pnts[1] = rez[1];
+            line = [];
+            line[0] = rez[0];
+            line[1] = rez[1];
           //  console.log('getLine bounds', rez);
             return(rez);
         },
@@ -78,7 +84,8 @@ var Line = function () {
             a = p0[1] - p1[1];
             b = p1[0] - p0[0];
             c = p0[0]*p1[1] - p1[0]*p0[1];
-            return {a: a, b: b, c: c};
+            return [a, b, c];
+            //return {a: a, b: b, c: c};
         },
         setFromCoefs: function (a1, b1, c1) {
             a = a1; b = b1, c = c1;
@@ -98,7 +105,7 @@ var Line = function () {
 
         getIntersection: function (line0, line1) {
             //console.log('get instersectiron', line0, line1);
-            var a = line0.a; var b = line0.b; var c = line0.c;
+            var a = line0[0]; var b = line0[1]; var c = line0[2];
 
             // http://e-maxx.ru/algo/lines_intersection
             // d = a1*b2 - a2*b1; // zero if parallel
@@ -106,12 +113,12 @@ var Line = function () {
             // y = a1*c2 - a2*c1
 
             //var d = a * line1.b - b * line1.a;
-            var d = line1.a * line0.b - line0.a * line1.b;
-            d = line0.a*line1.b - line0.b*line1.a;
+            var d = line1[0] * line0[1] - line0[0] * line1[1];
+            d = line0[0]*line1[1] - line0[1]*line1[0];
             return [
-                (line1.b* (0 - line0.c) - line0.b * (0 - line1.c)) / d,
+                (line1[1]* (0 - line0[2]) - line0[1] * (0 - line1[2])) / d,
                 //(line1.a * ( 0 - line0.c) - line0.a* (0 - line1.c)) / d
-                (line0.a * ( 0 - line1.c) - line1.a* (0 - line0.c)) / d
+                (line0[0] * ( 0 - line1[2]) - line1[0]* (0 - line0[2])) / d
             ]
         },
             /*
