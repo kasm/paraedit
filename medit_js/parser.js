@@ -27,6 +27,52 @@ var Parser = function (doc) {
             };
             return rez;
         },
+        // return main array (for solver) and part of query and optional - ref array
+        // main examples:
+        // lineseg: [pointref, pointref]
+        // circle [pointref, radius]
+        // TTRS:
+        // main: [line, side, line, side, radius]
+        // refs: [line, [main, 1], line1, [main, 3], [main, 4]]
+        // query: '_line_scalar_line_scalar_scalar'
+        // ids: ['l1',,'l2',,]
+        // types: ['line' ....]
+        parseParam2: function (parT) { var rez= {main: [], refs: [], query: '', ids: [], types: [], idns: []}; var i;
+
+            for (i=0; i<parT.length; i++) {
+                t=parT[i].split('.');
+                ts = '';
+                for (j=0; j<t.length-1; j++) {
+                    ts+=t[j];
+                    if (j<t.length-2) ts+='.';
+                };
+                if (doc.objs.hasOwnProperty(parT[i])) {
+                    rez.refs[i] = doc.objs[parT[i]].ob;
+                    rez.main[i] = doc.objs[parT[i]].ob;
+                    rez.ids.push(doc.objs[parT[i]].id);
+                    //rez.ids[i] = doc.objs[parT[i]].id;
+                    rez.types[i] = doc.objs[parT[i]].type;
+                    rez.idns.push(i);
+                } else if (doc.objs.hasOwnProperty(ts)) {
+                    rez.refs[i] = [doc.objs[ts].ob, parseInt(t[t.length-1])];
+                    //rez.refs[i] = [doc.objs[ts].ob, i];
+                    rez.main[i] = rez.refs[i];
+                    rez.ids.push(doc.objs[ts].id);
+                    rez.types[i] = 'scalar';
+                    rez.idns.push(i);
+                } else if (isNaN(parseInt(parT[i]))) {
+                    alert('parse param error');
+                } else {
+                    var k = parseInt(parT[i]);
+                    rez.main[i] = k;
+                    rez.refs[i] = [rez.main[i], i];
+                    //rez.ids[i] = '';
+                    rez.types[i] = 'scalar';
+                }
+            rez.query+= '_' + rez.types[i];
+            }// i
+            return rez;
+        },
         // return ref or [parentRef, index] // old
         // ret - {id: id, ref: ref, index: index or -1}
         parseParam: function (paramString) { var rez = {};
@@ -81,9 +127,11 @@ var Parser = function (doc) {
             var r = {};
             //alert('params:', JSON.stringify(params));
             for (i=0; i<paramsText.length; i++) {
-                params[i] = this.parseParam(paramsText[i]);
+                if (func != 'circle_TTRS') params[i] = this.parseParam(paramsText[i]);
             }; // params
             //var rez = this.parseParam(a1[0]);
+
+            var params2 = this.parseParam2(paramsText);
 
 
             //var queryParams = this.paramTypesString(doc.objs[rez].mainIds);
@@ -173,6 +221,25 @@ var Parser = function (doc) {
                     doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
                     doc.objs[rezText].func = gl[query];
                     break;
+                case 'circle_TTRS': //this.paramTypesString(params);
+                    var r = this.parseParam2(paramsText);
+                    doc.objs[rezText].query = 'circle_TTRS'; //r.query;
+                    doc.objs[rezText].mainIds = r.ids;
+                    doc.objs[rezText].mains = [doc.objs[rezText].ob].concat(r.main);
+                    doc.objs[rezText].func  = gl['circle_TTRS'];
+                    /*
+
+                    var query = 'circle_TTRS';
+                    doc.objs[rezText].query = query;
+                    doc.objs[rezText].mainIds[0] = params[0].id;
+                    doc.objs[rezText].mainIds[1] = params[1].id;
+                    doc.objs[rezText].mains[0] = doc.objs[rezText].ob;
+                    doc.objs[rezText].mains[1] = doc.objs[params[0].id].ob;
+                    doc.objs[rezText].mains[2] = doc.objs[params[1].id].ob;
+                    doc.objs[rezText].func = gl[query];
+                    */
+                    break;
+
 
 
 

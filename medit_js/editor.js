@@ -43,6 +43,11 @@ ls3.0=point(260,40)\n\
 \c1=circle(c1.c,50)\n\
 \l1=line(ls3.0,c1.c)\n\
 \l1=coin(ls3.0,c1.c)\n\
+\c2.c=point(100,200)\n\
+\c2=circle(c2.c,30)\n\
+\l2=line(p0,p1)\n\
+\l2=coin(ls3.0,ls3.1)\n\
+\c2=circle_TTRS(l1,1,l2,1,30)\n\
 ls2.1=mid(ls1.0,ls1.1)";
 var doc2={objs: {},
 pnts: {},

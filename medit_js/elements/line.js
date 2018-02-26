@@ -55,13 +55,10 @@ var Line = function () {
                 sortedPoints[dist] = points[i];
             };
             sort(sortedDistances);
-            //      console.log('sorted idst:', sortedDistances);
-            console.log('sorted poinst:', sortedPoints);
             var rez = [sortedPoints[sortedDistances[0].toString()], sortedPoints[sortedDistances[1].toString()]];
             line = [];
             line[0] = rez[0];
             line[1] = rez[1];
-          //  console.log('getLine bounds', rez);
             return(rez);
         },
         draw: function (cvc, element) {

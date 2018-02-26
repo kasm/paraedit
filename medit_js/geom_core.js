@@ -28,7 +28,6 @@ var GeomCore = function() {
         },
         'point_per_point_line': function(rez, point, line) {
             var line1 = []; this.line_per_point_line(line1, point, line);
-            console.log('GC point per point line', rez, point, line);
             return this.point_int_line_line(rez, line, line1);
         },
 
@@ -38,8 +37,6 @@ var GeomCore = function() {
             //rez[0] = b; rez[1] = a;
             rez[0] = b; rez[1] = -a;
             rez[2] = 0 - (point[0]*rez[0] + point[1]*rez[1]);
-            console.log('line_per_point_line', rez, point, line);
-            console.log('per line', rez);
             return rez;
         },
         'line_parallel_point_line': function(rez, point, line) {
@@ -70,6 +67,19 @@ var GeomCore = function() {
         //                                                  CIRCLE
 
 
+        'circle_TTRS': function (rez, line0, side0, line1, side1) {
+            var r = rez[1]; //var signs = els[2];
+            var tline0 = [line0[0], line0[1], line0[2] + side0*r];
+            var tline1 = [line1[0], line1[1], line1[2] + side1*r];
+            //var r = els[2];
+            //var line0 = {a: els[0].a, b: els[0].b, c: els[0].c + signs[0]*r};
+            //var line1 = {a: els[1].a, b: els[1].b, c: els[1].c + signs[1]*r};
+            var center = []; this.point_int_line_line(center, tline0, tline1);
+            rez[0][0] = center[0];
+            rez[0][1] = center[1];
+            //rez.r = r;
+            return rez;
+        },
 
         //                                                  MISC
         

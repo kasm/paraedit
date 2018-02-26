@@ -441,3 +441,12 @@ New architecture is slowly have been fulfilled.
 Implemented mid, eq, int types of links. Next step is light refactoring of the parser.
 
 Equation of line, perpendicular to line and through point
+
+2018-02-26
+Continue to work with new features. Stopped at the circle_TTRS link.
+Here some thoughts about this problem.
+parser should create complete data set for solver.
+This data set should be adressable by some name.
+Here are variants:
+1. Store link data in .main property of the linked element. Can be addressed by el.main.field1
+2. Store link as individual object and set link to this link :)  linkName.field1
