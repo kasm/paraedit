@@ -28,6 +28,10 @@ ls1=lineseg(ls1.0,ls1.1)\n\
 ls2.0=point(50,50)\n\
 ls2.1=point(100,100)\n\
 ls2=lineseg(ls2.0,ls2.1)\n\
+\ls7.0=point(400,100)\n\
+\ls7.1=point(400,150)\n\
+\ls7=lineseg(ls7.1,ls7.0)\n\
+\ls7.1=mid(ls2.0,ls2.1)\n\
 p0=point(10,120)\n\
 p0.0=eq(ls1.1.0)\n\
 ls3.0=point(260,40)\n\
@@ -48,21 +52,37 @@ ls3.0=point(260,40)\n\
 \l2=line(p0,p1)\n\
 \l2=coin(ls3.0,ls3.1)\n\
 \c2=circle_TTRS(l1,1,l2,1,30)\n\
-ls2.1=mid(ls1.0,ls1.1)";
+ls2.1=mid(ls1.0,ls1.1)\n\
+\ls6.0=point(400,20)\n\
+\ls6.1=point(400,50)\n\
+\ls6=lineseg(ls6.0,ls6.1)\n\
+\ls6.1=mid(ls7.0,ls7.1)";
+
+var splitLines = function (txt) {
+
+}
+
+var docTextArray = doctext.split('\n');
 var doc2={objs: {},
 pnts: {},
     linesegs: {},
     lines: {},
     circles: {},
-    scalars: {}
+    scalars: {},
+    docData: []
 };
 
 var Editor = function (canvasElement) {
     document.getElementById('t1').innerHTML='ddd';
     var Parser = require('./parser.js');
     parser = Parser(doc2);
-    parser.parseText(doctext);
+    parser.splitter(doctext);
+    parser.parseSplitted();
+    //parser.parseText(doctext);
+    doc2.docData = parser.splitter(doctext);
+    debugger;
     document.getElementById('t1').innerHTML='ddd';
+    var curr = {};
 
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
@@ -79,11 +99,17 @@ var Editor = function (canvasElement) {
     var editorMode = '';
 
     var mouseClick = function (e) {
-        if (editorMode === 'moving') {
-            editorMode = ''; return 0;
-        }
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+        if (editorMode === 'moving') {
+            editorMode = ''; return 0;
+        };
+        if (editorMode === 'enterLineseg0') {
+            curr.id = 'ls10' + doc.docObjs.linesegs.length;
+            curr.data = [x, y];
+            curr.npoint = doc2.pnts.length;
+            doc2.pnts[npoint]
+        }
         var pnts = doc.getPnts();
         selectedPoint = '';
         for (pid in pnts) {

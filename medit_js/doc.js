@@ -312,12 +312,18 @@ var Doc = function (elfuncs, doc_obj) {
               because of complex structure of links data (for instance distance and side)
 
              */
-            this.fillElPnts();
-            this.fillDocObjs();
+            var t2 = document.getElementById('t2');
+            //this.fillElPnts();
+            //this.fillDocObjs();
             var done = false;
             var rez;
             var mains;
+            var s5='';
+            for (id in docObjs) s5+=id+":"+docObjs[id].mainIds.length+"<br>";
+            t2.innerHTML = s5;
+            //for (id in docObjs) if (docObjs[id].mainIds.length>0) docObjs[id].solved=false;
             while (!done) {
+
                 for (id in docObjs) {
                     isObjectReadyToSolve = true;
                     ob = docObjs[id];

@@ -68,16 +68,12 @@ var GeomCore = function() {
 
 
         'circle_TTRS': function (rez, line0, side0, line1, side1) {
-            var r = rez[1]; //var signs = els[2];
+            var r = rez[1];
             var tline0 = [line0[0], line0[1], line0[2] + side0*r];
             var tline1 = [line1[0], line1[1], line1[2] + side1*r];
-            //var r = els[2];
-            //var line0 = {a: els[0].a, b: els[0].b, c: els[0].c + signs[0]*r};
-            //var line1 = {a: els[1].a, b: els[1].b, c: els[1].c + signs[1]*r};
             var center = []; this.point_int_line_line(center, tline0, tline1);
             rez[0][0] = center[0];
             rez[0][1] = center[1];
-            //rez.r = r;
             return rez;
         },
 
