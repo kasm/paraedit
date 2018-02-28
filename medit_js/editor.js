@@ -82,7 +82,8 @@ var Editor = function (canvasElement) {
     //parser.parseText(doctext);
     doc2.docData = parser.splitter(doctext);
     document.getElementById('t1').innerHTML='ddd';
-    var curr = {};
+    var curr = {toRedraw: true, data: []};
+    var boldIds = [];
 
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
@@ -174,6 +175,12 @@ var Editor = function (canvasElement) {
     var mouseMove = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+        boldIds[0] = 'jkjkew';
+        var o1 = objectUnder(x, y);
+        if (o1.length>0) {
+            boldIds[0] = o1;
+            curr.toRedraw = true;
+        }
 
         if (editorMode === 'editing') {
             elfuncs['circle'].editRadius(doc.docObjs[curr.data].ob, [x,y]);
@@ -186,7 +193,8 @@ var Editor = function (canvasElement) {
             pnts[selectedPoint][1] = y;
             ret.getdoc().recalcAllObjs();
             ret.redraw();
-        }
+        };
+        if (curr.toRedraw) ret.redraw();
     }
 
     window.addEventListener('click', mouseClick, false);
@@ -226,7 +234,11 @@ var Editor = function (canvasElement) {
             var elrec;
             for (i=0; i<els.length; i++) {
                 elrec = els[i];
+                if (elrec.id == boldIds[0]) {
+                    cvc.lineWidth = 3;
+                }
                 elfuncs[elrec.type].draw(cvc, elrec.ob);
+                cvc.lineWidth = 1;
             };
 
             cvc.beginPath();
