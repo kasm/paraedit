@@ -450,3 +450,6 @@ This data set should be adressable by some name.
 Here are variants:
 1. Store link data in .main property of the linked element. Can be addressed by el.main.field1
 2. Store link as individual object and set link to this link :)  linkName.field1
+
+2018-02-28
+How to enter data. Example lineseg:

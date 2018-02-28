@@ -117,7 +117,12 @@ var Doc = function (elfuncs, doc_obj) {
     var distid = 1000;
     var lineid = 1000;
     var linesegid = 1000;
+    var currfuncs = [];
     return {
+        pnts: doc_obj.pnts,
+        linesegs: doc_obj.linesegs,
+        circles: doc_obj.circles,
+        currfuncs: currfuncs,
         docObjs: docObjs,
         addObj: function (type, obj) {
             if (type == 'point') {
@@ -334,6 +339,7 @@ var Doc = function (elfuncs, doc_obj) {
                         //mains.push(docObjs[mid].ob);
                         if (!docObjs[mid].solved) isObjectReadyToSolve = false;
                     };
+
                     if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
                         //rez = geom[ob.query](ob.links);
                         rez = ob.func.apply(this, ob.mains);

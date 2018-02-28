@@ -69,7 +69,8 @@ pnts: {},
     lines: {},
     circles: {},
     scalars: {},
-    docData: []
+    docData: [],
+    curr: {}
 };
 
 var Editor = function (canvasElement) {
@@ -80,7 +81,6 @@ var Editor = function (canvasElement) {
     parser.parseSplitted();
     //parser.parseText(doctext);
     doc2.docData = parser.splitter(doctext);
-    debugger;
     document.getElementById('t1').innerHTML='ddd';
     var curr = {};
 
@@ -97,19 +97,68 @@ var Editor = function (canvasElement) {
     var holderSize = 5;
     var selectedPoint;
     var editorMode = '';
+    var objectUnder = function(x, y) {
+        var id_rez = '';
+        for (id in doc.circles) {
+            var r_current = Math.sqrt((doc.circles[id][0][0]-x)*(doc.circles[id][0][0]-x) + (doc.circles[id][0][1]-y)*(doc.circles[id][0][1]-y));
+            var e = Math.abs(r_current - doc.circles[id][1]);
+            if (e < 5) {
+                id_rez = id;
+            }
+        }
+        return id_rez;
+        };
 
     var mouseClick = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+        var o1 = objectUnder(x,y);
+        var justset = false;
+        if (o1.length>0 && editorMode=='') {
+            editorMode = 'editing';
+            justset = true;
+            curr.data = o1;
+            //doc.currfuncs = [elfuncs['circle'].editRadius, [doc.circles[o1], [x, y]]];
+        };
+        if (editorMode === 'editing' && (!justset)) {
+            doc.currfuncs = [];
+            editorMode = '';
+        };
+        if (y<0) return 0;
         if (editorMode === 'moving') {
             editorMode = ''; return 0;
         };
         if (editorMode === 'enterLineseg0') {
-            curr.id = 'ls10' + doc.docObjs.linesegs.length;
-            curr.data = [x, y];
-            curr.npoint = doc2.pnts.length;
-            doc2.pnts[npoint]
-        }
+            debugger;
+            var line = {
+                rez: 'p100' + Object.keys(doc.pnts).length,
+                func: 'point',
+                params: [x.toString(), y.toString()]
+            };
+            parser.parseLine(line);
+            curr.data = line;
+            editorMode = 'enterLineseg1';
+        };
+        if (editorMode === 'enterLineseg1') {
+            debugger;
+            var line = {
+                rez: 'p100' + Object.keys(doc.pnts).length,
+                func: 'point',
+                params: [x.toString(), y.toString()]
+            };
+            debugger;
+            parser.parseLine(line);
+            var t = line.rez;
+            line = {
+                rez: 'ls100' + Object.keys(doc.linesegs).length,
+                func: 'lineseg',
+                params: [curr.data.rez, t]
+            };
+            parser.parseLine(line);
+            editorMode = '';
+
+        }; // enter lineseg1
+
         var pnts = doc.getPnts();
         selectedPoint = '';
         for (pid in pnts) {
@@ -123,9 +172,15 @@ var Editor = function (canvasElement) {
     };
 
     var mouseMove = function (e) {
+        var x = parseInt(e.clientX - coords.left);
+        var y = parseInt(e.clientY - coords.top);
+
+        if (editorMode === 'editing') {
+            elfuncs['circle'].editRadius(doc.docObjs[curr.data].ob, [x,y]);
+            ret.getdoc().recalcAllObjs();
+            ret.redraw();
+        };
         if (editorMode === 'moving') {
-            var x = parseInt(e.clientX - coords.left);
-            var y = parseInt(e.clientY - coords.top);
             var pnts = doc.getPnts();
             pnts[selectedPoint][0] = x;
             pnts[selectedPoint][1] = y;
@@ -144,6 +199,12 @@ var Editor = function (canvasElement) {
     var c1var = canvasElement.getBoundingClientRect();
 
     var ret = {
+        test: function () {
+            alert('ttest');
+        },
+        lineseg: function() {
+            editorMode = 'enterLineseg0';
+        },
         getdoc: function () {
             return doc;
         },
@@ -206,3 +267,4 @@ var editor = Editor(document.getElementById('c1'));
 editor.getdoc().fillElPnts();
 editor.getdoc().recalcAllObjs();
 editor.redraw();
+window.editor = editor;

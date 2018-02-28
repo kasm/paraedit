@@ -74,7 +74,7 @@ var Parser = function (doc) {
             }// i
             return rez;
         },
-
+/*
         parseText: function(text) {
             var i;
             var lines = text.match(/[^\r\n]+/g);
@@ -82,6 +82,7 @@ var Parser = function (doc) {
                 this.parseLine(lines[i]);
             }
         },
+        */
         parseSplitted: function () {
             var i;
             for (i=0; i<lines.length; i++) this.parseLine(lines[i]);
@@ -103,7 +104,8 @@ var Parser = function (doc) {
             return lines;
 
         },
-
+        // line format:
+        //
         parseLine: function (line) { // creating objects (elements, points, etc) and/or setting links
             var i;
             var params2 = this.parseParam2(line.params);
@@ -143,7 +145,6 @@ var Parser = function (doc) {
                     r = this.parseParam2([line.rez]);
                     doc.objs[r.ids[0]].query = 'scalar_eq_scalar';
                     doc.objs[r.ids[0]].mainIds = params2.ids;
-                    doc.objs[r.ids[0]].mains[0] = r.refs[0];
                     doc.objs[r.ids[0]].mains[0] = r.refs[0];
                     doc.objs[r.ids[0]].mains[1] = params2.refs[0];
                     doc.objs[r.ids[0]].func = gl[doc.objs[r.ids[0]].query];
