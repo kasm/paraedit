@@ -129,6 +129,25 @@ var Editor = function (canvasElement) {
         if (editorMode === 'moving') {
             editorMode = ''; return 0;
         };
+        if (editorMode === 'circle0') {
+            var line = {
+                rez: 'pc100' + Object.keys(doc.pnts).length,
+                func: 'point',
+                params: [x.toString(), y.toString()]
+            };
+            parser.parseLine(line);
+            curr.data = line.rez;
+            var line1 = {
+                rez: 'c100' + Object.keys(doc.circles).length,
+                func: 'circle',
+                params: [line.rez, "10"]
+            };
+            parser.parseLine(line1);
+            editorMode = 'editing';
+            justset = false;
+            o1 = line1.rez;
+            curr.data = o1;
+        };
         if (editorMode === 'enterLineseg0') {
             debugger;
             var line = {
@@ -140,6 +159,8 @@ var Editor = function (canvasElement) {
             curr.data = line;
             editorMode = 'enterLineseg1';
         };
+
+
         if (editorMode === 'enterLineseg1') {
             debugger;
             var line = {
@@ -160,16 +181,19 @@ var Editor = function (canvasElement) {
 
         }; // enter lineseg1
 
+
         var pnts = doc.getPnts();
         selectedPoint = '';
-        for (pid in pnts) {
-            diffx = Math.abs(pnts[pid][0]-x);
-            diffy = Math.abs(pnts[pid][1]-y);
-            if (diffx < holderSize && diffy < holderSize) {
-                selectedPoint = pid;
-                editorMode = 'moving';
-            }
-        }
+        if (editorMode ==='') {
+            for (pid in pnts) {
+                diffx = Math.abs(pnts[pid][0] - x);
+                diffy = Math.abs(pnts[pid][1] - y);
+                if (diffx < holderSize && diffy < holderSize) {
+                    selectedPoint = pid;
+                    editorMode = 'moving';
+                }
+            }; // for pid in pnts
+        }; // if editor mode == ''
     };
 
     var mouseMove = function (e) {
@@ -212,6 +236,9 @@ var Editor = function (canvasElement) {
         },
         lineseg: function() {
             editorMode = 'enterLineseg0';
+        },
+        circle: function () {
+            editorMode = 'circle0';
         },
         getdoc: function () {
             return doc;
