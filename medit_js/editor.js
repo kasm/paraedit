@@ -81,6 +81,8 @@ var Editor = function (canvasElement) {
     parser.parseSplitted();
     //parser.parseText(doctext);
     doc2.docData = parser.splitter(doctext);
+    var gl = require('./geom_links')();
+
     document.getElementById('t1').innerHTML='ddd';
     var curr = {toRedraw: true, data: []};
     var boldIds = [];
@@ -98,6 +100,8 @@ var Editor = function (canvasElement) {
     var holderSize = 5;
     var selectedPoint;
     var editorMode = '';
+    var editorLookFor = '';
+    var editorFuncs = []; // [[func, data], ....]
     var objectUnder = function(x, y) {
         var id_rez = '';
         for (id in doc.circles) {
@@ -119,10 +123,12 @@ var Editor = function (canvasElement) {
             editorMode = 'editing';
             justset = true;
             curr.data = o1;
-            //doc.currfuncs = [elfuncs['circle'].editRadius, [doc.circles[o1], [x, y]]];
+            var c = doc.docObjs[o1];
+            editorFuncs.push(elfuncs[c.type].editor(c.ob, [x, y]));
         };
         if (editorMode === 'editing' && (!justset)) {
             doc.currfuncs = [];
+            editorFuncs = [];
             editorMode = '';
         };
         if (y<0) return 0;
@@ -135,19 +141,38 @@ var Editor = function (canvasElement) {
                 func: 'point',
                 params: [x.toString(), y.toString()]
             };
-            parser.parseLine(line);
+            parser.parseLine(line); // center
             curr.data = line.rez;
             var line1 = {
                 rez: 'c100' + Object.keys(doc.circles).length,
                 func: 'circle',
-                params: [line.rez, "10"]
+                params: [line.rez, "10"]  // funcs[type].getByPoints
             };
             parser.parseLine(line1);
             editorMode = 'editing';
             justset = false;
             o1 = line1.rez;
             curr.data = o1;
-        };
+        }; // circle0
+        if (editorMode == 'circle0a') {
+            var line = {
+                rez: 'pc100' + Object.keys(doc.pnts).length,
+                func: 'point',
+                params: [x.toString(), y.toString()]
+
+            }
+            parser.parseLine(line); // center
+            curr.data = line.rez;
+            var line1 = {
+                rez: 'c100' + Object.keys(doc.circles).length,
+                func: 'circle',
+                params: [line.rez, "10"]  // funcs[type].getByPoints
+            };
+            var c = parser.parseLine(line1);
+            editorMode = 'editing';
+            justset = false;
+            editorFuncs.push(elfuncs['circle'].editor(c.ob, [x, y]));
+        }
         if (editorMode === 'enterLineseg0') {
             debugger;
             var line = {
@@ -207,7 +232,9 @@ var Editor = function (canvasElement) {
         }
 
         if (editorMode === 'editing') {
-            elfuncs['circle'].editRadius(doc.docObjs[curr.data].ob, [x,y]);
+            //elfuncs['circle'].edit(doc.docObjs[curr.data].ob, [x,y]);
+            var ef = editorFuncs[0];
+            ef[0].apply(this, ef[1].concat([[x,y]]));
             ret.getdoc().recalcAllObjs();
             ret.redraw();
         };
@@ -238,7 +265,8 @@ var Editor = function (canvasElement) {
             editorMode = 'enterLineseg0';
         },
         circle: function () {
-            editorMode = 'circle0';
+            //editorMode = 'circle0';
+            editorMode = 'circle0a';
         },
         getdoc: function () {
             return doc;

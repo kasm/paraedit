@@ -461,3 +461,4 @@ a1x + b1y + r = -c
 a2x + b2y + r = -c
 
 write determinant for 3x3 matrix to geom_core and use it for this task;
+

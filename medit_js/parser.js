@@ -85,7 +85,7 @@ var Parser = function (doc) {
         */
         parseSplitted: function () {
             var i;
-            for (i=0; i<lines.length; i++) this.parseLine(lines[i]);
+            for (i=0; i<lines.length; i++) this.parseLine(lines[i], false); // false meain not by points
         },
         splitter: function (text) {
             var i; var a1, a2, a3, rezText;
@@ -104,9 +104,15 @@ var Parser = function (doc) {
             return lines;
 
         },
+        isElem: function (t) {
+            return (t === 'line' || t === 'circle' || t === 'lineseg');
+        },
+        isLink: function (t) {
+            return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq')
+        },
         // line format:
         //
-        parseLine: function (line) { // creating objects (elements, points, etc) and/or setting links
+        parseLine: function (line, byPoints) { // creating objects (elements, points, etc) and/or setting links
             var i;
             var params2 = this.parseParam2(line.params);
             switch (line.func) {
@@ -176,6 +182,7 @@ var Parser = function (doc) {
                     doc.objs[line.rez].func  = gl['circle_TTRS'];
                     break;
             }
+            return doc.objs[line.rez];
         }, // parseLine
         parse: function (lines) {
 
