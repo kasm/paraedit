@@ -124,55 +124,53 @@ var Editor = function (canvasElement) {
             justset = true;
             curr.data = o1;
             var c = doc.docObjs[o1];
-            editorFuncs.push(elfuncs[c.type].editor(c.ob, [x, y]));
+            //editorFuncs.push(elfuncs[c.type].editor(c.ob, [x, y]));
+            editorFuncs[0] = elfuncs[c.type].editor(c.ob, [x, y]);
         };
         if (editorMode === 'editing' && (!justset)) {
-            doc.currfuncs = [];
-            editorFuncs = [];
+            doc.currfuncs = []; // not used
+            editorFuncs = []; // used
             editorMode = '';
         };
         if (y<0) return 0;
         if (editorMode === 'moving') {
             editorMode = ''; return 0;
         };
-        if (editorMode === 'circle0') {
-            var line = {
-                rez: 'pc100' + Object.keys(doc.pnts).length,
-                func: 'point',
-                params: [x.toString(), y.toString()]
+        if (editorMode == 'circle0b') {
+            if (editorStage == elfuncs['circle'].nPoints) {
+                editorMode = '';
+                editorStage = 0;
+                editorFuncs = [];
+                return 0;
             };
-            parser.parseLine(line); // center
-            curr.data = line.rez;
-            var line1 = {
-                rez: 'c100' + Object.keys(doc.circles).length,
-                func: 'circle',
-                params: [line.rez, "10"]  // funcs[type].getByPoints
-            };
-            parser.parseLine(line1);
-            editorMode = 'editing';
-            justset = false;
-            o1 = line1.rez;
-            curr.data = o1;
-        }; // circle0
-        if (editorMode == 'circle0a') {
-            var line = {
-                rez: 'pc100' + Object.keys(doc.pnts).length,
-                func: 'point',
-                params: [x.toString(), y.toString()]
+            if (editorStage == 0) {
+                // create rulers points
+                curr.pnts = [];
+                for (i = 0; i < elfuncs['circle'].nPoints; i++) curr.pnts[i] = [0, 0];
+                var line = {
+                    rez: 'pc100' + Object.keys(doc.pnts).length,
+                    func: 'point',
+                    //params: [x.toString(), y.toString()]
+                    params: ['0', '0']
 
-            }
-            parser.parseLine(line); // center
-            curr.data = line.rez;
-            var line1 = {
-                rez: 'c100' + Object.keys(doc.circles).length,
-                func: 'circle',
-                params: [line.rez, "10"]  // funcs[type].getByPoints
+                }
+                parser.parseLine(line); // center
+                curr.data = line.rez;
+                var line1 = {
+                    rez: 'c100' + Object.keys(doc.circles).length,
+                    func: 'circle',
+                    params: [line.rez, "10"]  // funcs[type].getByPoints
+                };
+                var c = parser.parseLine(line1);
+                curr.obj = c;
             };
-            var c = parser.parseLine(line1);
-            editorMode = 'editing';
+            //editorMode = 'editing';
             justset = false;
-            editorFuncs.push(elfuncs['circle'].editor(c.ob, [x, y]));
-        }
+
+            editorFuncs[0] = elfuncs['circle'].editorArray(curr.obj.ob)[editorStage];
+            editorStage++;
+        }// circle b
+
         if (editorMode === 'enterLineseg0') {
             debugger;
             var line = {
@@ -231,7 +229,8 @@ var Editor = function (canvasElement) {
             curr.toRedraw = true;
         }
 
-        if (editorMode === 'editing') {
+        //if (editorMode === 'editing') {
+        if (editorMode === 'circle0b' || editorMode == 'editing') {
             //elfuncs['circle'].edit(doc.docObjs[curr.data].ob, [x,y]);
             var ef = editorFuncs[0];
             ef[0].apply(this, ef[1].concat([[x,y]]));
@@ -256,6 +255,7 @@ var Editor = function (canvasElement) {
     cvc.strokeStyle='green';
     cvc.lineWidth = 1;
     var c1var = canvasElement.getBoundingClientRect();
+    var editorStage = 0;
 
     var ret = {
         test: function () {
@@ -266,7 +266,8 @@ var Editor = function (canvasElement) {
         },
         circle: function () {
             //editorMode = 'circle0';
-            editorMode = 'circle0a';
+            editorMode = 'circle0b';
+            editorStage = 0;
         },
         getdoc: function () {
             return doc;
@@ -275,6 +276,8 @@ var Editor = function (canvasElement) {
             var i;
             var tt = document.getElementById('t1'); var s='<font size="2">';
             var k = Object.keys(doc.docObjs);
+            s+='editorMode:'+editorMode+'<br>';
+            s+='editorStage:'+editorStage+'<br>';
             for (i=0; i<k.length; i++) {
                 s+= JSON.stringify(doc.docObjs[k[i]]) + '<br>';
             };
