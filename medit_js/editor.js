@@ -118,7 +118,7 @@ var Editor = function (canvasElement) {
 
     var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) {
         var el = parser.createElementAndPoints(curr.id, curr.type, elfuncs[curr.type].params);
-        curr.rulers = elfuncs[curr.type].fillRulers(curr.rulers, el.ob);
+        curr.rulers = elfuncs[curr.type].getRulers(curr.rulers, el.ob);
         curr.funcs = elfuncs[curr.type].editorArray(el.ob, curr.rulers);
     };
 
@@ -138,23 +138,32 @@ var Editor = function (canvasElement) {
         } // if entering
 
 
-        if (editorMode == 'editing') {
+        if (editorMode == 'waitRuler') {
 
-            var pnts = doc.getPnts();
+            //var pnts = doc.getPnts();
+            //var pnts = curr.rulers;
             selectedPoint = '';
-            if (editorMode ==='') {
-                for (pid in pnts) {
-                    diffx = Math.abs(pnts[pid][0] - x);
-                    diffy = Math.abs(pnts[pid][1] - y);
+    //        if (editorMode ==='') {
+                //for (pid in pnts) {
+                for (i=0; i<curr.rulers.length; i++) {
+                    diffx = Math.abs(curr.rulers[i][0] - x);
+                    diffy = Math.abs(curr.rulers[i][1] - y);
                     if (diffx < holderSize && diffy < holderSize) {
-                        selectedPoint = pid;
-                        editorMode = 'moving';
+                        curr.iRuler = i;
+                        editorMode = 'editing';
+                        return 0;
                     }
                 }; // for pid in pnts
-            }; // if editor mode == ''
+    //        }; // if editor mode == ''
 
 
-        } // editing
+        } // waitRuler
+        if (editorMode == 'editing') {
+            editorMode = '';
+            curr.funcs = [];
+            curr.rulers = [];
+
+        }
 
 
 
@@ -271,6 +280,15 @@ var Editor = function (canvasElement) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
 
+        var tt = document.getElementById('t1'); var s='<font size="2">';
+        var k = Object.keys(doc.docObjs);
+        s+='curr' + JSON.stringify(curr) + "<br>";
+        s+='editorMode:'+editorMode+'<br>';
+        s+='editorStage:'+editorStage+'<br>';
+
+
+
+
         if (editorMode == 'entering') {
             var ef = elfuncs[curr.type];
             var iRuler = ef.ways[0][curr.stage];
@@ -279,9 +297,55 @@ var Editor = function (canvasElement) {
             curr.funcs[iRuler][0].apply(this, curr.funcs[iRuler][1]);
         };
 
+        var isover0 = '';
+
+        if (editorMode == '') {
+            for (id in doc.docObjs) {
+                var el = doc.docObjs[id];
+                if (el.type != 'point') {
+                    if (elfuncs[el.type].isOver(el.ob, x, y)) {
+                        isover0 = el.id;
+                        curr.rulers = [];
+                        curr.id = el.id;
+                        elfuncs[el.type].getRulers(curr.rulers, el.ob);
+                        curr.funcs = elfuncs[el.type].editorArray(el.ob, curr.rulers);
+                        editorMode = 'waitRuler';
+                    }
+                }
+            }
+        };
+
+        var isover1 = '';
+
+        if (editorMode == 'waitRuler') {
+            for (id in doc.docObjs) {
+                var el = doc.docObjs[id];
+                if (el.type != 'point') {
+                    if (elfuncs[el.type].isOver(el.ob, x, y)) {
+                        isover1 = el.id;
+                    };
+                }
+            }
+        };
+
+        if (editorMode == 'waitRuler' && isover1 != curr.id) {
+            curr.rulers = [];
+            curr.funcs = [];
+            editorMode = '';
+        };
+        if (editorMode == 'editing') {
+            var ef = elfuncs[curr.type];
+            var f = curr.funcs[curr.iRuler][0];
+            curr.rulers[curr.iRuler][0] = x;
+            curr.rulers[curr.iRuler][1] = y;
+            var params = curr.funcs[curr.iRuler][1];
+            f.apply(this, params);
+
+        }
 
 
 
+/*
         boldIds[0] = 'jkjkew';
         var o1 = objectUnder(x, y);
         if (o1.length>0) {
@@ -304,8 +368,10 @@ var Editor = function (canvasElement) {
             ret.getdoc().recalcAllObjs();
             ret.redraw();
         };
+        */
+
         if (curr.toRedraw) ret.redraw();
-    }
+    } // mouse move
 
     window.addEventListener('click', mouseClick2, false);
     window.addEventListener('mousemove', mouseMove, false);
@@ -385,13 +451,16 @@ var Editor = function (canvasElement) {
                 y = y/count;
                 cvc.fillText(elid, x, y);
             }
-            var ps = doc.getPnts();
+
+
+            //var ps = doc.getPnts();
+            var ps = curr.rulers;
             for (i in ps) {
-                cvc.moveTo(pnts[i][0] - holderSize, pnts[i][1] - holderSize);
-                cvc.lineTo(pnts[i][0] + holderSize, pnts[i][1] - holderSize);
-                cvc.lineTo(pnts[i][0] + holderSize, pnts[i][1] + holderSize);
-                cvc.lineTo(pnts[i][0] - holderSize, pnts[i][1] + holderSize);
-                cvc.lineTo(pnts[i][0] - holderSize, pnts[i][1] - holderSize);
+                cvc.moveTo(ps[i][0] - holderSize, ps[i][1] - holderSize);
+                cvc.lineTo(ps[i][0] + holderSize, ps[i][1] - holderSize);
+                cvc.lineTo(ps[i][0] + holderSize, ps[i][1] + holderSize);
+                cvc.lineTo(ps[i][0] - holderSize, ps[i][1] + holderSize);
+                cvc.lineTo(ps[i][0] - holderSize, ps[i][1] - holderSize);
             }
             cvc.stroke();
         }, // redraw

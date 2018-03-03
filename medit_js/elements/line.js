@@ -9,6 +9,8 @@ var Line = function () {
     var gc = require('../geom_core')();
     var a, b, c;
     var type = 'line';
+    var holderSize = 5;
+
     function sort(tosort) {
         var sorted = false;
         while (!sorted) {
@@ -25,6 +27,15 @@ var Line = function () {
     };
 
     return {
+        isOver: function (line, x, y) {
+            var dist = gc.scalar_len_point_line([x,y], line);
+            if (dist < holderSize) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         getLineBounds: function(line, bounds) {
          //   console.log('line bounds:::::::::::::', line, bounds);
             // bounds: left, right, top, bottom

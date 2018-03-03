@@ -16,10 +16,12 @@ var Circle = function () {
             cvc.arc(circle[0][0], circle[0][1], circle[1], 0, Math.PI * 2);
             cvc.stroke();
         },
-        isOver: function (circle, pnt) {
-
+        isOver: function (circle, x, y) {
+            var r_current = Math.sqrt((circle[0][0]-x)*(circle[0][0]-x) + (circle[0][1]-y)*(circle[0][1]-y));
+            var e = Math.abs(r_current - circle[1]);
+            if (e < 5) { return true; } else { return false; };
         },
-        fillRulers: function (rulers, circle) {
+        getRulers: function (rulers, circle) {
             rulers[0] = circle[0]; // dicrect link, no need to update
             rulers[1] = [];
             rulers[1][0] = circle[0][0] + circle[1];

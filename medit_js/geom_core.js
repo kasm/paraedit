@@ -154,7 +154,23 @@ var GeomCore = function() {
         },
         'scale_lineseg': function (base, ob, koef) {
 
+        },
+
+
+        //                                                     DISTANCE
+        'scalar_len_point_line': function (point, line) {
+            var d = Math.sqrt(line.a*line.a + line.b*line.b);
+            var an = line.a / d;
+            var bn = line.b / d;
+            var cn = line.c / d;
+            return an * point[0] + bn*point[1] + cn;
+        },
+        'scalar_len_point_point': function (point0, point1) {
+            var dx = point1[0] - point0[0];
+            var dy = point1[1] - point0[0];
+            return Math.sqrt(dx*dx + dy*dy);
         }
+
 
 
 

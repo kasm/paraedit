@@ -3,14 +3,27 @@
  */
 
 var geom = require('../geom.js')();
+var gc=require('../geom_core')();
 
 // TODO: make array of link functions -  linkfuncs['line']['mid'] = function(el) { return a+b/2}
     // or linkfuncs['line_circle']['int'] = function(e0, e1) { .....}
     // linkfuncs['lineseg']['per'] = function(e, pnt) { line.setFromPoints(e.pnts[0], e.pnts[1]; line.getPerpPnt(pnt); };
 var LineSeg = function () {
+    var holderSize = 5;
+
 
     //var els = els1;
     return {
+        isOver: function (ls, x, y) {
+            var line = [];
+            gc.line_point_point(line, ls[0], ls[1]);
+            var dist = gc.scalar_len_point_line([x,y], line);
+            if (dist < holderSize) {
+                return true;
+            } else {
+                return false;
+            }
+        },
         draw: function (cvc, element) {
             cvc.beginPath();
             if (element.hasOwnProperty('pntsCalc')) {
