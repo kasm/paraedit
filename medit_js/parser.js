@@ -28,6 +28,40 @@ var Parser = function (doc) {
             };
             return rez;
         },
+        createPointsAndFillParams: function (id, paramsStrArray) { var i;
+            var paramsOb = {str: [], ob: []}; var fullId;
+            for (i = 0; i<paramsStrArray.length; i++) {
+                if (isNaN(parseInt(paramsStrArray[i]))) {
+                    fullId = id+'.'+paramsStrArray[i]
+                    doc.pnts[fullId] = [0, 0];
+                    paramsOb.str[i] = fullId;
+                    paramsOb.ob[i] = doc.pnts[fullId];
+                } else {
+                    paramsOb.ob[i] = parseInt(paramsStrArray[i]);
+                    paramsOb.str[i] = paramsStrArray[i];
+                }
+            };
+            return paramsOb;
+        },
+        createElementAndPoints: function (id, type, params) {
+            var strAndOb = this.createPointsAndFillParams(id, params);
+            //var params3 = this.parseParam2(params2);
+            var i;
+            var line = {};
+            line.params = strAndOb.str;
+            line.params2 = {};
+            line.params2.main = strAndOb.ob;
+            line.rez = id;
+            line.func = type;
+            var r = this.parseLine(line, '');
+            return r;
+
+            doc.objs[id] = this.obCreateIfNot(id);
+            doc.objs[id].type = type;
+            doc.objs[id].ob = rez.main;
+            return doc.objs[id];
+        },
+
         // return main array (for solver) and part of query and optional - ref array
         // main examples:
         // lineseg: [pointref, pointref]
@@ -62,7 +96,8 @@ var Parser = function (doc) {
                     rez.types[i] = 'scalar';
                     rez.idns.push(i);
                 } else if (isNaN(parseInt(parT[i]))) {
-                    alert('parse param error');
+                    debugger;
+                    //alert('parse param error');
                 } else {
                     var k = parseInt(parT[i]);
                     rez.main[i] = k;
@@ -85,7 +120,10 @@ var Parser = function (doc) {
         */
         parseSplitted: function () {
             var i;
-            for (i=0; i<lines.length; i++) this.parseLine(lines[i], false); // false meain not by points
+            for (i=0; i<lines.length; i++) {
+                var params2 = this.parseParam2(lines[i]);
+                this.parseLine(lines[i], false);
+            } // false meain not by points
         },
         splitter: function (text) {
             var i; var a1, a2, a3, rezText;
@@ -100,7 +138,9 @@ var Parser = function (doc) {
                 lines[i].func=a2[0];
                 a3 = a2[1].split(')');
                 lines[i].params = a3[0].split(',');
-            }
+                lines[i].params2 = this.parseParam2(lines[i].params);
+                this.parseLine(lines[i], false);
+            };
             return lines;
 
         },
@@ -114,35 +154,35 @@ var Parser = function (doc) {
         //
         parseLine: function (line, byPoints) { // creating objects (elements, points, etc) and/or setting links
             var i;
-            var params2 = this.parseParam2(line.params);
+            //var params2 = this.parseParam2(line.params);
             switch (line.func) {
-                case 'point': doc.pnts[line.rez] = params2.main;
+                case 'point': doc.pnts[line.rez] = line.params2.main;
                     doc.objs[line.rez] = this.obCreateIfNot(line.rez);
                     doc.objs[line.rez].ob = doc.pnts[line.rez];
                     doc.objs[line.rez].type = 'point';
                     break;
                 case 'line':
-                    doc.lines[line.rez] = []; gc.line_point_point(doc.lines[line.rez], doc.objs[params2.ids[0]].ob, doc.objs[params2.ids[1]].ob);
+                    doc.lines[line.rez] = []; gc.line_point_point(doc.lines[line.rez], doc.objs[line.params2.ids[0]].ob, doc.objs[line.params2.ids[1]].ob);
                     doc.objs[line.rez] = this.obCreateIfNot(line.rez);
                     doc.objs[line.rez].ob = doc.lines[line.rez];
                     doc.objs[line.rez].type = 'line';
                     break;
                 case 'lineseg':
-                    doc.linesegs[line.rez] = params2.main;
+                    doc.linesegs[line.rez] = line.params2.main;
                     this.obCreateIfNot(line.rez);
                     doc.objs[line.rez].ob = doc.linesegs[line.rez];
                     doc.objs[line.rez].type = 'lineseg';
                     break;
-                case 'circle': doc.circles[line.rez] = params2.main; //[doc.pnts[params[0].id],params[1]];
+                case 'circle': doc.circles[line.rez] = line.params2.main; //[doc.pnts[params[0].id],params[1]];
                     this.obCreateIfNot(line.rez);
                     doc.objs[line.rez].ob = doc.circles[line.rez];
                     doc.objs[line.rez].type = 'circle';
                     break;
                 case 'mid':
-                    doc.objs[line.rez].query = 'point_mid' + params2.query;
-                    doc.objs[line.rez].mainIds = params2.ids;
-                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(params2.main);
-                    doc.objs[line.rez].func = gl['point_mid' + params2.query];
+                    doc.objs[line.rez].query = 'point_mid' + line.params2.query;
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func = gl['point_mid' + line.params2.query];
                     break;
                 case 'add':
                     doc.objs[rez] = this.obCreateIfNot(id);
@@ -150,35 +190,35 @@ var Parser = function (doc) {
                 case 'eq':
                     r = this.parseParam2([line.rez]);
                     doc.objs[r.ids[0]].query = 'scalar_eq_scalar';
-                    doc.objs[r.ids[0]].mainIds = params2.ids;
+                    doc.objs[r.ids[0]].mainIds = line.params2.ids;
                     doc.objs[r.ids[0]].mains[0] = r.refs[0];
-                    doc.objs[r.ids[0]].mains[1] = params2.refs[0];
+                    doc.objs[r.ids[0]].mains[1] = line.params2.refs[0];
                     doc.objs[r.ids[0]].func = gl[doc.objs[r.ids[0]].query];
 
                     break;
                 case 'per':
-                    doc.objs[line.rez].query = 'point_per' + params2.query;
-                    doc.objs[line.rez].mainIds = params2.ids;
-                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(params2.main);
-                    doc.objs[line.rez].func = gl['point_per' + params2.query];
+                    doc.objs[line.rez].query = 'point_per' + line.params2.query;
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func = gl['point_per' + line.params2.query];
 
                     break;
                 case 'int':
-                    doc.objs[line.rez].query = 'point_int' + params2.query;
-                    doc.objs[line.rez].mainIds = params2.ids;
-                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(params2.main);
-                    doc.objs[line.rez].func = gl['point_int' + params2.query];
+                    doc.objs[line.rez].query = 'point_int' + line.params2.query;
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func = gl['point_int' + line.params2.query];
                     break;
                 case 'coin':
-                    doc.objs[line.rez].query = 'line_coin' + params2.query;
-                    doc.objs[line.rez].mainIds=params2.ids;
-                    doc.objs[line.rez].mains=[doc.objs[line.rez].ob].concat(params2.main);
+                    doc.objs[line.rez].query = 'line_coin' + line.params2.query;
+                    doc.objs[line.rez].mainIds=line.params2.ids;
+                    doc.objs[line.rez].mains=[doc.objs[line.rez].ob].concat(line.params2.main);
                     doc.objs[line.rez].func=gl[doc.objs[line.rez].query];
                     break;
                 case 'circle_TTRS':
                     doc.objs[line.rez].query = 'circle_TTRS'; //r.query;
-                    doc.objs[line.rez].mainIds = params2.ids;
-                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(params2.main);
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
                     doc.objs[line.rez].func  = gl['circle_TTRS'];
                     break;
             }

@@ -78,9 +78,11 @@ var Editor = function (canvasElement) {
     var Parser = require('./parser.js');
     parser = Parser(doc2);
     parser.splitter(doctext);
-    parser.parseSplitted();
+    //parser.parseSplitted();
     //parser.parseText(doctext);
-    doc2.docData = parser.splitter(doctext);
+
+
+    //doc2.docData = parser.splitter(doctext);
     var gl = require('./geom_links')();
 
     document.getElementById('t1').innerHTML='ddd';
@@ -114,6 +116,51 @@ var Editor = function (canvasElement) {
         return id_rez;
         };
 
+    var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) {
+        var el = parser.createElementAndPoints(curr.id, curr.type, elfuncs[curr.type].params);
+        curr.rulers = elfuncs[curr.type].fillRulers(curr.rulers, el.ob);
+        curr.funcs = elfuncs[curr.type].editorArray(el.ob, curr.rulers);
+    };
+
+    var mouseClick2 = function (e) {
+
+        var x = parseInt(e.clientX - coords.left);
+        var y = parseInt(e.clientY - coords.top);
+        if (y<0) return 0;
+        if (editorMode == 'entering') {
+            curr.stage++;
+            if (elfuncs[curr.type].ways[0].length == curr.stage) {
+                editorMode = '';
+                curr.funcs = [];
+                curr.rulers = [];
+                return 0;
+            };
+        } // if entering
+
+
+        if (editorMode == 'editing') {
+
+            var pnts = doc.getPnts();
+            selectedPoint = '';
+            if (editorMode ==='') {
+                for (pid in pnts) {
+                    diffx = Math.abs(pnts[pid][0] - x);
+                    diffy = Math.abs(pnts[pid][1] - y);
+                    if (diffx < holderSize && diffy < holderSize) {
+                        selectedPoint = pid;
+                        editorMode = 'moving';
+                    }
+                }; // for pid in pnts
+            }; // if editor mode == ''
+
+
+        } // editing
+
+
+
+    };
+
+    /*
     var mouseClick = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
@@ -218,10 +265,23 @@ var Editor = function (canvasElement) {
             }; // for pid in pnts
         }; // if editor mode == ''
     };
+    */
 
     var mouseMove = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+
+        if (editorMode == 'entering') {
+            var ef = elfuncs[curr.type];
+            var iRuler = ef.ways[0][curr.stage];
+            curr.rulers[iRuler][0] = x;
+            curr.rulers[iRuler][1] = y;
+            curr.funcs[iRuler][0].apply(this, curr.funcs[iRuler][1]);
+        };
+
+
+
+
         boldIds[0] = 'jkjkew';
         var o1 = objectUnder(x, y);
         if (o1.length>0) {
@@ -247,7 +307,7 @@ var Editor = function (canvasElement) {
         if (curr.toRedraw) ret.redraw();
     }
 
-    window.addEventListener('click', mouseClick, false);
+    window.addEventListener('click', mouseClick2, false);
     window.addEventListener('mousemove', mouseMove, false);
     console.log('Edi');
     cvc.fillStyle = "#FFFFFF";
@@ -264,10 +324,18 @@ var Editor = function (canvasElement) {
         lineseg: function() {
             editorMode = 'enterLineseg0';
         },
-        circle: function () {
+        circle_old: function () {
             //editorMode = 'circle0';
             editorMode = 'circle0b';
             editorStage = 0;
+        },
+        circle: function () {
+            curr.rulers = [];
+            curr.type = 'circle';
+            curr.stage = 0;
+            editorMode = 'entering';
+            curr.id = 'c100' + Object.keys(doc.circles).length;
+            createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
         },
         getdoc: function () {
             return doc;
@@ -276,6 +344,7 @@ var Editor = function (canvasElement) {
             var i;
             var tt = document.getElementById('t1'); var s='<font size="2">';
             var k = Object.keys(doc.docObjs);
+            s+='curr' + JSON.stringify(curr) + "<br>";
             s+='editorMode:'+editorMode+'<br>';
             s+='editorStage:'+editorStage+'<br>';
             for (i=0; i<k.length; i++) {
