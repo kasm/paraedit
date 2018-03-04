@@ -189,6 +189,7 @@ var Editor = function (canvasElement) {
                         elfuncs[el.type].getRulers(curr.rulers, el.ob);
                         curr.funcs = elfuncs[el.type].editorArray(el.ob, curr.rulers);
                         editorMode = 'waitRuler';
+                        break;
                     }
                 }
             }
@@ -201,7 +202,7 @@ var Editor = function (canvasElement) {
                 var el = doc.docObjs[id];
                 if (el.type != 'point') {
                     if (elfuncs[el.type].isOver(el.ob, x, y)) {
-                        isover1 = el.id;
+                        isover1 = el.id; break;
                     };
                 }
             }
@@ -220,7 +221,7 @@ var Editor = function (canvasElement) {
             var params = curr.funcs[curr.iRuler][1];
             f.apply(this, params);
         }
-
+        doc.recalcAllObjs();
         if (curr.toRedraw) ret.redraw();
     } // mouse move
 
