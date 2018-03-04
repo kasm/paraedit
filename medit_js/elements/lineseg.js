@@ -14,16 +14,37 @@ var LineSeg = function () {
 
     //var els = els1;
     return {
+        nRulers: 2,
+        rulerNames: ['p0', 'p1'],
+        params: ['p0', 'p1'],
+        ob: [[0,0], [10, 0]],
         isOver: function (ls, x, y) {
+
             var line = [];
             gc.line_point_point(line, ls[0], ls[1]);
             var dist = gc.scalar_len_point_line([x,y], line);
-            if (dist < holderSize) {
+            if (Math.abs(dist) < holderSize) {
                 return true;
             } else {
                 return false;
             }
         },
+        getRulers: function (rulers, lineseg) {
+            rulers[0] = lineseg[0]; // dicrect link, no need to update
+            rulers[1] = lineseg[1];
+            return rulers;
+        },
+        ways: [ // numbers of rulers used while creation
+            // ways can be different, for instance ways for creating arc
+            [0, 1]
+        ],
+        editorArray: function (lineseg, rulers) {
+            return [
+                [function () { },[]],
+                [function () { },[]]
+            ]
+        },
+
         draw: function (cvc, element) {
             cvc.beginPath();
             if (element.hasOwnProperty('pntsCalc')) {

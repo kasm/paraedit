@@ -19,7 +19,9 @@ var Circle = function () {
         isOver: function (circle, x, y) {
             var r_current = Math.sqrt((circle[0][0]-x)*(circle[0][0]-x) + (circle[0][1]-y)*(circle[0][1]-y));
             var e = Math.abs(r_current - circle[1]);
-            if (e < 5) { return true; } else { return false; };
+            var cd1 = Math.abs(circle[0][0] - x);
+            var cd2 = Math.abs(circle[0][1] - y);
+            if (e < 5 || cd1 + cd2 < 10) { return true; } else { return false; };
         },
         getRulers: function (rulers, circle) {
             rulers[0] = circle[0]; // dicrect link, no need to update
@@ -32,12 +34,6 @@ var Circle = function () {
             // ways can be different, for instance ways for creating arc
             [0, 1]
         ],
-        /*
-        deprecated: edit must use editorArray
-        edit: function (circle, point) {
-            circle[1] = Math.sqrt((circle[0][0] - point[0])*(circle[0][0] - point[0]) + (circle[0][1] - point[1])*(circle[0][1] - point[1]));
-        },
-        */
 
         // editor array is function which returns array of editors of element
         // editors will be called at mousemove event and take current mouse point
@@ -46,8 +42,8 @@ var Circle = function () {
         // can be called at edit time
         editorArray: function (circle, rulers) {
             return ([
-                //[gl.point_copy_point, [circle[0]]], // copy from mouse [x,y] to circle[0]
-                [gl.point_copy_point, [circle[0], rulers[0]]], // copy from mouse [x,y] to circle[0]
+                //[gl.point_copy_point, [circle[0], rulers[0]]], // copy from mouse [x,y] to circle[0]
+                [function () { },[]], // copy from mouse [x,y] to circle[0]
                 // also can use circle[0] directly in ruler[0]. Then this tracker function can be empty
 
                 //[gl.scalar_len_point_point, [[circle, 1], circle[0]]]

@@ -122,6 +122,7 @@ var Doc = function (elfuncs, doc_obj) {
         pnts: doc_obj.pnts,
         linesegs: doc_obj.linesegs,
         circles: doc_obj.circles,
+        lines: doc_obj.lines,
         currfuncs: currfuncs,
         docObjs: docObjs,
         addObj: function (type, obj) {

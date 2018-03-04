@@ -388,7 +388,12 @@ var Editor = function (canvasElement) {
             alert('ttest');
         },
         lineseg: function() {
-            editorMode = 'enterLineseg0';
+            curr.rulers = [];
+            curr.type = 'lineseg';
+            curr.stage = 0;
+            editorMode = 'entering';
+            curr.id = 'ls00' + Object.keys(doc.linesegs).length;
+            createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
         },
         circle_old: function () {
             //editorMode = 'circle0';
@@ -403,6 +408,16 @@ var Editor = function (canvasElement) {
             curr.id = 'c100' + Object.keys(doc.circles).length;
             createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
         },
+        line: function () {
+            curr.rulers = [];
+            curr.type = 'line';
+            curr.stage = 0;
+            editorMode = 'entering';
+            curr.id = 'ln00' + Object.keys(doc.lines).length;
+            createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
+
+        },
+
         getdoc: function () {
             return doc;
         },

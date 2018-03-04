@@ -5,11 +5,15 @@
 var medit = {};
 medit.eps = 0.00000001;
 
+
 var Line = function () {
     var gc = require('../geom_core')();
     var a, b, c;
     var type = 'line';
     var holderSize = 5;
+    var centerX = 200;
+    var centerY = 200;
+    var spaceBetweenRulers = 100;
 
     function sort(tosort) {
         var sorted = false;
@@ -27,13 +31,42 @@ var Line = function () {
     };
 
     return {
+        nRulers: 2,
+        rulerNames: ['p0', 'p1'],
+        params: [0, 1, 100],
+        ob: [[0,0], [10, 0]],
+
         isOver: function (line, x, y) {
             var dist = gc.scalar_len_point_line([x,y], line);
-            if (dist < holderSize) {
+            if (Math.abs(dist) < holderSize) {
                 return true;
             } else {
                 return false;
             }
+        },
+        getRulers: function (rulers, line) {
+            var p0 = []; var p1 = [];
+            var pp = [];
+            gc.point_per_point_line(pp, [centerX, centerY], line);
+            var a = line[0]; var b = line[1];
+            p0[0] = pp[0] - b*spaceBetweenRulers;
+            p0[1] = pp[1] + a* spaceBetweenRulers;
+            p1[0] = pp[0] + b*spaceBetweenRulers;
+            p1[1] = pp[1]  -a*spaceBetweenRulers;
+            rulers[0] = p0;
+            rulers[1] = p1;
+            return rulers;
+        },
+        ways: [ // numbers of rulers used while creation
+            // ways can be different, for instance ways for creating arc
+            [0, 1]
+        ],
+
+        editorArray: function (line, rulers) {
+            return [
+                [gc.line_point_point, [line, rulers[0], rulers[1]]],
+                [gc.line_point_point, [line, rulers[0], rulers[1]]]
+            ]
         },
 
         getLineBounds: function(line, bounds) {

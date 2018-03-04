@@ -162,7 +162,14 @@ var Parser = function (doc) {
                     doc.objs[line.rez].type = 'point';
                     break;
                 case 'line':
-                    doc.lines[line.rez] = []; gc.line_point_point(doc.lines[line.rez], doc.objs[line.params2.ids[0]].ob, doc.objs[line.params2.ids[1]].ob);
+                    doc.lines[line.rez] = [];
+                    if (line.params.length == 2) {
+                        gc.line_point_point(doc.lines[line.rez], doc.objs[line.params2.ids[0]].ob, doc.objs[line.params2.ids[1]].ob);
+                    } else {
+                        doc.lines[line.rez][0] = line.params[0];
+                        doc.lines[line.rez][1] = line.params[1];
+                        doc.lines[line.rez][2] = line.params[2];
+                    }
                     doc.objs[line.rez] = this.obCreateIfNot(line.rez);
                     doc.objs[line.rez].ob = doc.lines[line.rez];
                     doc.objs[line.rez].type = 'line';

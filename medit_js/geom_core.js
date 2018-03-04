@@ -159,10 +159,10 @@ var GeomCore = function() {
 
         //                                                     DISTANCE
         'scalar_len_point_line': function (point, line) {
-            var d = Math.sqrt(line.a*line.a + line.b*line.b);
-            var an = line.a / d;
-            var bn = line.b / d;
-            var cn = line.c / d;
+            var d = Math.sqrt(line[0]*line[0] + line[1]*line[1]);
+            var an = line[0] / d;
+            var bn = line[1] / d;
+            var cn = line[2] / d;
             return an * point[0] + bn*point[1] + cn;
         },
         'scalar_len_point_point': function (point0, point1) {
