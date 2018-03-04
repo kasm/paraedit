@@ -34,6 +34,14 @@ var Parser = function (doc) {
                 if (isNaN(parseInt(paramsStrArray[i]))) {
                     fullId = id+'.'+paramsStrArray[i]
                     doc.pnts[fullId] = [0, 0];
+                    doc.objs[fullId] = {
+                        id: fullId,
+                        type: 'point',
+                        mains: [],
+                        mainIds: [],
+                        solved: true,
+                        ob: doc.pnts[fullId]
+                    };
                     paramsOb.str[i] = fullId;
                     paramsOb.ob[i] = doc.pnts[fullId];
                 } else {

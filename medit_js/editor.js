@@ -92,6 +92,15 @@ var Editor = function (canvasElement) {
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
+
+    var linkParams = { // not used
+        mid: ['point', 'element'],
+        int: ['point', 'element', 'element'],
+        per: ['point', 'point', 'element'], // result point = source point per element
+        circle_TTRS: ['element', 'element', '']
+    };
+
+
     var geom = require('./geom.js')([300, 300]);
 
     var doc = Doc(elfuncs, doc2);
@@ -116,11 +125,70 @@ var Editor = function (canvasElement) {
         return id_rez;
         };
 
-    var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) {
+    var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) { var i;
         var el = parser.createElementAndPoints(curr.id, curr.type, elfuncs[curr.type].params);
         curr.rulers = elfuncs[curr.type].getRulers(curr.rulers, el.ob);
+        for (i=0; i<curr.rulers.length; i++) {
+            var pntid = id + '.' + elfuncs[curr.type].rulerNames[i];
+            doc.pnts[pntid] = curr.rulers[i];
+            /*
+            doc.docObjs[pntid] = {
+                id: id,
+                type: 'point',
+                main: [],
+                mainIds: [],
+                query: '',
+                ob: doc.pnts[pntid]
+            }
+            */
+        }
+
         curr.funcs = elfuncs[curr.type].editorArray(el.ob, curr.rulers);
+        var i=5;
+
     };
+
+    var getSelectedRuler = function (x, y) { var rez = {selected: false, iRuler: 0};
+        for (i=0; i<curr.rulers.length; i++) {
+            diffx = Math.abs(curr.rulers[i][0] - x);
+            diffy = Math.abs(curr.rulers[i][1] - y);
+            if (diffx < holderSize && diffy < holderSize) {
+                curr.iRuler = i;
+                rez.iRuler = i;
+                rez.selected = true;
+                return rez;
+            }
+        };
+        return rez;
+    } // waitRuler
+
+    var getSelectedEl = function (x, y) { rez = {selected: false, id: 0};
+        for (id in doc.docObjs) {
+            var el = doc.docObjs[id];
+            if (el.type != 'point') {
+                if (elfuncs[el.type].isOver(el.ob, x, y)) {
+                    rez.selected = true;
+                    rez.id = el.id;
+                }
+            }
+        }
+        return rez;
+    };
+
+
+
+    var getSelectedPointId = function (x, y) { rez = '';
+        var i;
+        for (id in doc.pnts) {
+            diffx = Math.abs(doc.pnts[id][0] -x);
+            diffy = Math.abs(doc.pnts[id][1] -y);
+            if (diffx < holderSize && diffy < holderSize) {
+                return id;
+            }
+        }
+        return rez;
+    }
+
 
     var mouseClick2 = function (e) {
 
@@ -155,12 +223,41 @@ var Editor = function (canvasElement) {
             curr.funcs = [];
             curr.rulers = [];
         }
+
+        if (editorMode == 'enteringLink') {
+            if (curr.type == 'mid') {
+                if (curr.stage ==0) {
+                    var id1 = getSelectedPointId(x, y);
+                    if (id1.length > 0) {
+                        curr.data.rezid = id1;
+                        curr.stage++;
+                        return 0;
+                    };
+                };
+                if (curr.stage == 1) {
+                    var r = getSelectedEl(x, y);
+                    if (r.selected) {
+                        debugger;
+                        var line = {rez: curr.data.rezid, func: 'mid', params: r.id,
+                            params2: {query: '_lineseg', main: [doc.docObjs[r.id].ob], ids: [r.id]}};
+                        parser.parseLine(line);
+                        editorMode = '';
+                        curr.rulers = [];
+                        curr.stage = 0;
+                    }
+                }
+            } // mid
+
+
+        } // entering Link
+
     }; // mouse click2
 
 
     var mouseMove = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+        curr.x = x; curr.y = y;
 
         var tt = document.getElementById('t1'); var s='<font size="2">';
         var k = Object.keys(doc.docObjs);
@@ -177,6 +274,20 @@ var Editor = function (canvasElement) {
         };
 
         var isover0 = '';
+
+        if (editorMode == 'enteringLink') {
+            for (id in doc.docObjs) {
+                var el = doc.docObjs[id];
+                if (el.type != 'point') {
+                    if (elfuncs[el.type].isOver(el.ob, x, y)) {
+                        isover0 = el.id;
+                        curr.rulers = [];
+                        curr.id = el.id;
+                        elfuncs[el.type].getRulers(curr.rulers, el.ob);
+                    }
+                }
+            }
+        }
 
         if (editorMode == '') {
             for (id in doc.docObjs) {
@@ -197,7 +308,7 @@ var Editor = function (canvasElement) {
 
         var isover1 = '';
 
-        if (editorMode == 'waitRuler') {
+        if (editorMode == 'waitRuler' || editorMode == 'enteringLink') {
             for (id in doc.docObjs) {
                 var el = doc.docObjs[id];
                 if (el.type != 'point') {
@@ -213,6 +324,12 @@ var Editor = function (canvasElement) {
             curr.funcs = [];
             editorMode = '';
         };
+        if (editorMode == 'enteringLink' && isover1 != curr.id) {
+            curr.rulers = [];
+            curr.funcs = [];
+        };
+
+
         if (editorMode == 'editing') {
             var ef = elfuncs[curr.type];
             var f = curr.funcs[curr.iRuler][0];
@@ -268,6 +385,12 @@ var Editor = function (canvasElement) {
             curr.id = 'ln00' + Object.keys(doc.lines).length;
             createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
 
+        },
+        mid: function () {
+            curr.data = {};
+            curr.type = 'mid';
+            curr.stage = 0; // first stage - result point, second stage - lineseg
+            editorMode = 'enteringLink';
         },
 
         getdoc: function () {

@@ -467,3 +467,8 @@ There are many rulers (more then steps for building element). So it will be WAYS
 creating element. WAY is array of numbers of rules which participate in element creation.
 update:
 Ways are implemented.
+
+2018-03-04
+links should be in separate array.
+To be able to work without parent id
+because when select point for 'mid' we must also find element id
