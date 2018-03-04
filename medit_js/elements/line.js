@@ -33,7 +33,7 @@ var Line = function () {
     return {
         nRulers: 2,
         rulerNames: ['p0', 'p1'],
-        params: [0, 1, 100],
+        params: [0, 1, -100],
         ob: [[0,0], [10, 0]],
 
         isOver: function (line, x, y) {

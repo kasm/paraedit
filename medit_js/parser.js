@@ -109,16 +109,8 @@ var Parser = function (doc) {
             }// i
             return rez;
         },
-/*
-        parseText: function(text) {
-            var i;
-            var lines = text.match(/[^\r\n]+/g);
-            for (i=0; i<lines.length; i++) {
-                this.parseLine(lines[i]);
-            }
-        },
-        */
-        parseSplitted: function () {
+
+       parseSplitted: function () {
             var i;
             for (i=0; i<lines.length; i++) {
                 var params2 = this.parseParam2(lines[i]);

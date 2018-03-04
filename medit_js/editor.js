@@ -137,144 +137,26 @@ var Editor = function (canvasElement) {
             };
         } // if entering
 
-
         if (editorMode == 'waitRuler') {
-
-            //var pnts = doc.getPnts();
-            //var pnts = curr.rulers;
-            selectedPoint = '';
-    //        if (editorMode ==='') {
-                //for (pid in pnts) {
-                for (i=0; i<curr.rulers.length; i++) {
-                    diffx = Math.abs(curr.rulers[i][0] - x);
-                    diffy = Math.abs(curr.rulers[i][1] - y);
-                    if (diffx < holderSize && diffy < holderSize) {
-                        curr.iRuler = i;
-                        editorMode = 'editing';
-                        return 0;
-                    }
-                }; // for pid in pnts
-    //        }; // if editor mode == ''
-
-
+            //selectedPoint = '';
+            for (i=0; i<curr.rulers.length; i++) {
+                diffx = Math.abs(curr.rulers[i][0] - x);
+                diffy = Math.abs(curr.rulers[i][1] - y);
+                if (diffx < holderSize && diffy < holderSize) {
+                    curr.iRuler = i;
+                    editorMode = 'editing';
+                    return 0;
+                }
+            };
         } // waitRuler
+
         if (editorMode == 'editing') {
             editorMode = '';
             curr.funcs = [];
             curr.rulers = [];
-
         }
+    }; // mouse click2
 
-
-
-    };
-
-    /*
-    var mouseClick = function (e) {
-        var x = parseInt(e.clientX - coords.left);
-        var y = parseInt(e.clientY - coords.top);
-        var o1 = objectUnder(x,y);
-        var justset = false;
-        if (o1.length>0 && editorMode=='') {
-            editorMode = 'editing';
-            justset = true;
-            curr.data = o1;
-            var c = doc.docObjs[o1];
-            //editorFuncs.push(elfuncs[c.type].editor(c.ob, [x, y]));
-            editorFuncs[0] = elfuncs[c.type].editor(c.ob, [x, y]);
-        };
-        if (editorMode === 'editing' && (!justset)) {
-            doc.currfuncs = []; // not used
-            editorFuncs = []; // used
-            editorMode = '';
-        };
-        if (y<0) return 0;
-        if (editorMode === 'moving') {
-            editorMode = ''; return 0;
-        };
-        if (editorMode == 'circle0b') {
-            if (editorStage == elfuncs['circle'].nPoints) {
-                editorMode = '';
-                editorStage = 0;
-                editorFuncs = [];
-                return 0;
-            };
-            if (editorStage == 0) {
-                // create rulers points
-                curr.pnts = [];
-                for (i = 0; i < elfuncs['circle'].nPoints; i++) curr.pnts[i] = [0, 0];
-                var line = {
-                    rez: 'pc100' + Object.keys(doc.pnts).length,
-                    func: 'point',
-                    //params: [x.toString(), y.toString()]
-                    params: ['0', '0']
-
-                }
-                parser.parseLine(line); // center
-                curr.data = line.rez;
-                var line1 = {
-                    rez: 'c100' + Object.keys(doc.circles).length,
-                    func: 'circle',
-                    params: [line.rez, "10"]  // funcs[type].getByPoints
-                };
-                var c = parser.parseLine(line1);
-                curr.obj = c;
-            };
-            //editorMode = 'editing';
-            justset = false;
-
-            editorFuncs[0] = elfuncs['circle'].editorArray(curr.obj.ob)[editorStage];
-            editorStage++;
-        }// circle b
-
-        if (editorMode === 'enterLineseg0') {
-            debugger;
-            var line = {
-                rez: 'p100' + Object.keys(doc.pnts).length,
-                func: 'point',
-                params: [x.toString(), y.toString()]
-            };
-            parser.parseLine(line);
-            curr.data = line;
-            editorMode = 'enterLineseg1';
-        };
-
-
-        if (editorMode === 'enterLineseg1') {
-            debugger;
-            var line = {
-                rez: 'p100' + Object.keys(doc.pnts).length,
-                func: 'point',
-                params: [x.toString(), y.toString()]
-            };
-            debugger;
-            parser.parseLine(line);
-            var t = line.rez;
-            line = {
-                rez: 'ls100' + Object.keys(doc.linesegs).length,
-                func: 'lineseg',
-                params: [curr.data.rez, t]
-            };
-            parser.parseLine(line);
-            editorMode = '';
-
-        }; // enter lineseg1
-
-
-        var pnts = doc.getPnts();
-        selectedPoint = '';
-        if (editorMode ==='') {
-            for (pid in pnts) {
-                diffx = Math.abs(pnts[pid][0] - x);
-                diffy = Math.abs(pnts[pid][1] - y);
-                if (diffx < holderSize && diffy < holderSize) {
-                    selectedPoint = pid;
-                    editorMode = 'moving';
-                }
-            }; // for pid in pnts
-        }; // if editor mode == ''
-    };
-    */
 
     var mouseMove = function (e) {
         var x = parseInt(e.clientX - coords.left);
@@ -285,9 +167,6 @@ var Editor = function (canvasElement) {
         s+='curr' + JSON.stringify(curr) + "<br>";
         s+='editorMode:'+editorMode+'<br>';
         s+='editorStage:'+editorStage+'<br>';
-
-
-
 
         if (editorMode == 'entering') {
             var ef = elfuncs[curr.type];
@@ -340,35 +219,7 @@ var Editor = function (canvasElement) {
             curr.rulers[curr.iRuler][1] = y;
             var params = curr.funcs[curr.iRuler][1];
             f.apply(this, params);
-
         }
-
-
-
-/*
-        boldIds[0] = 'jkjkew';
-        var o1 = objectUnder(x, y);
-        if (o1.length>0) {
-            boldIds[0] = o1;
-            curr.toRedraw = true;
-        }
-
-        //if (editorMode === 'editing') {
-        if (editorMode === 'circle0b' || editorMode == 'editing') {
-            //elfuncs['circle'].edit(doc.docObjs[curr.data].ob, [x,y]);
-            var ef = editorFuncs[0];
-            ef[0].apply(this, ef[1].concat([[x,y]]));
-            ret.getdoc().recalcAllObjs();
-            ret.redraw();
-        };
-        if (editorMode === 'moving') {
-            var pnts = doc.getPnts();
-            pnts[selectedPoint][0] = x;
-            pnts[selectedPoint][1] = y;
-            ret.getdoc().recalcAllObjs();
-            ret.redraw();
-        };
-        */
 
         if (curr.toRedraw) ret.redraw();
     } // mouse move

@@ -465,3 +465,5 @@ write determinant for 3x3 matrix to geom_core and use it for this task;
 2018-03-03
 There are many rulers (more then steps for building element). So it will be WAYS for
 creating element. WAY is array of numbers of rules which participate in element creation.
+update:
+Ways are implemented.
