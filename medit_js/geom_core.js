@@ -5,6 +5,7 @@
 
 
 var GeomCore = function() {
+    var eps = 0.00000001;
 
     return {
         'eps': 0.000000001,
@@ -34,7 +35,52 @@ var GeomCore = function() {
 
 
 
+        //                                                              POINTS
+        'points_int_line_circles': function (line, circle) {
+            // assume a & b normalized
+            var d = this.distance_point_line(circle[0], line);
+            var ab = line[0]*line[0] + line[1]*line[1];
+            var c = line[2] - d / ab;
+            var a = line[0];
+            var b = line[1];
+            var sq = Math.abs(circle[1]*circle[1] * ab - c*c);
+            var x0, y0, x1, y1;
+            if (sq < eps) { // 1 point
+                x0 = 0 - line[0]*c / ab;
+                y0 = 0 - line[1]*c / ab;
+                return [[x0 + circle[0][0], y + circle[0][1]]];
+            };
+            if (sq > 0) {
+                x0 = (0 - line[0]*c + b*Math.sqrt(sq)) / ab;
+                y0 = (0 - line[1]*c - a*Math.sqrt(sq)) / ab;
+                x1 = (0 - line[0]*c - b*Math.sqrt(sq)) / ab;
+                y1 = (0 - line[1]*c + a*Math.sqrt(sq)) / ab;
+                return [
+                    [x0 + circle[0][0], y0 + circle[0][1]],
+                    [x1 + circle[0][0], y1 + circle[0][1]]
+                ];
+            } else {
+                return []
+            }
+        },
 
+        'points_int_line_circle': function (line, circle) {
+            var d = this.distance_point_line(circle[0], line);
+            var a = line[0]; var b = line[1];
+            var st = Math.sqrt(circle[1]*circle[1] - d*d);
+            var lper = [];
+            this.line_per_point_line(lper, circle[0], line);
+            var ptc = [];
+            this.point_int_line_line(ptc, line, lper);
+            var pa = lper[0]; var pb = lper[1];
+            var p0 = [];
+            p0[0] = ptc[0] + pa*st;
+            p0[1] = ptc[1] + pb*st;
+            var p1 = [];
+            p1[0] = ptc[0] - pa*st;
+            p1[1] = ptc[1] - pb*st;
+            return [p0, p1];
+        },
 
         //                                                                      LINE
         'line_per_point_line': function(rez, point, line) {
@@ -111,6 +157,15 @@ var GeomCore = function() {
             return point_rez;
         },
 
+        'distance_point_line': function (point, line) {
+            var d = Math.sqrt(line[0]*line[0] + line[1]*line[1]);
+            var an = line[0] / d;
+            var bn = line[1] / d;
+            var cn = line[2] / d;
+            return an * point[0] + bn*point[1] + cn;
+        },
+
+
 
 
         'rotate_point': function (point_rez, base, point, angleOrDir) { // maybe to store angles as [cos, sin]
@@ -171,6 +226,7 @@ var GeomCore = function() {
             return an * point[0] + bn*point[1] + cn;
         },
         'scalar_len_point_point': function (point0, point1) {
+            debugger;
             var dx = point1[0] - point0[0];
             var dy = point1[1] - point0[0];
             return Math.sqrt(dx*dx + dy*dy);

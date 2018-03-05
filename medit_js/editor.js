@@ -56,6 +56,12 @@ ls2.1=mid(ls1.0,ls1.1)\n\
 \ls6.0=point(400,20)\n\
 \ls6.1=point(400,50)\n\
 \ls6=lineseg(ls6.0,ls6.1)\n\
+\l8.0=point(0,100)\n\
+\l8.1=point(400,150)\n\
+\l8=line(l8.0,l8.1)\n\
+\ls11.0=point(300,300)\n\
+\ls11.1=point(400,300)\n\
+\ls11=lineseg(ls11.0,ls11.1)\n\
 \ls6.1=mid(ls7.0,ls7.1)";
 
 var splitLines = function (txt) {
@@ -102,6 +108,8 @@ var Editor = function (canvasElement) {
 
 
     var geom = require('./geom.js')([300, 300]);
+    var gc = require('./geom_core.js')();
+    var gl = require('./geom_links.js')();
 
     var doc = Doc(elfuncs, doc2);
     var els = doc.getEls();
@@ -264,19 +272,31 @@ var Editor = function (canvasElement) {
                     var r = getSelectedEl(x,y);
 
                     if (r.selected) {
+                        curr.data.click1 = [x, y];
                         curr.data.el1id = r.id;
                         curr.stage++;
+                        curr.dob1 = doc.docObjs[r.id];
                         return 0;
                     }
                 };
                 if (curr.stage == 2) {
                     var r = getSelectedEl(x, y);
                     if (r.selected) {
+                        var dob2 = doc.docObjs[r.id];
+                        if (dob2.type == 'circle') {
+                            curr.data.click1 = [x, y];
+                        };
+
+                        var isCircle = (dob2.type == 'circle') || (doc.docObjs[curr.data.el1id].type == 'circle');
+                        var ps =gl.points_int_line_circle(curr.dob1.ob, dob2.ob);
+                        var d1 = gc.scalar_len_point_point(ps[0], curr.data.click1);
+                        var d2 = gc.scalar_len_point_point(ps[1], curr.data.click1);
+                        if (d1 < d2) { s = 0} else {s=1;}
                         debugger;
                         var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
                             params2: {
                                 query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
-                                main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob], ids: [curr.data.el1id, r.id]}};
+                                main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]}};
                         parser.parseLine(line);
                         editorMode = '';
                         curr.stage = 0;
