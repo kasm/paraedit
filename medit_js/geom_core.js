@@ -34,7 +34,7 @@ var GeomCore = function() {
 
 
 
-        
+
 
         //                                                                      LINE
         'line_per_point_line': function(rez, point, line) {

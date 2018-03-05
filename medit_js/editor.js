@@ -272,6 +272,7 @@ var Editor = function (canvasElement) {
                 if (curr.stage == 2) {
                     var r = getSelectedEl(x, y);
                     if (r.selected) {
+                        debugger;
                         var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
                             params2: {
                                 query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
