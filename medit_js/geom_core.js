@@ -31,6 +31,11 @@ var GeomCore = function() {
             return this.point_int_line_line(rez, line, line1);
         },
 
+
+
+
+        
+
         //                                                                      LINE
         'line_per_point_line': function(rez, point, line) {
             var a = line[0]; var b = line[1]; var c = line[2];

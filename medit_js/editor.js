@@ -227,7 +227,10 @@ var Editor = function (canvasElement) {
         if (editorMode == 'enteringLink') {
             if (curr.type == 'mid') {
                 if (curr.stage ==0) {
-                    var id1 = getSelectedPointId(x, y);
+                    var id1 = getSelectedPointId(x, y); // dirty hack we showing only rulers of selected element but cycle over all points of document
+                    // this is because we cant get Ids of element's points linked to rulers
+                    // because we not passing element's id to gerRulers function
+                    // and we not storing points ids in element at all !!!
                     if (id1.length > 0) {
                         curr.data.rezid = id1;
                         curr.stage++;
@@ -247,6 +250,40 @@ var Editor = function (canvasElement) {
                     }
                 }
             } // mid
+
+            if (curr.type == 'int') {
+                if (curr.stage == 0) {
+                    var id1 = getSelectedPointId(x, y);
+                    if (id1.length>0) {
+                        curr.data.rezid = id1;
+                        curr.stage++;
+                        return 0;
+                    }
+                };
+                if (curr.stage == 1){
+                    var r = getSelectedEl(x,y);
+
+                    if (r.selected) {
+                        curr.data.el1id = r.id;
+                        curr.stage++;
+                        return 0;
+                    }
+                };
+                if (curr.stage == 2) {
+                    var r = getSelectedEl(x, y);
+                    if (r.selected) {
+                        var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
+                            params2: {
+                                query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
+                                main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob], ids: [curr.data.el1id, r.id]}};
+                        parser.parseLine(line);
+                        editorMode = '';
+                        curr.stage = 0;
+                        curr.rulers = [];
+                        return 0;
+                    }
+                }
+            } // int
 
 
         } // entering Link
@@ -389,6 +426,12 @@ var Editor = function (canvasElement) {
         mid: function () {
             curr.data = {};
             curr.type = 'mid';
+            curr.stage = 0; // first stage - result point, second stage - lineseg
+            editorMode = 'enteringLink';
+        },
+        int: function () {
+            curr.data = {};
+            curr.type = 'int';
             curr.stage = 0; // first stage - result point, second stage - lineseg
             editorMode = 'enteringLink';
         },
