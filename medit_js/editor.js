@@ -290,11 +290,17 @@ var Editor = function (canvasElement) {
                         };
 
                         var isCircle = (dob2.type == 'circle') || (doc.docObjs[curr.data.el1id].type == 'circle');
-                        var q = 'points_int' + curr.q0 + curr.q1;
-                        var ps =gl[q](curr.dob1.ob, dob2.ob);
-                        var d1 = gc.scalar_len_point_point(ps[0], curr.data.click1);
-                        var d2 = gc.scalar_len_point_point(ps[1], curr.data.click1);
-                        if (d1 < d2) { s = 0} else {s=1;}
+                        if (isCircle) {
+                            var q = 'points_int' + curr.q0 + curr.q1;
+                            var ps =gl[q](curr.dob1.ob, dob2.ob);
+                            var d1 = gc.scalar_len_point_point(ps[0], curr.data.click1);
+                            var d2 = gc.scalar_len_point_point(ps[1], curr.data.click1);
+                            if (d1 < d2) { s = 0} else {s=1;}
+                        } else {
+                            //var q = ''
+                            s = '';
+                        }
+
                         var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
                             params2: {
                                 query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
