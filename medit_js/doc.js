@@ -108,8 +108,10 @@ var Doc = function (elfuncs, doc_obj) {
     var els = doc_obj.els;
     var links = doc_obj.links;
     var dists = doc_obj.dist;
-    var Geom = require('./geom.js');
-    var geom = Geom(pnts['defPoint']);
+   // var Geom = require('./geom.js');
+    var gl = require('./geom_links.js')();
+
+   // var geom = Geom(pnts['defPoint']);
     var tid = 1000;
     var docObjs = doc_obj.objs;  // this is current, not parameter !!
     var pntid = 1000;
@@ -343,7 +345,7 @@ var Doc = function (elfuncs, doc_obj) {
 
                     if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
                         //rez = geom[ob.query](ob.links);
-                        rez = ob.func.apply(this, ob.mains);
+                        rez = ob.func.apply(gl, ob.mains);
                         ob.solved = true;
                     }
                 };
