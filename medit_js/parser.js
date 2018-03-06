@@ -228,6 +228,13 @@ var Parser = function (doc) {
                     doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
                     doc.objs[line.rez].func  = gl['circle_TTRS'];
                     break;
+                case 'tan2':
+                    doc.objs[line.rez].query = doc.objs[line.rez].type + '_' + 'tan2' + line.params2.query;
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func  = gl[doc.objs[line.rez].query];
+                    break;
+
             }
             return doc.objs[line.rez];
         }, // parseLine

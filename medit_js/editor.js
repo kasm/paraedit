@@ -311,8 +311,80 @@ var Editor = function (canvasElement) {
                         curr.rulers = [];
                         return 0;
                     }
-                }
+                } // stage 2
             } // int
+
+            if (curr.type == 'tan2') {
+                if (curr.stage == 0) {
+                    debugger;
+                    var r = getSelectedEl(x,y);
+                    if (r.id.length > 0) {
+                        curr.data.rezid = r.id;
+                        curr.stage++;
+                        return 0;
+                    }
+                };
+                if (curr.stage == 1) {
+                    var r = getSelectedEl(x,y);
+                    if (r.selected) {
+                        //curr.data.click1 = [x, y];
+                        curr.data.el0id = r.id;
+                        curr.stage++;
+                        curr.dob0 = doc.docObjs[r.id];
+                        curr.q0 = '_' + doc.docObjs[r.id].type;
+                        return 0;
+                    }
+                }; // stage 1
+                if (curr.stage == 2) {
+                    var r = getSelectedEl(x,y);
+
+                    if (r.selected) {
+                        //curr.data.click1 = [x, y];
+                        curr.data.el1id = r.id;
+                        curr.stage++;
+                        curr.dob1 = doc.docObjs[r.id];
+                        curr.q1 = '_' + doc.docObjs[r.id].type;
+                        return 0;
+                    }
+                }; // stage 2
+                if (curr.stage == 3) {
+                    var qq = '_' + doc.docObjs[curr.data.el0id].type + '_' + doc.docObjs[curr.data.el1id].type;
+                    var query = qq;
+                    //var query = doc.docObjs[curr.data.rezid].type + '_tan2' + qq;
+
+                    var cs = gl['circles_tan2' + qq + '_radius'](doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, doc.docObjs[curr.data.rezid].ob[1]);
+                    var dd = 100000000; var di;
+                    for (i = 0; i<cs.length; i++) {
+                        var d = gc.distance_point_point(cs[i][0], [x,y]);
+                        if (d < dd) {
+                            dd = d;
+                            di = i;
+                        }
+                    }; // i
+                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, di];
+
+
+                    var line = {rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id],
+                        params2: {
+                            query: query, //'_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
+                            main: m, //[doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]
+                            ids: [curr.data.el0id, curr.data.el1id]
+                            }};
+                    parser.parseLine(line);
+                    editorMode = '';
+                    curr.stage = 0;
+                    curr.rulers = [];
+                    return 0;
+
+
+
+
+
+                }; // stage 3, last
+
+
+
+            } // tan
 
 
         } // entering Link
@@ -461,6 +533,12 @@ var Editor = function (canvasElement) {
         int: function () {
             curr.data = {};
             curr.type = 'int';
+            curr.stage = 0; // first stage - result point, second stage - lineseg
+            editorMode = 'enteringLink';
+        },
+        tan2: function () {
+            curr.data = {};
+            curr.type = 'tan2';
             curr.stage = 0; // first stage - result point, second stage - lineseg
             editorMode = 'enteringLink';
         },

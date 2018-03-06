@@ -140,6 +140,34 @@ var GeomCore = function() {
             return rez;
         },
 
+        //'circles_parallel_line_parallel_line_radius_distance': function (rez, els) {
+        'circles_tan2_line_line_radius': function (line0, line1, r) {
+            var rez = [];
+            line0[2] += r; line1[2] += r;
+            var point00 = []; this.point_int_line_line(point00, line0, line1);
+            line1[2] -= 2*r;
+            var point01 = []; this.point_int_line_line(point01, line0, line1);
+            line0[2] -= 2*r; line1[2] += 2*r;
+            var point10 = []; this.point_int_line_line(point10, line0, line1);
+            line1[2] -= 2*r;
+            line0[2] += r; line1[2] += r;  // because line0 & line1 are references !!!
+            var point11 = []; this.point_int_line_line(point11, line0, line1);
+            rez.push([point00, r]);
+            rez.push([point01, r]);
+            rez.push([point10, r]);
+            rez.push([point11, r]);
+            return rez;
+        },
+
+        'circle_tan2_line_line_radius_n': function (rez, l0, l1, r, n) {
+            var trez = this.circles_tan_line_line_radius(l0, l1, r)
+            rez[0][0] = trez[n][0][0];
+            rez[0][1] = trez[n][0][1];
+            rez[1] = trez[n][1];
+            return rez;
+        },
+
+
         //                                                  MISC
         
         'get_points': function (type, ob) {
