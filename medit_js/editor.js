@@ -276,23 +276,25 @@ var Editor = function (canvasElement) {
                         curr.data.el1id = r.id;
                         curr.stage++;
                         curr.dob1 = doc.docObjs[r.id];
+                        curr.q0 = '_' + doc.docObjs[r.id].type;
                         return 0;
                     }
                 };
                 if (curr.stage == 2) {
                     var r = getSelectedEl(x, y);
                     if (r.selected) {
+                        curr.q1 = '_' + doc.docObjs[r.id].type;
                         var dob2 = doc.docObjs[r.id];
                         if (dob2.type == 'circle') {
                             curr.data.click1 = [x, y];
                         };
 
                         var isCircle = (dob2.type == 'circle') || (doc.docObjs[curr.data.el1id].type == 'circle');
-                        var ps =gl.points_int_line_circle(curr.dob1.ob, dob2.ob);
+                        var q = 'points_int' + curr.q0 + curr.q1;
+                        var ps =gl[q](curr.dob1.ob, dob2.ob);
                         var d1 = gc.scalar_len_point_point(ps[0], curr.data.click1);
                         var d2 = gc.scalar_len_point_point(ps[1], curr.data.click1);
                         if (d1 < d2) { s = 0} else {s=1;}
-                        debugger;
                         var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
                             params2: {
                                 query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,

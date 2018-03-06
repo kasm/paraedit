@@ -36,7 +36,7 @@ var GeomCore = function() {
 
 
         //                                                              POINTS
-        'points_int_line_circles': function (line, circle) {
+        'points_int_line_circle_old': function (line, circle) {
             // assume a & b normalized
             var d = this.distance_point_line(circle[0], line);
             var ab = line[0]*line[0] + line[1]*line[1];
@@ -81,6 +81,18 @@ var GeomCore = function() {
             p1[1] = ptc[1] - pb*st;
             return [p0, p1];
         },
+        'points_int_circle_circle': function (c0, c1) {
+            var d = this.distance_point_point(c0[0], c1[0]);
+            var mid = []; this.point_mid_point_point(mid, c0[0], c1[0]); // not used
+            var x = (c0[1]*c0[1] - c1[1]*c1[1] + d*d) / (2*d);
+            var h = Math.sqrt(c0[1]*c0[1] - x*x);
+            var lc = []; this.line_point_point(lc, c0[0], c1[0]);
+            var lp = []; this.line_point_ab(lp, c0[0], [lc[1], -lc[0]]); lp[2]-=x;
+            var p0 = []; this.point_int_line_line(p0, lp, [lc[0], lc[1], lc[2]+h]);
+            var p1 = []; this.point_int_line_line(p1, lp, [lc[0], lc[1], lc[2]-h]);
+            return [p0, p1];
+        },
+
 
         //                                                                      LINE
         'line_per_point_line': function(rez, point, line) {
@@ -165,6 +177,10 @@ var GeomCore = function() {
             return an * point[0] + bn*point[1] + cn;
         },
 
+        'distance_point_point': function (p0, p1) {
+            return Math.sqrt((p0[0]-p1[0])*(p0[0]-p1[0]) + (p0[1]-p1[1])*(p0[1]-p1[1]));
+        },
+
 
 
 
@@ -226,10 +242,70 @@ var GeomCore = function() {
             return an * point[0] + bn*point[1] + cn;
         },
         'scalar_len_point_point': function (point0, point1) {
-            debugger;
             var dx = point1[0] - point0[0];
             var dy = point1[1] - point0[0];
             return Math.sqrt(dx*dx + dy*dy);
+        },
+
+
+        //                                                  EXPERIMENT
+        'line_point_ab': function (line, point, ab) {
+            // ax + by + c = 0;  c = -a*x - b*y;
+            line[0] = ab[0]; line[1] = ab[1]; line[2] = -ab[0]*point[0] - ab[1]*point[1];
+            return line;
+        },
+
+        'lineseg_set_ab': function (lineseg, ab) { // maybe should consider to pass fixed points of line segment
+            // in this version just rotate about first point
+            // algo:
+            // 0. get line of lineseg
+            // 1. create new line ab through first point
+            // 2. measure length of lineseg
+            // 3. place new point at same length
+            var line = []; this.line_lineseg(line, lineseg);
+            var line1 = []; this.line_point_ab(line1, lineseg[0], ab);
+            var l = this.distance_point_point(lineseg[0], lineseg[1]);
+            lineseg[1][0] = -b*l; lineseg[1][1] = a*l;
+            return lineseg;
+        },
+
+        // set params, using other params.
+        // ID: original object, pameters set (generated and then changed), fixed set
+        // params:
+        // x0, y0, x1, y1, ab, len
+        'lineseg_getpars': function (lineseg) {
+            var dx = lineseg[1][0] - lineseg[0][0];
+            var dy = lineseg[1][1] - lineseg[0][1];
+            var l = Math.sqrt(dx*dx + dy*dy);
+            var ab = [dy/l, dx/l];
+            return [
+                lineseg[0][0],
+                lineseg[0][1],
+                lineseg[1][0],
+                lineseg[0][1],
+                ab,
+                l
+            ]
+        },
+
+        'lineseg_setpars': function (ls, fixes, change) {
+            var s = '';
+            var pars = this.lineseg_getpars(ls);
+            var par_x0 = pars[0]; var par_y0 = pars[1]; var par_x1 = par[2]; var par_y1 = par[3];
+            var par_ab = pars[4]; var par_l = pars[5];
+
+            for (i=0; i<fixes.length; i++) {
+                var t = '0';
+                if (fixes[i] == 1) { t='1' };
+                if (change.number == i) { t='2'};
+                s+=t;
+            };
+            if (s == '110012') { // change second point by length
+                ls[1][0] = ls[0][0] + par_ab[1]*par_l;
+                ls[1][1] = ls[0][1] - par_ab[0]*par_l;
+            };
+            // etc
+
         }
 
 

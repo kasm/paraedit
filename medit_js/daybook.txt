@@ -472,3 +472,23 @@ Ways are implemented.
 links should be in separate array.
 To be able to work without parent id
 because when select point for 'mid' we must also find element id
+
+2018-03-05
+simple geom equation:
+0*x + 1 * y - 100 = 0
+
+
+a*x + b* y = R
+a*a + b*b = 1
+a = (R-b*y)/x
+(R-b*y)^2 + b^2*x^2 = x^2
+
+IDEA:
+elements will exchage set of parameters
+
+2018-03-06
+
+sample of new links table:
+
+tan(c5,l2, 1) // 1 - side selector
+per(l2,l3)
