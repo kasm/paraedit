@@ -492,3 +492,7 @@ sample of new links table:
 
 tan(c5,l2, 1) // 1 - side selector
 per(l2,l3)
+^^^^
+temporarily foget
+
+2018-03-06

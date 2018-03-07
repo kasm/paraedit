@@ -384,7 +384,7 @@ var Editor = function (canvasElement) {
 
 
 
-            } // tan
+            } // tan2
 
 
         } // entering Link
