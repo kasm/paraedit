@@ -92,7 +92,7 @@ var Editor = function (canvasElement) {
     var gl = require('./geom_links')();
 
     document.getElementById('t1').innerHTML='ddd';
-    var curr = {toRedraw: true, data: []};
+    var curr = {toRedraw: true, data: [], tpnts: []};
     var boldIds = [];
 
     elfuncs['line'] = require('./elements/line.js')();
@@ -386,6 +386,74 @@ var Editor = function (canvasElement) {
 
             } // tan2
 
+            if (curr.type == 'tan21') {
+                if (curr.stage == 0) {
+                    var r = getSelectedEl(x,y);
+                    if (r.id.length > 0) {
+                        curr.data.rezid = r.id;
+                        curr.rezob = doc.docObjs[id];
+                        curr.stage++;
+                        return 0;
+                    }
+                };
+                if (curr.stage == 1) {
+                    var r = getSelectedEl(x,y);
+                    if (r.selected) {
+                        //curr.data.click1 = [x, y];
+                        curr.data.el0id = r.id;
+                        curr.stage++;
+                        curr.dob0 = doc.docObjs[r.id];
+                        curr.q0 = '_' + doc.docObjs[r.id].type;
+                        return 0;
+                    }
+                }; // stage 1
+                if (curr.stage == 2) {
+                    var r = getSelectedEl(x,y);
+
+                    if (r.selected) {
+                        //curr.data.click1 = [x, y];
+                        curr.data.el1id = r.id;
+                        curr.stage++;
+                        curr.dob1 = doc.docObjs[r.id];
+                        curr.q1 = '_' + doc.docObjs[r.id].type;
+                        return 0;
+                    }
+                }; // stage 2
+                if (curr.stage == 3) {
+                    var qq = '_' + curr.dob0.type + '_' + curr.dob1.type;
+                    var r = curr.rezob.ob[1];
+                    debugger;
+                    var tpnts = gc.points_univers(curr.dob0.ob, curr.dob1.ob, r, qq, 'tan');
+                    curr.tpnts = tpnts;
+                    curr.r = curr.rezob.ob[1];
+                    debugger;
+                    var d = 100000000; di = 0;
+                    for (i = 0; i<tpnts.length; i++) {
+                        var dt = gc.distance_point_point(tpnts[i], [x, y]);
+                        if (dt < d) { d = dt; di = i; };
+                    };
+                        // will pass to circle_universe - no need to pass radius
+                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, qq, gc.selectors3.tan[di], 'tan'];
+
+
+                    var line = {rez: curr.data.rezid, func: 'tan21',
+                        params: [curr.data.el0id, curr.data.el1id, ],
+                        params2: {
+                            query: query, //'_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
+                            main: m, //[doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]
+                            ids: [curr.data.el0id, curr.data.el1id]
+                        }};
+                    parser.parseLine(line);
+                    editorMode = '';
+                    curr.stage = 0;
+                    curr.rulers = [];
+                    return 0;
+
+
+
+                } // stage 3
+            } // tan21
+
 
         } // entering Link
 
@@ -538,7 +606,7 @@ var Editor = function (canvasElement) {
         },
         tan2: function () {
             curr.data = {};
-            curr.type = 'tan2';
+            curr.type = 'tan21';
             curr.stage = 0; // first stage - result point, second stage - lineseg
             editorMode = 'enteringLink';
         },
@@ -572,6 +640,10 @@ var Editor = function (canvasElement) {
                 }
                 elfuncs[elrec.type].draw(cvc, elrec.ob);
                 cvc.lineWidth = 1;
+            };
+
+            for (i=0; i<curr.tpnts.length; i++){
+                elfuncs['circle'].draw(cvc, [curr.tpnts[i], curr.r]);
             };
 
             cvc.beginPath();

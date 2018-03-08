@@ -148,7 +148,7 @@ var Parser = function (doc) {
             return (t === 'line' || t === 'circle' || t === 'lineseg');
         },
         isLink: function (t) {
-            return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq')
+            return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq' || t === 'tan2' || t ==='tan3');
         },
         // line format:
         //
@@ -232,6 +232,13 @@ var Parser = function (doc) {
                     doc.objs[line.rez].query = doc.objs[line.rez].type + '_' + 'tan2' + line.params2.query;
                     doc.objs[line.rez].mainIds = line.params2.ids;
                     doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func  = gl[doc.objs[line.rez].query];
+                    break;
+                case 'tan21':
+                    doc.objs[line.rez].query = 'circle_univers';
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    debugger;
                     doc.objs[line.rez].func  = gl[doc.objs[line.rez].query];
                     break;
 

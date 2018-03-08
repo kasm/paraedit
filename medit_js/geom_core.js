@@ -81,6 +81,9 @@ var GeomCore = function() {
             p1[1] = ptc[1] - pb*st;
             return [p0, p1];
         },
+
+
+
         'points_int_circle_circle': function (c0, c1) {
             var d = this.distance_point_point(c0[0], c1[0]);
             var mid = []; this.point_mid_point_point(mid, c0[0], c1[0]); // not used
@@ -91,6 +94,11 @@ var GeomCore = function() {
             var p0 = []; this.point_int_line_line(p0, lp, [lc[0], lc[1], lc[2]+h]);
             var p1 = []; this.point_int_line_line(p1, lp, [lc[0], lc[1], lc[2]-h]);
             return [p0, p1];
+        },
+
+
+        'points_int_line_line': function (l0, l1) {
+            rez = [[]]; return this.point_int_line_line(rez[0], l0, l1);
         },
 
 
@@ -168,6 +176,8 @@ var GeomCore = function() {
         },
 
 
+
+
         //                                                  MISC
         
         'get_points': function (type, ob) {
@@ -208,8 +218,6 @@ var GeomCore = function() {
         'distance_point_point': function (p0, p1) {
             return Math.sqrt((p0[0]-p1[0])*(p0[0]-p1[0]) + (p0[1]-p1[1])*(p0[1]-p1[1]));
         },
-
-
 
 
         'rotate_point': function (point_rez, base, point, angleOrDir) { // maybe to store angles as [cos, sin]
@@ -334,8 +342,239 @@ var GeomCore = function() {
             };
             // etc
 
+        },// lineseg setpars
+
+        'point_line_circle_selector': function(rez, line, circle, selector) {
+
+        },
+
+        //                                                              UNIVERSAL POINTS
+
+        selectors2: {
+                tan: [[-1, -1], [-1, 1], [1, -1], [1, 1]],
+                    int: [0, 0]
+            },
+        selectors3: {
+                tan: [
+                    [-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+                    [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]
+                ],
+                    int: [[-1, 0, 0], [1, 0, 0]]
+            },
+
+
+        'point_int_line_line_radius_selector': function (rez, l0, l1, r, selector) {
+                return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+            },
+                'point_int_lineseg_line_radius_selector': function (rez, ls0, l1, r, selector) {
+                var l0 = [];
+                this.line_lineseg(l0, ls0);
+                return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+            },
+                'point_int_line_lineseg_radius_selector': function (rez, l0, ls1, r, selector) {
+                var l1 = [];
+                this.line_lineseg(l1, ls1);
+                return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+            },
+                'point_int_lineseg_lineseg_radius_selector': function (rez, ls0, ls1, r, selector) {
+                var l0 = [];
+                this.line_lineseg(l0, ls0);
+                var l1 = [];
+                this.line_lineseg(l1, ls1);
+                return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+            },
+
+
+                'point_int_line_circle_radius_selector': function (rez, line, circle, radius, selector) {
+                // selector : [intersection number, circle side, line side]
+                    debugger;
+                var sline = [line[0], line[1], line[2] + selector[2] * radius];
+                var scircle = [circle[0], circle[1] + selector[1] * radius];
+                var h = this.distance_point_line(scircle[0], sline);
+                var x2 = scircle[1] * scircle[1] - h * h;
+                /*
+                 if (x2 < 0) { // actually there are still 2 external circles possible
+                 rez = [];
+                 return rez;
+                 };
+                 */
+                var x = Math.sqrt(x2);
+                var lper = [];
+                this.line_per_point_line(lper, scircle[0], sline);
+                this.point_int_line_line(rez, sline, [lper[0], lper[1], lper[2] + selector[0] * x]);
+                return rez;
+            },
+                'point_int_lineseg_circle_radius_selector': function (rez, lineseg, circle, radius, selector) {
+                var line = [];
+                this.line_lineseg(line, lineseg);
+                return this.point_int_line_circle_radius_selector(rez, line, circle, radius, selector);
+            },
+                'point_int_circle_line_radius_selector': function (rez, circle, line, radius, selector) {
+                return this.point_int_line_circle_radius_selector(rez, line, circle, radius, selector);
+            },
+                'point_int_circle_lineseg_radius_selector': function (rez, circle, lineseg, radius, selector) {
+                var line = [];
+                this.line_lineseg(line, lineseg);
+                return this.point_int_line_circle_radius_selector(rez, line, circle, radius, selector);
+            },
+
+
+                'point_int_circle_circle_radius_selector': function (rez, c0, c1, radius, selector) {
+                // selector: [intNumber, c0 side, c1 side]
+                var d = this.distance_point_point(c0[0], c1[0]);
+                var lc = [];
+                this.line_point_point(lc, c0[0], c1[0]);
+                var lp = [];
+                this.line_per_point_line(lp, c0[0], lc);
+                var r0 = c0[1] + selector[1] * radius;
+                var r1 = c1[1] + selector[2] * radius;
+                var x = (r0 * r0 - r1 * r1 + d * d) / (2 * d);
+                var h = Math.sqrt(r0 * r0 - x * x);
+                this.point_int_line_line(rez, [lc[0], lc[1], lc[2] + selector[0] * h], [lp[0], lp[1], lp[2] - x]);
+            },
+
+
+            'ff2': function () {
+
+              return {
+                  '_line_line': {
+                      func: this.point_int_line_line_radius_selector,
+                      selectors: {
+                          tan: [[-1, -1], [-1, 1], [1, -1], [1, 1]],
+                          int: [0, 0]
+                      }
+                  },
+                  '_line_lineseg': {
+                      func: this.point_int_line_lineseg_radius_selector,
+                      selectors: this.selectors2
+                  },
+                  '_lineseg_line': {
+                      func: this.point_int_lineseg_line_radius_selector,
+                      selectors: this.selectors2
+                  },
+                  '_lineseg_lineseg': {
+                      func: this.point_int_lineseg_lineseg_radius_selector,
+                      selectors: this.selectors2
+                  },
+
+                  '_line_circle': {
+                      func: this.point_int_line_circle_radius_selector,
+                      selectors: this.selectors3
+                  },
+                  '_lineseg_circle': {
+                      func: this.point_int_lineseg_circle_radius_selector,
+                      selectors: this.selectors3
+                  },
+                  '_circle_lineseg': {
+                      func: this.point_int_circle_lineseg_radius_selector,
+                      selectors: this.selectors3
+                  },
+                  '_circle_line': {
+                      func: this.point_int_circle_line_radius_selector,
+                      selectors: this.selectors3
+                  },
+                  '_circle_circle': {
+                      func: this.point_int_circle_circle_radius_selector,
+                      selectors: this.selectors3
+                  }
+              }
+        },
+
+                points_univers: function (el0, el1, radius, types, reg) { //reg = 'tan' or 'int'
+                    var ff = {
+                        '_line_line': this._line_line,
+                        '_line_lineseg': this._line_lineseg,
+                        '_lineseg_line': this._lineseg_line,
+                        '_lineseg_lineseg': {
+                            func: this.point_int_lineseg_lineseg_radius_selector,
+                            selectors: this.selectors2
+                        },
+                        '_line_circle': this._line_circle,
+                        '_lineseg_circle': this._lineseg_circle,
+                        '_circle_line': this._circle_line,
+                        '_circle_lineseg': this._circle_lineseg,
+                        '_circle_circle': this._circle_circle
+                    };
+                    var ff2 = this.ff2();
+
+                    var trez = [];
+                    var f = ff2[types];
+                    for (i = 0; i < this.selectors3.tan.length; i++) {
+                    //for (i = 0; i < this.funcs[types].selectors[reg].length; i++) {
+                        trez[i] = [];
+                        //var ff = 'point_int' + types + '_radius_selector';
+                        f.func.apply(this, [trez[i], el0, el1, radius, this.selectors3.tan[i]]);
+                        //this.funcs[types].func(trez[i], el0, el1, radius, f.selectors[reg][i]);
+                    }
+                    return trez;
+                }, // points int el el
+
+                point_univers: function (rez, el0, el1, radius, types, selector, reg) {
+                    var ff = {
+                        '_line_line': this._line_line,
+                        '_line_lineseg': this._line_lineseg,
+                        '_lineseg_line': this._lineseg_line,
+                        '_lineseg_lineseg': this._lineseg_lineseg,
+                        '_line_circle': this._line_circle,
+                        '_lineseg_circle': this._lineseg_circle,
+                        '_circle_line': this._circle_line,
+                        '_circle_lineseg': this._circle_lineseg,
+                        '_circle_circle': this._circle_circle
+
+                    };
+                    var ff2 = this.ff2();
+
+                    var f = ff2[types];
+
+
+
+                    return f.func.apply(this, [rez, el0, el1, radius, selector]);
+                    //return this.funcs[types].func(rez, el0, el1, radius, selector);
+                },
+                circle_univers: function (rez, el0, el1, types, selector) {
+                    return this.point_univers(rez[0], el0, el1, rez[1], types, selector, 'tan');
+                }
+
+
+
+
+
+
+/*
+        'points_int': [],
+        'int': {
+            points: function(el0, el1, types) {
+
+            }
+
+            'lineline': {
+
+
+            },
+            'linecircle': {
+                selectorArray: [-1, 1],
+                point: function(p, line, circle, selector) {
+                    p[0] = ljsdf + selector *h;
+                    return p;
+                }
+                points: function(line, circle) {
+                    var rez = []
+                    for (i =0; i<this.selectorArray.length; i++) {
+                        rez[i] = [];
+                        this.point(rez[i], selectorArra[i]);
+                    }
+                }
+            },
+            point: function(ob0, ob1, selector){
+
+            },
+            intArray: {
+                'lineline': [0],
+                'linecircle': [0, 1]
+            }
         }
 
+*/
 
 
 
