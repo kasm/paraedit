@@ -387,7 +387,6 @@ var GeomCore = function() {
 
                 'point_int_line_circle_radius_selector': function (rez, line, circle, radius, selector) {
                 // selector : [intersection number, circle side, line side]
-                    debugger;
                 var sline = [line[0], line[1], line[2] + selector[2] * radius];
                 var scircle = [circle[0], circle[1] + selector[1] * radius];
                 var h = this.distance_point_line(scircle[0], sline);

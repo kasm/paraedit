@@ -416,24 +416,24 @@ var Editor = function (canvasElement) {
                         curr.stage++;
                         curr.dob1 = doc.docObjs[r.id];
                         curr.q1 = '_' + doc.docObjs[r.id].type;
+
+                        curr.qq = '_' + curr.dob0.type + '_' + curr.dob1.type;
+                        var r = curr.rezob.ob[1];
+                        var tpnts = gc.points_univers(curr.dob0.ob, curr.dob1.ob, r, curr.qq, 'tan');
+                        curr.tpnts = tpnts;
+                        curr.r = curr.rezob.ob[1];
+
                         return 0;
                     }
                 }; // stage 2
                 if (curr.stage == 3) {
-                    var qq = '_' + curr.dob0.type + '_' + curr.dob1.type;
-                    var r = curr.rezob.ob[1];
-                    debugger;
-                    var tpnts = gc.points_univers(curr.dob0.ob, curr.dob1.ob, r, qq, 'tan');
-                    curr.tpnts = tpnts;
-                    curr.r = curr.rezob.ob[1];
-                    debugger;
                     var d = 100000000; di = 0;
-                    for (i = 0; i<tpnts.length; i++) {
-                        var dt = gc.distance_point_point(tpnts[i], [x, y]);
+                    for (i = 0; i<curr.tpnts.length; i++) {
+                        var dt = gc.distance_point_point(curr.tpnts[i], [x, y]);
                         if (dt < d) { d = dt; di = i; };
                     };
                         // will pass to circle_universe - no need to pass radius
-                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, qq, gc.selectors3.tan[di], 'tan'];
+                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, curr.qq, gc.selectors3.tan[di], 'tan'];
 
 
                     var line = {rez: curr.data.rezid, func: 'tan21',
@@ -447,6 +447,7 @@ var Editor = function (canvasElement) {
                     editorMode = '';
                     curr.stage = 0;
                     curr.rulers = [];
+                    curr.tpnts = []
                     return 0;
 
 
@@ -534,6 +535,7 @@ var Editor = function (canvasElement) {
             curr.rulers = [];
             curr.funcs = [];
         };
+
 
 
         if (editorMode == 'editing') {
@@ -642,9 +644,31 @@ var Editor = function (canvasElement) {
                 cvc.lineWidth = 1;
             };
 
-            for (i=0; i<curr.tpnts.length; i++){
-                elfuncs['circle'].draw(cvc, [curr.tpnts[i], curr.r]);
-            };
+
+
+            if (editorMode == 'enteringLink' && curr.type == 'tan21' && curr.stage == 3){
+                var i; var di;
+                var d = 100000000; di = 0;
+                for (i = 0; i<curr.tpnts.length; i++) {
+                    var dt = gc.distance_point_point(curr.tpnts[i], [curr.x, curr.y]);
+                    if (dt < d) { d = dt; di = i; };
+                };
+                for (i=0; i<curr.tpnts.length; i++){
+                    cvc.strokeStyle='green';
+                    cvc.lineWidth = 1;
+
+
+                    if (i == di) {
+                        cvc.strokeStyle = 'blue';
+                        cvc.lineWidth = 3;
+
+                    }
+                    elfuncs['circle'].draw(cvc, [curr.tpnts[i], curr.r]);
+
+                };
+
+
+            }
 
             cvc.beginPath();
             cvc.fillStyle = '#00f';
