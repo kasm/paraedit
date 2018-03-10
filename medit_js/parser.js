@@ -59,6 +59,7 @@ var Parser = function (doc) {
             line.params = strAndOb.str;
             line.params2 = {};
             line.params2.main = strAndOb.ob;
+            line.params2.parts = params;
             line.rez = id;
             line.func = type;
             var r = this.parseLine(line, '');
@@ -67,6 +68,7 @@ var Parser = function (doc) {
             doc.objs[id] = this.obCreateIfNot(id);
             doc.objs[id].type = type;
             doc.objs[id].ob = rez.main;
+            doc.objs[id].parts = params;
             return doc.objs[id];
         },
 
@@ -80,8 +82,8 @@ var Parser = function (doc) {
         // query: '_line_scalar_line_scalar_scalar'
         // ids: ['l1',,'l2',,]
         // types: ['line' ....]
-        parseParam2: function (parT) { var rez= {main: [], refs: [], query: '', ids: [], types: [], idns: []}; var i;
-
+        parseParam2: function (parT) { var rez= {main: [], refs: [], query: '', ids: [], types: [], idns: [], parts: []}; var i;
+            rez.parts = parT;
             for (i=0; i<parT.length; i++) {
                 t=parT[i].split('.');
                 ts = '';
@@ -125,6 +127,17 @@ var Parser = function (doc) {
                 this.parseLine(lines[i], false);
             } // false meain not by points
         },
+        split1: function (text) {
+            var rez = {};
+            rez.raw = text;
+            var a1 = text.split('=');
+            rez.rez = a1[0];
+            var a2 = a1.split('(');
+            rez.func = a2[0];
+            var a3 = a2[1].split(')');
+            rez.params = a3[0].split(',');
+
+        },
         splitter: function (text) {
             var i; var a1, a2, a3, rezText;
             lines = [];
@@ -140,6 +153,7 @@ var Parser = function (doc) {
                 lines[i].params = a3[0].split(',');
                 lines[i].params2 = this.parseParam2(lines[i].params);
                 this.parseLine(lines[i], false);
+                doc.doclines[lines[i].rez] = lines[i];
             };
             return lines;
 
@@ -147,6 +161,10 @@ var Parser = function (doc) {
         isElem: function (t) {
             return (t === 'line' || t === 'circle' || t === 'lineseg');
         },
+        isElemAll: function (t) {
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'point');
+        },
+
         isLink: function (t) {
             return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq' || t === 'tan2' || t ==='tan3');
         },
@@ -155,6 +173,12 @@ var Parser = function (doc) {
         parseLine: function (line, byPoints) { // creating objects (elements, points, etc) and/or setting links
             var i;
             //var params2 = this.parseParam2(line.params);
+            if (this.isElem(line.func)) {
+                doc.objs[line.rez] = this.obCreateIfNot(line.rez);
+                doc.objs[line.rez].raw = line.raw;
+                doc.objs[line.rez].ids = line.params2.ids;
+                doc.objs[line.rez].parts = line.params2.parts;
+            }
             switch (line.func) {
                 case 'point': doc.pnts[line.rez] = line.params2.main;
                     doc.objs[line.rez] = this.obCreateIfNot(line.rez);

@@ -104,6 +104,16 @@ a * (x0 + xt*t) + b*(y0+yt*t) + c = 0
 
 
 var Doc = function (elfuncs, doc_obj) {
+    var doc = doc_obj; //                                                    DIRTY !!!
+    var Parser = require('./parser.js');
+    parser = Parser(doc_obj);
+    parser.splitter(doc_obj.doctext); // put to doclines
+
+
+
+
+
+
     var pnts = doc_obj.pnts;
     var els = doc_obj.els;
     var links = doc_obj.links;
@@ -121,6 +131,61 @@ var Doc = function (elfuncs, doc_obj) {
     var linesegid = 1000;
     var currfuncs = [];
     return {
+        doctext: doc_obj.doctext,
+        doclines: doc.doclines,
+        updateDocLines: function () { var i;
+            for (var member in doc.doclines) delete doc.doclines[member];
+            for (id in docObjs) {
+                var dob = docObjs[id];
+                doc.doclines[id] = {};
+                doc.doclines[id].rez = id;
+                doc.doclines[id].func = dob.type;
+                doc.doclines[id].params = [];
+                for (i = 0; i<elfuncs[dob.type].paramTypes.length; i++) {
+                    if (elfuncs[dob.type].paramTypes[i] == 'val') {
+                        doc.doclines[id].params[i] = Math.round(dob.ob[i]);
+                    } else {
+                        doc.doclines[id].params[i] = docObjs[id].parts[i];
+                    }
+                }
+            }
+        },
+        toTextEls: function() {
+            this.updateDocLines();
+            var s = [];
+            var i, j; i = 0;
+
+            for (id in doc.doclines) {
+                var dob = docObjs[id];
+            //for (i = 0; i < doc.doclines.length; i++) {
+                if (parser.isElemAll(dob.type)) {
+                    s[i] = doc.doclines[id].rez + '=' + doc.doclines[id].func + '(';
+                    for (j = 0; j < doc.doclines[id].params.length; j++) {
+                        var t = doc.doclines[id].params;
+                        s[i] += doc.doclines[id].params[j];
+                        if (j < doc.doclines[id].params.length - 1) s[i] += ',';
+                    }
+                    ;
+                    s[i] += ')'; i++;
+                }
+            }
+            ;
+            return s;
+        },
+
+        toTextLinks: function () { var i; var as = [];
+            for (i = 0; i<doc.doclines.length; i++)  {
+                if (parser.isLink(doc.doclines[i].func)) {
+                    as[i] = doc.doclines[i].rez +'='+doc.doclines[i].func+'(';
+                    for (j=0; j<doc.doclines[i].params.length; j++) {
+                        as[i]+=doc.doclines[i].params[j];
+                        if (j < doc.doclines[i].params.length - 1) as[i]+=',';
+                    };
+                    as[i]+=')';
+                };
+            }
+            return as;
+        },
         pnts: doc_obj.pnts,
         linesegs: doc_obj.linesegs,
         circles: doc_obj.circles,

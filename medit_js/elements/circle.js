@@ -10,6 +10,7 @@ var Circle = function () {
         nRulers: 2,
         rulerNames: ['c', 'rp'],
         params: ['c', '10'],
+        paramTypes: ['id', 'val'], // id, val, array
         ob: [[0, 0], 10],
         draw: function (cvc, circle) {
             cvc.beginPath();

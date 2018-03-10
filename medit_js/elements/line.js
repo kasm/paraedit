@@ -34,6 +34,7 @@ var Line = function () {
         nRulers: 2,
         rulerNames: ['p0', 'p1'],
         params: [0, 1, -100],
+        paramTypes: ['id', 'id'],
         ob: [[0,0], [10, 0]],
 
         isOver: function (line, x, y) {
@@ -107,7 +108,7 @@ var Line = function () {
         },
         draw: function (cvc, element) {
             cvc.beginPath();
-            bpnts = this.getLineBounds(element, {left: 0, top: 0, right: 450, bottom: 550});
+            bpnts = this.getLineBounds(element, {left: 0, top: 0, right: 600, bottom: 600});
             var lx = this.setFromPoints([0,0], [1,0]);
             var ly = this.setFromPoints([0,0], [0, 1]);
             cvc.moveTo(bpnts[0][0], bpnts[0][1]);

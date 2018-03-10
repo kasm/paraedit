@@ -70,17 +70,22 @@ var splitLines = function (txt) {
 
 var docTextArray = doctext.split('\n');
 var doc2={objs: {},
-pnts: {},
+    pnts: {},
     linesegs: {},
     lines: {},
     circles: {},
     scalars: {},
     docData: [],
-    curr: {}
+    curr: {},
+    doctext: doctext,
+    doclines: {},
+    docTest2: []
 };
 
 var Editor = function (canvasElement) {
     document.getElementById('t1').innerHTML='ddd';
+
+
     var Parser = require('./parser.js');
     parser = Parser(doc2);
     parser.splitter(doctext);
@@ -98,6 +103,7 @@ var Editor = function (canvasElement) {
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
+    elfuncs['point'] = require('./elements/point.js')();
 
     var linkParams = { // not used
         mid: ['point', 'element'],
@@ -627,6 +633,11 @@ var Editor = function (canvasElement) {
                 s+= JSON.stringify(doc.docObjs[k[i]]) + '<br>';
             };
             tt.innerHTML=s+'</>';
+            //debugger;
+            s = '';
+            var as = doc.toTextEls();
+            for (i=0; i<as.length; i++) { s+=as[i]+'\n'; };
+            tt.innerHTML=s;
 
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
@@ -674,7 +685,7 @@ var Editor = function (canvasElement) {
             cvc.fillStyle = '#00f';
             for (pntid in pnts) {
                 p = pnts[pntid];
-                cvc.fillText(pntid+'('+p[0]+','+p[1]+')', p[0], p[1]);
+                cvc.fillText(pntid+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
             };
             for (elid in els) {
                 el = els[elid]; x=0; y=0; count = 0;

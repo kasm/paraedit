@@ -3,6 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .editor {
+            float: left;
+            width: 630px;
+            height: 630px;
+            border: 1px;
+            border-color: black;
+        }
+        .text1 {
+            float: left;
+            width: 250px;
+            height: 600px;
+            border: 1px;
+            background-color:#aaa;
+            border-color: black;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -16,10 +38,18 @@
 
 </div>
 <div>
-    <canvas id='c1' width = 600; height =600></canvas>
+<div style="border-color: black; border: 3px" class="editor">
+    Editor working area:<br>
+    <canvas id='c1' width="600px" height="600px" style="border: 1px; border-color: green; border-style: solid; width: 600px; height: 600px"></canvas>
 </div>
-<div id="t1">
-fff
+    <div class="text1">
+        Text area:
+        <textarea title="t1title" id="t1" class="text1" style="border: 1px; border-color: green; border-style: solid;">
+
+        </textarea>
+
+    </div>
+
 </div>
 <div id="t2">
     fff

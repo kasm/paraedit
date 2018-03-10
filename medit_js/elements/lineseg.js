@@ -17,6 +17,7 @@ var LineSeg = function () {
         nRulers: 2,
         rulerNames: ['p0', 'p1'],
         params: ['p0', 'p1'],
+        paramTypes: ['id', 'id'],
         ob: [[0,0], [10, 0]],
         isOver: function (ls, x, y) {
 
