@@ -108,6 +108,7 @@ var Doc = function (elfuncs, doc_obj) {
     var Parser = require('./parser.js');
     parser = Parser(doc_obj);
     parser.splitter(doc_obj.doctext); // put to doclines
+    parser.parser();
 
 
 
@@ -131,24 +132,48 @@ var Doc = function (elfuncs, doc_obj) {
     var linesegid = 1000;
     var currfuncs = [];
     return {
+        clear: function () {
+            doc = {objs: {},
+                pnts: {},
+                linesegs: {},
+                lines: {},
+                circles: {},
+                scalars: {},
+                docData: [],
+                curr: {},
+                doctext: doctext,
+                doclines: [],
+                docTest2: []
+            };
+        },
         doctext: doc_obj.doctext,
         doclines: doc.doclines,
-        updateDocLines: function () { var i;
-            for (var member in doc.doclines) delete doc.doclines[member];
-            for (id in docObjs) {
-                var dob = docObjs[id];
-                doc.doclines[id] = {};
-                doc.doclines[id].rez = id;
-                doc.doclines[id].func = dob.type;
-                doc.doclines[id].params = [];
-                for (i = 0; i<elfuncs[dob.type].paramTypes.length; i++) {
-                    if (elfuncs[dob.type].paramTypes[i] == 'val') {
-                        doc.doclines[id].params[i] = Math.round(dob.ob[i]);
-                    } else {
-                        doc.doclines[id].params[i] = docObjs[id].parts[i];
+        updateDocLinesFromObj: function () { var i, j;
+            //for (var member in doc.doclines) delete doc.doclines[member];
+            for (i = 0; i<doc.doclines.length; i++) {
+                if (parser.isElemAll(doc.doclines[i].func)) {
+                    var dob = docObjs[doc.doclines[i].rez];
+                    /*
+                     doc.doclines[id] = {};
+                     doc.doclines[id].rez = id;
+                     doc.doclines[id].func = dob.type;
+                     doc.doclines[id].params = [];
+                     */
+                    for (j = 0; j<elfuncs[dob.type].paramTypes.length; j++) {
+                        if (elfuncs[dob.type].paramTypes[j] == 'val') {
+                            doc.doclines[i].params[j] = Math.round(dob.ob[j]);
+                        } else {
+                            doc.doclines[i].params[j] = dob.parts[j];
+                        }
                     }
                 }
             }
+        },
+        updateDocLinesFromText: function () {
+            parser.splitter(doc.doctext);
+        },
+        updateObjFromDocLines: function () {
+            parser.parseSplitted();
         },
         toTextEls: function() {
             this.updateDocLines();
@@ -185,6 +210,23 @@ var Doc = function (elfuncs, doc_obj) {
                 };
             }
             return as;
+        },
+        toText: function () {
+            this.updateDocLinesFromObj();
+
+            var i; var s = [];
+            for (i=0; i<doc.doclines.length; i++) {
+                s[i] = doc.doclines[i].rez + '=' + doc.doclines[i].func + '(';
+                for (j = 0; j < doc.doclines[i].params.length; j++) {
+                    var t = doc.doclines[i].params;
+                    s[i] += doc.doclines[i].params[j];
+                    if (j < doc.doclines[i].params.length - 1) s[i] += ',';
+                }
+                ;
+                s[i] += ')';
+            }
+            return s;
+            doc.doctext = s;
         },
         pnts: doc_obj.pnts,
         linesegs: doc_obj.linesegs,
@@ -385,16 +427,12 @@ var Doc = function (elfuncs, doc_obj) {
               because of complex structure of links data (for instance distance and side)
 
              */
-            var t2 = document.getElementById('t2');
+
             //this.fillElPnts();
             //this.fillDocObjs();
             var done = false;
             var rez;
             var mains;
-            var s5='';
-            for (id in docObjs) s5+=id+":"+docObjs[id].mainIds.length+"<br>";
-            t2.innerHTML = s5;
-            //for (id in docObjs) if (docObjs[id].mainIds.length>0) docObjs[id].solved=false;
             while (!done) {
 
                 for (id in docObjs) {

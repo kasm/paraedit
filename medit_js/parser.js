@@ -28,6 +28,8 @@ var Parser = function (doc) {
             };
             return rez;
         },
+
+        // takes ID of parent el and array 'params' from 'circle.js'
         createPointsAndFillParams: function (id, paramsStrArray) { var i;
             var paramsOb = {str: [], ob: []}; var fullId;
             for (i = 0; i<paramsStrArray.length; i++) {
@@ -43,6 +45,7 @@ var Parser = function (doc) {
                         ob: doc.pnts[fullId]
                     };
                     paramsOb.str[i] = fullId;
+                    doc.doclines.push({rez: fullId, func: 'point', params: ['0', '0']});
                     paramsOb.ob[i] = doc.pnts[fullId];
                 } else {
                     paramsOb.ob[i] = parseInt(paramsStrArray[i]);
@@ -59,17 +62,20 @@ var Parser = function (doc) {
             line.params = strAndOb.str;
             line.params2 = {};
             line.params2.main = strAndOb.ob;
-            line.params2.parts = params;
+            line.params2.parts = strAndOb.str;
             line.rez = id;
             line.func = type;
+            doc.doclines.push({rez: id, func: type, params: line.params});
             var r = this.parseLine(line, '');
             return r;
 
+/*
             doc.objs[id] = this.obCreateIfNot(id);
             doc.objs[id].type = type;
             doc.objs[id].ob = rez.main;
             doc.objs[id].parts = params;
             return doc.objs[id];
+            */
         },
 
         // return main array (for solver) and part of query and optional - ref array
@@ -119,14 +125,16 @@ var Parser = function (doc) {
             }// i
             return rez;
         },
-
+/*
        parseSplitted: function () {
             var i;
+
             for (i=0; i<lines.length; i++) {
-                var params2 = this.parseParam2(lines[i]);
+                var params2 = this.parseParam2(lines[i].params);
                 this.parseLine(lines[i], false);
             } // false meain not by points
         },
+        */
         split1: function (text) {
             var rez = {};
             rez.raw = text;
@@ -140,7 +148,7 @@ var Parser = function (doc) {
         },
         splitter: function (text) {
             var i; var a1, a2, a3, rezText;
-            lines = [];
+            lines = []; doc.doclines.length = 0;
             var lines1 = text.match(/[^\r\n]+/g);
             for (i=0; i<lines1.length; i++) {
                 lines[i] = {};
@@ -151,13 +159,23 @@ var Parser = function (doc) {
                 lines[i].func=a2[0];
                 a3 = a2[1].split(')');
                 lines[i].params = a3[0].split(',');
-                lines[i].params2 = this.parseParam2(lines[i].params);
-                this.parseLine(lines[i], false);
-                doc.doclines[lines[i].rez] = lines[i];
+                //lines[i].params2 = this.parseParam2(lines[i].params);
+                //this.parseLine(lines[i], false);
+                doc.doclines[i] = lines[i];
             };
             return lines;
-
         },
+
+        parser: function () { // from doc.doclines
+            var i;
+            //doc.objs = {};
+            for (i=0; i<doc.doclines.length; i++) {
+                doc.doclines[i].params2 = this.parseParam2(doc.doclines[i].params);
+                this.parseLine(doc.doclines[i])
+            }
+            return doc.doclines;
+        },
+
         isElem: function (t) {
             return (t === 'line' || t === 'circle' || t === 'lineseg');
         },

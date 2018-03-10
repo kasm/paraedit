@@ -78,7 +78,7 @@ var doc2={objs: {},
     docData: [],
     curr: {},
     doctext: doctext,
-    doclines: {},
+    doclines: [],
     docTest2: []
 };
 
@@ -118,15 +118,11 @@ var Editor = function (canvasElement) {
     var gl = require('./geom_links.js')();
 
     var doc = Doc(elfuncs, doc2);
-    var els = doc.getEls();
 
     var cvc = canvasElement.getContext('2d');
     var coords = canvasElement.getBoundingClientRect();
     var holderSize = 5;
-    var selectedPoint;
-    var editorMode = '';
-    var editorLookFor = '';
-    var editorFuncs = []; // [[func, data], ....]
+    var editorMode = 'wait';
     var objectUnder = function(x, y) {
         var id_rez = '';
         for (id in doc.circles) {
@@ -212,9 +208,10 @@ var Editor = function (canvasElement) {
         if (editorMode == 'entering') {
             curr.stage++;
             if (elfuncs[curr.type].ways[0].length == curr.stage) {
-                editorMode = '';
+                editorMode = 'wait';
                 curr.funcs = [];
                 curr.rulers = [];
+                curr.stage = 0;
                 return 0;
             };
         } // if entering
@@ -233,7 +230,7 @@ var Editor = function (canvasElement) {
         } // waitRuler
 
         if (editorMode == 'editing') {
-            editorMode = '';
+            editorMode = 'wait';
             curr.funcs = [];
             curr.rulers = [];
         }
@@ -258,7 +255,7 @@ var Editor = function (canvasElement) {
                         var line = {rez: curr.data.rezid, func: 'mid', params: r.id,
                             params2: {query: '_lineseg', main: [doc.docObjs[r.id].ob], ids: [r.id]}};
                         parser.parseLine(line);
-                        editorMode = '';
+                        editorMode = 'wait';
                         curr.rulers = [];
                         curr.stage = 0;
                     }
@@ -312,7 +309,7 @@ var Editor = function (canvasElement) {
                                 query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
                                 main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]}};
                         parser.parseLine(line);
-                        editorMode = '';
+                        editorMode = 'wait';
                         curr.stage = 0;
                         curr.rulers = [];
                         return 0;
@@ -450,7 +447,7 @@ var Editor = function (canvasElement) {
                             ids: [curr.data.el0id, curr.data.el1id]
                         }};
                     parser.parseLine(line);
-                    editorMode = '';
+                    editorMode = 'wait';
                     curr.stage = 0;
                     curr.rulers = [];
                     curr.tpnts = []
@@ -470,6 +467,7 @@ var Editor = function (canvasElement) {
     var mouseMove = function (e) {
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
+        if (x>620 || y<0) return 0;
         curr.x = x; curr.y = y;
 
         var tt = document.getElementById('t1'); var s='<font size="2">';
@@ -477,6 +475,7 @@ var Editor = function (canvasElement) {
         s+='curr' + JSON.stringify(curr) + "<br>";
         s+='editorMode:'+editorMode+'<br>';
         s+='editorStage:'+editorStage+'<br>';
+        s+='x='+x+'; y='+y;
 
         if (editorMode == 'entering') {
             var ef = elfuncs[curr.type];
@@ -502,7 +501,7 @@ var Editor = function (canvasElement) {
             }
         }
 
-        if (editorMode == '') {
+        if (editorMode == 'wait') {
             for (id in doc.docObjs) {
                 var el = doc.docObjs[id];
                 if (el.type != 'point') {
@@ -535,7 +534,7 @@ var Editor = function (canvasElement) {
         if (editorMode == 'waitRuler' && isover1 != curr.id) {
             curr.rulers = [];
             curr.funcs = [];
-            editorMode = '';
+            editorMode = 'wait';
         };
         if (editorMode == 'enteringLink' && isover1 != curr.id) {
             curr.rulers = [];
@@ -618,26 +617,65 @@ var Editor = function (canvasElement) {
             curr.stage = 0; // first stage - result point, second stage - lineseg
             editorMode = 'enteringLink';
         },
+        clearOb: function (ob) {
+            for (id in ob) {
+                if (ob.hasOwnProperty(id)) {
+                    delete ob[id];
+                }
+            }
+        },
+        save: function () {
+            debugger;
+            var s = document.getElementById('t1').value;
+            for (var id in doc.docObjs){
+                if (doc.docObjs.hasOwnProperty(id)){
+                    delete doc.docObjs[id];
+                }
+            };
+            this.clearOb(doc.pnts);
+            this.clearOb(doc.lines);
+            this.clearOb(doc.linesegs);
+            this.clearOb(doc.circles);
+            this.clearOb(doc.scalars);
+            this.clearOb(doc.curr);
+            this.clearOb(doc.pnts);
+            doc.doclines.length = 0;
+            doc.doctext = s;
+            editorMode = 'wait';
+
+
+            parser.splitter(s);
+            parser.parser();
+        },
 
         getdoc: function () {
             return doc;
         },
         redraw: function () { var els = doc.getToRedraw(); var pnts = doc.getPnts();
             var i;
-            var tt = document.getElementById('t1'); var s='<font size="2">';
+            var tt = document.getElementById('status'); var s='<font size="2">';
             var k = Object.keys(doc.docObjs);
             s+='curr' + JSON.stringify(curr) + "<br>";
+            s = '';
             s+='editorMode:'+editorMode+'<br>';
-            s+='editorStage:'+editorStage+'<br>';
+            s+='editorStage:'+curr.stage+'<br>';
             for (i=0; i<k.length; i++) {
-                s+= JSON.stringify(doc.docObjs[k[i]]) + '<br>';
+                //s+= JSON.stringify(doc.docObjs[k[i]]) + '<br>';
             };
-            tt.innerHTML=s+'</>';
-            //debugger;
+            tt.innerHTML=s; //+'</>';
+            /*
             s = '';
             var as = doc.toTextEls();
+            var as2 = doc.toTextLinks();
             for (i=0; i<as.length; i++) { s+=as[i]+'\n'; };
-            tt.innerHTML=s;
+            for (i=0; i<as2.length; i++) { s+=as2[i]+'\n'; };
+            */
+            s = '';
+            var tt = document.getElementById('t1');// var s='<font size="2">';
+
+            var as = doc.toText();
+            for (i=0; i<as.length; i++) { s+=as[i]+'\n'; };
+            tt.value=s;
 
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
