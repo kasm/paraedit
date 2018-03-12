@@ -21,7 +21,7 @@ function getSnaps(doc) { var rez={};
     }
 }
 
-var doctext =
+var doctext1 =
     "ls1.0=point(270,130)\n\
 ls1.1=point(120, 50)\n\
 ls1=lineseg(ls1.0,ls1.1)\n\
@@ -64,6 +64,7 @@ ls2.1=mid(ls1.0,ls1.1)\n\
 \ls11=lineseg(ls11.0,ls11.1)\n\
 \ls6.1=mid(ls7.0,ls7.1)";
 
+var doctext = '';
 var splitLines = function (txt) {
 
 }
@@ -154,8 +155,6 @@ var Editor = function (canvasElement) {
         }
 
         curr.funcs = elfuncs[curr.type].editorArray(el.ob, curr.rulers);
-        var i=5;
-
     };
 
     var getSelectedRuler = function (x, y) { var rez = {selected: false, iRuler: 0};
@@ -236,6 +235,7 @@ var Editor = function (canvasElement) {
         }
 
         if (editorMode == 'enteringLink') {
+
             if (curr.type == 'mid') {
                 if (curr.stage ==0) {
                     var id1 = getSelectedPointId(x, y); // dirty hack we showing only rulers of selected element but cycle over all points of document
@@ -258,6 +258,8 @@ var Editor = function (canvasElement) {
                         editorMode = 'wait';
                         curr.rulers = [];
                         curr.stage = 0;
+                        debugger;
+                        doc.doclines.push({rez: curr.data.rezid, func: 'mid', params: [r.id]})
                     }
                 }
             } // mid
@@ -285,6 +287,7 @@ var Editor = function (canvasElement) {
                 };
                 if (curr.stage == 2) {
                     var r = getSelectedEl(x, y);
+                    curr.data.el2id = r.id;
                     if (r.selected) {
                         curr.q1 = '_' + doc.docObjs[r.id].type;
                         var dob2 = doc.docObjs[r.id];
@@ -306,88 +309,19 @@ var Editor = function (canvasElement) {
 
                         var line = {rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, r.id],
                             params2: {
-                                query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
-                                main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]}};
+                                query: '_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type + '_scalar',
+                                main: [doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s.toString(10)],
+                                ids: [curr.data.el1id, r.id]}};
                         parser.parseLine(line);
                         editorMode = 'wait';
                         curr.stage = 0;
                         curr.rulers = [];
+                        debugger;
+                        doc.doclines.push({rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, curr.data.el2id, s.toString(10)]});
                         return 0;
                     }
                 } // stage 2
             } // int
-
-            if (curr.type == 'tan2') {
-                if (curr.stage == 0) {
-                    debugger;
-                    var r = getSelectedEl(x,y);
-                    if (r.id.length > 0) {
-                        curr.data.rezid = r.id;
-                        curr.stage++;
-                        return 0;
-                    }
-                };
-                if (curr.stage == 1) {
-                    var r = getSelectedEl(x,y);
-                    if (r.selected) {
-                        //curr.data.click1 = [x, y];
-                        curr.data.el0id = r.id;
-                        curr.stage++;
-                        curr.dob0 = doc.docObjs[r.id];
-                        curr.q0 = '_' + doc.docObjs[r.id].type;
-                        return 0;
-                    }
-                }; // stage 1
-                if (curr.stage == 2) {
-                    var r = getSelectedEl(x,y);
-
-                    if (r.selected) {
-                        //curr.data.click1 = [x, y];
-                        curr.data.el1id = r.id;
-                        curr.stage++;
-                        curr.dob1 = doc.docObjs[r.id];
-                        curr.q1 = '_' + doc.docObjs[r.id].type;
-                        return 0;
-                    }
-                }; // stage 2
-                if (curr.stage == 3) {
-                    var qq = '_' + doc.docObjs[curr.data.el0id].type + '_' + doc.docObjs[curr.data.el1id].type;
-                    var query = qq;
-                    //var query = doc.docObjs[curr.data.rezid].type + '_tan2' + qq;
-
-                    var cs = gl['circles_tan2' + qq + '_radius'](doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, doc.docObjs[curr.data.rezid].ob[1]);
-                    var dd = 100000000; var di;
-                    for (i = 0; i<cs.length; i++) {
-                        var d = gc.distance_point_point(cs[i][0], [x,y]);
-                        if (d < dd) {
-                            dd = d;
-                            di = i;
-                        }
-                    }; // i
-                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, di];
-
-
-                    var line = {rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id],
-                        params2: {
-                            query: query, //'_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
-                            main: m, //[doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]
-                            ids: [curr.data.el0id, curr.data.el1id]
-                            }};
-                    parser.parseLine(line);
-                    editorMode = '';
-                    curr.stage = 0;
-                    curr.rulers = [];
-                    return 0;
-
-
-
-
-
-                }; // stage 3, last
-
-
-
-            } // tan2
 
             if (curr.type == 'tan21') {
                 if (curr.stage == 0) {
@@ -436,21 +370,26 @@ var Editor = function (canvasElement) {
                         if (dt < d) { d = dt; di = i; };
                     };
                         // will pass to circle_universe - no need to pass radius
-                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, curr.qq, gc.selectors3.tan[di], 'tan'];
+                    var m = [doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, di, 'tan'];
+                    var q2 = '_' + doc.docObjs[curr.data.el0id].type + '_' + doc.docObjs[curr.data.el1id].type
 
 
                     var line = {rez: curr.data.rezid, func: 'tan21',
-                        params: [curr.data.el0id, curr.data.el1id, ],
+                        params: [curr.data.el0id, curr.data.el1id],
                         params2: {
-                            query: query, //'_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
+                            query: 'query', //'_' + doc.docObjs[curr.data.el1id].type + '_' + doc.docObjs[r.id].type,
                             main: m, //[doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]
                             ids: [curr.data.el0id, curr.data.el1id]
                         }};
+                    debugger;
                     parser.parseLine(line);
                     editorMode = 'wait';
                     curr.stage = 0;
                     curr.rulers = [];
                     curr.tpnts = []
+                    doc.doclines.push({rez: curr.data.rezid, func: 'tan21', params: [curr.data.el0id, curr.data.el1id, di]});
+                    //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, gc.selectors3.tan[di]]});
+                    //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, JSON.stringify(gc.selectors3.tan[di])]});
                     return 0;
 
 

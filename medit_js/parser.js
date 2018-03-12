@@ -65,6 +65,7 @@ var Parser = function (doc) {
             line.params2.parts = strAndOb.str;
             line.rez = id;
             line.func = type;
+            line.type = type;
             doc.doclines.push({rez: id, func: type, params: line.params});
             var r = this.parseLine(line, '');
             return r;
@@ -91,30 +92,53 @@ var Parser = function (doc) {
         parseParam2: function (parT) { var rez= {main: [], refs: [], query: '', ids: [], types: [], idns: [], parts: []}; var i;
             rez.parts = parT;
             for (i=0; i<parT.length; i++) {
+                /*
+
+                                SHOULD BE '[' check here   OR   JSON.parse('[' + part[i] + ']')
+                if (Array.isArray(JSON.parse(parT[i]))) {
+                    rez.main[i] = JSON.parse(parT[i]);
+                    rez.refs[i] = rez.main[i];
+                    rez.types[i] = 'array';
+                    rez.query+= '_' + rez.types[i];
+                    continue;
+                }
+                */
+                var jt0 = '[' + parT[i] + ']';
+                //var jt = JSON.parse(jt0);
                 t=parT[i].split('.');
                 ts = '';
                 for (j=0; j<t.length-1; j++) {
                     ts+=t[j];
                     if (j<t.length-2) ts+='.';
                 };
-                if (doc.objs.hasOwnProperty(parT[i])) {
+                if (doc.objs.hasOwnProperty(parT[i])) { // ID
                     rez.refs[i] = doc.objs[parT[i]].ob;
                     rez.main[i] = doc.objs[parT[i]].ob;
                     rez.ids.push(doc.objs[parT[i]].id);
                     //rez.ids[i] = doc.objs[parT[i]].id;
                     rez.types[i] = doc.objs[parT[i]].type;
                     rez.idns.push(i);
-                } else if (doc.objs.hasOwnProperty(ts)) {
+                } else if (doc.objs.hasOwnProperty(ts)) { // [parent, number]
                     rez.refs[i] = [doc.objs[ts].ob, parseInt(t[t.length-1])];
                     //rez.refs[i] = [doc.objs[ts].ob, i];
                     rez.main[i] = rez.refs[i];
                     rez.ids.push(doc.objs[ts].id);
                     rez.types[i] = 'scalar';
                     rez.idns.push(i);
-                } else if (isNaN(parseInt(parT[i]))) {
-                    debugger;
+                }
+                /*
+                else if (Array.isArray(jt[0])) {             // array
+                    rez.main[i] = jt[0];
+                    rez.refs[i] = rez.main[i];
+                    rez.types[i] = 'array';
+                }
+                */
+                else if (isNaN(parseFloat(parT[i]))) { // error - no ID and parent and no number
+                    rez.main[i] = parT[i];
+                    rez.refs[i] = rez.main[i];
+                    rez.types[i] = 'string';
                     //alert('parse param error');
-                } else {
+                } else { //                             number
                     var k = parseInt(parT[i]);
                     rez.main[i] = k;
                     rez.refs[i] = [rez.main[i], i];
@@ -144,29 +168,80 @@ var Parser = function (doc) {
             rez.func = a2[0];
             var a3 = a2[1].split(')');
             rez.params = a3[0].split(',');
-
         },
         splitter: function (text) {
-            var i; var a1, a2, a3, rezText;
+            doc.jsonlines = {};
+            this.JSONparserAll(doc.doclines, text);
+            return 0;
+            var i; var a1, a2, a3, a4, rezText;
             lines = []; doc.doclines.length = 0;
             var lines1 = text.match(/[^\r\n]+/g);
-            for (i=0; i<lines1.length; i++) {
-                lines[i] = {};
-                lines[i].raw = lines1[i];
-                a1 = lines[i].raw.split('=');
-                lines[i].rez = a1[0];
-                a2 = a1[1].split('(');
-                lines[i].func=a2[0];
-                a3 = a2[1].split(')');
-                lines[i].params = a3[0].split(',');
-                //lines[i].params2 = this.parseParam2(lines[i].params);
-                //this.parseLine(lines[i], false);
-                doc.doclines[i] = lines[i];
-            };
+            if (!(lines1 === null)) {
+                for (i=0; i<lines1.length; i++) {
+                    lines[i] = {};
+                    lines[i].raw = lines1[i];
+                    a1 = lines[i].raw.split('=');
+                    lines[i].rez = a1[0];
+                    a2 = a1[1].split('(');
+                    lines[i].func=a2[0];
+                    a3 = a2[1].split(')');
+                    a4 = a3[0].split(',');
+                    lines[i].params = a3[0].split(',');
+                    doc.doclines[i] = lines[i];
+                };
+            }
             return lines;
         },
 
-        parser: function () { // from doc.doclines
+        JSONparserAll: function (rez, text) {
+            rez.length = 0;
+            var lines1 = text.match(/[^\r\n]+/g);
+            if (!(lines1 === null)) {
+                for (i=0; i<lines1.length; i++) {
+                    rez[i] = this.JSONparserLine(lines1[i]);
+                }
+            }
+            return rez;
+        },
+        JSONparserLineOld: function (text) {
+            console.log(text);
+            var rez = {};
+            var a1 = text.split('=');
+            rez.rez = a1[0];
+            var a2 = a1[1].split('(');
+            rez.func = a2[0];
+            var a3 = a2[1].split(')');
+            var a3a = '['+a3[0] + ']';
+            // "["ls11","c1002","["-1","1","1"]"]"
+            // "[ls11,c1002,[-1,1,1]]"
+            // "["ls11","c1002",["-1","1","1"]]"
+            var bbb = a3a.replace(/[\[]([A-Za-z0-9\.\-]+),/g, '["$1",');
+            var bbb2 = bbb.replace(/[,]([A-Za-z0-9\.\-]+),/g, ',"$1",');
+            var bbb3 = bbb2.replace(/[,]([A-Za-z0-9\.\-]+)\]/g, ',"$1"]');
+
+            var bbb21 = bbb3.replace(/[,]([A-Za-z0-9\.\-]+),/g, ',"$1",');
+            var bbb31 = bbb21.replace(/[,]([A-Za-z0-9\.\-]+)\]/g, ',"$1"]');
+
+            var bbb4 = bbb31.replace(/[\[]([A-Za-z0-9\.\-]+)\]/g, '["$1"]');
+            rez.params = JSON.parse(bbb4);
+            console.log(JSON.stringify(rez));
+            return rez;
+        },
+        JSONparserLine: function (text) {
+            console.log(text);
+            var rez = {};
+            var a1 = text.split('=');
+            rez.rez = a1[0];
+            var a2 = a1[1].split('(');
+            rez.func = a2[0];
+            var a3 = a2[1].split(')');
+            var a3a = '[' + a3[0] + ']';
+            rez.params = JSON.parse(a3a);
+            return rez;
+        },
+
+
+            parser: function () { // from doc.doclines
             var i;
             //doc.objs = {};
             for (i=0; i<doc.doclines.length; i++) {
@@ -254,6 +329,7 @@ var Parser = function (doc) {
                     break;
                 case 'int':
                     doc.objs[line.rez].query = 'point_int' + line.params2.query;
+                    console.log(doc.objs[line.rez].query + ':' + JSON.stringify(line.params2.ids));
                     doc.objs[line.rez].mainIds = line.params2.ids;
                     doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
                     doc.objs[line.rez].func = gl['point_int' + line.params2.query];
@@ -278,9 +354,12 @@ var Parser = function (doc) {
                     break;
                 case 'tan21':
                     doc.objs[line.rez].query = 'circle_univers';
+                    var id0 = line.params[0];
+                    var id1 = line.params[1];
+                    var qq = '_' + doc.objs[id0].type + '_' + doc.objs[id1].type;
+                    var m = [line.params2.main[0], line.params2.main[1], qq, line.params2.main[2], line.params2.main[3]];
                     doc.objs[line.rez].mainIds = line.params2.ids;
-                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
-                    debugger;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(m);
                     doc.objs[line.rez].func  = gl[doc.objs[line.rez].query];
                     break;
 

@@ -166,6 +166,8 @@ var Doc = function (elfuncs, doc_obj) {
                             doc.doclines[i].params[j] = dob.parts[j];
                         }
                     }
+                } else if (parser.isLink(doc.doclines[i].func)) {
+
                 }
             }
         },
@@ -211,7 +213,7 @@ var Doc = function (elfuncs, doc_obj) {
             }
             return as;
         },
-        toText: function () {
+        toTextOld: function () {
             this.updateDocLinesFromObj();
 
             var i; var s = [];
@@ -228,6 +230,33 @@ var Doc = function (elfuncs, doc_obj) {
             return s;
             doc.doctext = s;
         },
+        toText: function () {
+            this.updateDocLinesFromObj();
+
+            var i; var s = [];
+            for (i=0; i<doc.doclines.length; i++) {
+                s[i] = doc.doclines[i].rez + '=' + doc.doclines[i].func + '(';
+                for (j = 0; j < doc.doclines[i].params.length; j++) {
+                    var t = doc.doclines[i].params;
+                    if (Array.isArray(doc.doclines[i].params[j])) { // is array
+                        s[i]+='[';
+                        for (k = 0; k<doc.doclines[i].params[j].length; k++) {
+                            s[i]+='"' + doc.doclines[i].params[j][k] + '"';
+                            if (k < doc.doclines[i].params[j].length-1) s[i]+=',';
+                        }
+                        s[i]+=']';
+                    } else {
+                        s[i] += '"' + doc.doclines[i].params[j] + '"';
+                    };
+                    if (j < doc.doclines[i].params.length - 1) s[i] += ',';
+                }
+                ;
+                s[i] += ')';
+            }
+            return s;
+            doc.doctext = s;
+        },
+
         pnts: doc_obj.pnts,
         linesegs: doc_obj.linesegs,
         circles: doc_obj.circles,
@@ -433,6 +462,7 @@ var Doc = function (elfuncs, doc_obj) {
             var done = false;
             var rez;
             var mains;
+            console.log('-------------------------------------------------------------------------');
             while (!done) {
 
                 for (id in docObjs) {
@@ -448,6 +478,8 @@ var Doc = function (elfuncs, doc_obj) {
 
                     if (ob.mainIds.length > 0 && isObjectReadyToSolve) {
                         //rez = geom[ob.query](ob.links);
+                        //console.log('func:', JSON.stringify(ob.func));
+                        //console.log('doc recalc:' + ob.id + '=' + ob.func.name + ':' + JSON.stringify(ob.mains));
                         rez = ob.func.apply(gl, ob.mains);
                         ob.solved = true;
                     }

@@ -364,17 +364,20 @@ var GeomCore = function() {
 
 
         'point_int_line_line_radius_selector': function (rez, l0, l1, r, selector) {
+                //return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r], [l1[0], l1[1], l1[2] + r]);
                 return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
             },
                 'point_int_lineseg_line_radius_selector': function (rez, ls0, l1, r, selector) {
                 var l0 = [];
                 this.line_lineseg(l0, ls0);
+                //return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r ], [l1[0], l1[1], l1[2] + r]);
                 return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
             },
                 'point_int_line_lineseg_radius_selector': function (rez, l0, ls1, r, selector) {
                 var l1 = [];
                 this.line_lineseg(l1, ls1);
                 return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+                //return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r ], [l1[0], l1[1], l1[2] + r ]);
             },
                 'point_int_lineseg_lineseg_radius_selector': function (rez, ls0, ls1, r, selector) {
                 var l0 = [];
@@ -382,6 +385,7 @@ var GeomCore = function() {
                 var l1 = [];
                 this.line_lineseg(l1, ls1);
                 return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r * selector[0]], [l1[0], l1[1], l1[2] + r * selector[1]]);
+                //return this.point_int_line_line(rez, [l0[0], l0[1], l0[2] + r ], [l1[0], l1[1], l1[2] + r ]);
             },
 
 
@@ -498,17 +502,20 @@ var GeomCore = function() {
 
                     var trez = [];
                     var f = ff2[types];
-                    for (i = 0; i < this.selectors3.tan.length; i++) {
+                    for (i = 0; i < f.selectors[reg].length; i++) {
                     //for (i = 0; i < this.funcs[types].selectors[reg].length; i++) {
                         trez[i] = [];
                         //var ff = 'point_int' + types + '_radius_selector';
-                        f.func.apply(this, [trez[i], el0, el1, radius, this.selectors3.tan[i]]);
+
+                        f.func.apply(this, [trez[i], el0, el1, radius, f.selectors[reg][i]]);
+                        //f.func.apply(this, [trez[i], el0, el1, radius, this.selectors3.tan[i]]);
+
                         //this.funcs[types].func(trez[i], el0, el1, radius, f.selectors[reg][i]);
                     }
                     return trez;
                 }, // points int el el
 
-                point_univers: function (rez, el0, el1, radius, types, selector, reg) {
+                point_univers: function (rez, el0, el1, radius, types, selector_number, reg) {
                     var ff = {
                         '_line_line': this._line_line,
                         '_line_lineseg': this._line_lineseg,
@@ -522,16 +529,18 @@ var GeomCore = function() {
 
                     };
                     var ff2 = this.ff2();
+                    debugger;
 
                     var f = ff2[types];
+                    var selector = f.selectors[reg][selector_number];
 
 
 
                     return f.func.apply(this, [rez, el0, el1, radius, selector]);
                     //return this.funcs[types].func(rez, el0, el1, radius, selector);
                 },
-                circle_univers: function (rez, el0, el1, types, selector) {
-                    return this.point_univers(rez[0], el0, el1, rez[1], types, selector, 'tan');
+                circle_univers: function (rez, el0, el1, types, selector_number) {
+                    return this.point_univers(rez[0], el0, el1, rez[1], types, selector_number, 'tan');
                 }
 
 
