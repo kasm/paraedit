@@ -13,8 +13,8 @@
         }
         .text1 {
             float: left;
-            width: 250px;
-            height: 720px;
+            width: 300px;
+            height: 600px;
             border: 1px;
             background-color:#eee;
             border-color: black;
@@ -51,32 +51,33 @@
             position:relative;
             top:1px;
         }
+        .imgButton:active {
+            position:relative;;
+            top: 3px;
+        }
 
     </style>
 </head>
 <body>
 <div>
     <table border="1" border-color="black">
-        <tr><td>Web based graphics editor with geometry parametrization</td></tr>
+        <tr><td colspan="3" align="center" style="font-size:18pt">Web based graphics editor with geometry parametrization</td></tr>
+
         <tr>
-            <td><button onclick="editor.test()">test</button>
-                <button onclick="editor.lineseg()">lineseg</button>
-                <button onclick="editor.circle()">circle</button>
-                <button onclick="editor.line()">line</button>
-            </td><td>
-            <td>   </td><td>
-            <button onclick="editor.mid()">mid</button>
-            <button onclick="editor.int()">int</button>
-            <button onclick="editor.tan2()">tan2</button>
-            <button onclick="editor.per_ls()">per</button>
+            <td align="center">Elements<br>
+                <img src="img/lineseg64x64.png" onclick="editor.lineseg()" class="imgButton">
+                <img src="img/line64x64.png" onclick="editor.line()" class="imgButton" >
+                <img src="img/circle64x64.png" onclick="editor.circle()" class="imgButton">
+            </td><td>  </td>
+            <td align="center">
+                Links<br>
+                <img src="img/mid64x64.png" onclick="editor.mid()" class="imgButton">
+                <img src="img/per64x64.png" onclick="editor.per_ls()" class="imgButton">
+                <img src="img/int64x64.png" onclick="editor.int()" class="imgButton">
+                <img src="img/tan64x64.png" onclick="editor.tan2()" class="imgButton">
         </td>
         </tr>
    </table>
-
-    <span class="myButton">green</span>
-
-
-
 
 </div>
 <div>
@@ -92,20 +93,16 @@
 </div>
     <div class="text1">
         Text area:
-        <textarea title="t1title" id="t1" class="text1" style="border: 1px; border-color: green; border-style: solid;">
+        <textarea title="" id="t1" class="text1" style="border: 1px; border-color: green; border-style: solid;"
+                  onmouseout="editor.textAreaLeave()" onkeyup="editor.textAreaChanged()">
 
         </textarea>
-        <span onclick="editor.save()" class="myButton">save</span>
 
     </div>
 
 </div>
-<div id="t2">
-    fff
-</div>
+
 <script src="index.js"></script>
-<div>
-    <button onclick="editor.test()">test</button>
-</div>
+
 </body>
 </html>

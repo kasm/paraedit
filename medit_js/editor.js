@@ -251,14 +251,12 @@ var Editor = function (canvasElement) {
                 if (curr.stage == 1) {
                     var r = getSelectedEl(x, y);
                     if (r.selected) {
-                        debugger;
                         var line = {rez: curr.data.rezid, func: 'mid', params: r.id,
                             params2: {query: '_lineseg', main: [doc.docObjs[r.id].ob], ids: [r.id]}};
                         parser.parseLine(line);
                         editorMode = 'wait';
                         curr.rulers = [];
                         curr.stage = 0;
-                        debugger;
                         doc.doclines.push({rez: curr.data.rezid, func: 'mid', params: [r.id]})
                     }
                 }
@@ -555,6 +553,7 @@ var Editor = function (canvasElement) {
     cvc.lineWidth = 1;
     var c1var = canvasElement.getBoundingClientRect();
     var editorStage = 0;
+    var textAreaChanged = false;
 
     var ret = {
         test: function () {
@@ -621,8 +620,14 @@ var Editor = function (canvasElement) {
                 }
             }
         },
+        textAreaChanged: function () {
+            textAreaChanged = true;
+        },
+        textAreaLeave: function () {
+            if (textAreaChanged) this.save();
+            textAreaChanged = false;
+        },
         save: function () {
-            debugger;
             var s = document.getElementById('t1').value;
             for (var id in doc.docObjs){
                 if (doc.docObjs.hasOwnProperty(id)){
@@ -639,8 +644,6 @@ var Editor = function (canvasElement) {
             doc.doclines.length = 0;
             doc.doctext = s;
             editorMode = 'wait';
-
-
             parser.splitter(s);
             parser.parser();
         },
