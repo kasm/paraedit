@@ -16,7 +16,7 @@
             width: 250px;
             height: 720px;
             border: 1px;
-            background-color:#aaa;
+            background-color:#eee;
             border-color: black;
         }
         .row:after {
@@ -24,18 +24,58 @@
             display: table;
             clear: both;
         }
+
+
+        .myButton {
+            -moz-box-shadow: 0px 0px 0px 0px #3dc21b;
+            -webkit-box-shadow: 0px 0px 0px 0px #3dc21b;
+            box-shadow: 0px 0px 0px 0px #3dc21b;
+            background-color:#44c767;
+            -moz-border-radius:7px;
+            -webkit-border-radius:7px;
+            border-radius:7px;
+            border:1px solid #18ab29;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:21px;
+            padding:9px 31px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #2f6627;
+        }
+        .myButton:hover {
+            background-color:#5cbf2a;
+        }
+        .myButton:active {
+            position:relative;
+            top:1px;
+        }
+
     </style>
 </head>
 <body>
 <div>
-    <button onclick="editor.test()">test</button>
-    <button onclick="editor.lineseg()">lineseg</button>
-    <button onclick="editor.circle()">circle</button>
-    <button onclick="editor.line()">line</button>
-    <button onclick="editor.mid()">mid</button>
-    <button onclick="editor.int()">int</button>
-    <button onclick="editor.tan2()">tan2</button>
-    <button onclick="editor.save()">save</button>
+    <table border="1" border-color="black">
+        <tr><td>Web based graphics editor with geometry parametrization</td></tr>
+        <tr>
+            <td><button onclick="editor.test()">test</button>
+                <button onclick="editor.lineseg()">lineseg</button>
+                <button onclick="editor.circle()">circle</button>
+                <button onclick="editor.line()">line</button>
+            </td><td>
+            <td>   </td><td>
+            <button onclick="editor.mid()">mid</button>
+            <button onclick="editor.int()">int</button>
+            <button onclick="editor.tan2()">tan2</button>
+            <button onclick="editor.per_ls()">per</button>
+        </td>
+        </tr>
+   </table>
+
+    <span class="myButton">green</span>
+
+
 
 
 </div>
@@ -43,7 +83,7 @@
 <div style="border-color: black; border: 3px" class="editor">
     <div>
     Editor working area:<br>
-    <canvas id='c1' width="600px" height="600px" style="border: 1px; border-color: green; border-style: solid; width: 600px; height: 600px"></canvas>
+    <canvas id='c1' width="600px" height="600px" style="border: 1px; border-color: green; border-style: solid; width: 600px; height: 600px" ></canvas>
     </div>
     Status:<br>
     <div id="status">
@@ -55,6 +95,7 @@
         <textarea title="t1title" id="t1" class="text1" style="border: 1px; border-color: green; border-style: solid;">
 
         </textarea>
+        <span onclick="editor.save()" class="myButton">save</span>
 
     </div>
 

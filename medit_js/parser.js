@@ -327,6 +327,12 @@ var Parser = function (doc) {
                     doc.objs[line.rez].func = gl['point_per' + line.params2.query];
 
                     break;
+                case 'per_ls':
+                    doc.objs[line.rez].query = 'lineseg_per_lineseg';
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func = gl['lineseg_per_lineseg'];
+                    break;
                 case 'int':
                     doc.objs[line.rez].query = 'point_int' + line.params2.query;
                     console.log(doc.objs[line.rez].query + ':' + JSON.stringify(line.params2.ids));

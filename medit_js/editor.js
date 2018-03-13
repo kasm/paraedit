@@ -203,7 +203,7 @@ var Editor = function (canvasElement) {
 
         var x = parseInt(e.clientX - coords.left);
         var y = parseInt(e.clientY - coords.top);
-        if (y<0) return 0;
+        if (y<0 || x>600) return 0;
         if (editorMode == 'entering') {
             curr.stage++;
             if (elfuncs[curr.type].ways[0].length == curr.stage) {
@@ -364,6 +364,35 @@ var Editor = function (canvasElement) {
                     }
                 }; // stage 2
                 if (curr.stage == 3) {
+                    /*                                      TRYED TO CREATE LINK IN ONE PLACE
+                                but it still must be parsed, because there is text input
+
+                    var d = 100000000; di = 0;
+                    for (i = 0; i<curr.tpnts.length; i++) {
+                        var dt = gc.distance_point_point(curr.tpnts[i], [x, y]);
+                        if (dt < d) { d = dt; di = i; };
+                    };
+                    // will pass to circle_universe - no need to pass radius
+                    var q2 = '_' + doc.docObjs[curr.data.el0id].type + '_' + doc.docObjs[curr.data.el1id].type;
+                    var m = [doc.docObjs[curr.data.rezid].ob, doc.docObjs[curr.data.el0id].ob, doc.docObjs[curr.data.el1id].ob, q2, di, 'tan'];
+                    doc.docObjs[curr.data.rezid].mainIds = [curr.data.el0id, curr.data.el1id];
+                    doc.docObjs[curr.data.rezid].query = 'circle_univers';
+                    doc.docObjs[curr.data.rezid].mains = m;
+                    doc.docObjs[curr.data.rezid].func = gl['circle_univers'];
+                    editorMode = 'wait';
+                    curr.stage = 0;
+                    curr.rulers = [];
+                    curr.tpnts = []
+                    doc.doclines.push({rez: curr.data.rezid, func: 'tan21', params: [curr.data.el0id, curr.data.el1id, di]});
+                    //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, gc.selectors3.tan[di]]});
+                    //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, JSON.stringify(gc.selectors3.tan[di])]});
+                    return 0;
+*/
+
+
+
+
+
                     var d = 100000000; di = 0;
                     for (i = 0; i<curr.tpnts.length; i++) {
                         var dt = gc.distance_point_point(curr.tpnts[i], [x, y]);
@@ -381,7 +410,6 @@ var Editor = function (canvasElement) {
                             main: m, //[doc.docObjs[curr.data.el1id].ob, doc.docObjs[r.id].ob, s], ids: [curr.data.el1id, r.id]
                             ids: [curr.data.el0id, curr.data.el1id]
                         }};
-                    debugger;
                     parser.parseLine(line);
                     editorMode = 'wait';
                     curr.stage = 0;
@@ -396,10 +424,34 @@ var Editor = function (canvasElement) {
 
                 } // stage 3
             } // tan21
-
-
+            if (curr.type=='per_ls') {
+                if (curr.stage == 0) {
+                    var r = getSelectedEl(x,y);
+                    if (r.id.length > 0) {
+                        curr.data.rezid = r.id;
+                        curr.rezob = doc.docObjs[r.id];
+                        curr.stage++;
+                        return 0;
+                    }
+                }
+                if (curr.stage == 1) {
+                    var r = getSelectedEl(x, y);
+                    if (r.id.length > 0) {
+                        curr.data.el0id = r.id;
+                        curr.ob = doc.docObjs[r.id];
+                        var m = [curr.ob];
+                        var line = {rez: curr.data.rezid, func: 'per_ls', params: [curr.ob.id]};
+                        line.params2 = parser.parseParam2(line.params);
+                        parser.parseLine(line);
+                        editorMode = 'wait';
+                        curr.stage = 0;
+                        curr.rulers = [];
+                        doc.doclines.push(line);
+                        return 0;
+                    } // if r.id.lenght > 0
+                } // stage 1
+            } // per ls
         } // entering Link
-
     }; // mouse click2
 
 
@@ -556,6 +608,12 @@ var Editor = function (canvasElement) {
             curr.stage = 0; // first stage - result point, second stage - lineseg
             editorMode = 'enteringLink';
         },
+        per_ls: function () {
+            curr.data = {};
+            curr.type = 'per_ls';
+            curr.stage = 0;
+            editorMode = 'enteringLink';
+        },
         clearOb: function (ob) {
             for (id in ob) {
                 if (ob.hasOwnProperty(id)) {
@@ -696,7 +754,8 @@ return ret;
 
 var editor = Editor(document.getElementById('c1'));
 //editor.recalc();
-editor.getdoc().fillElPnts();
-editor.getdoc().recalcAllObjs();
-editor.redraw();
+
+//editor.getdoc().fillElPnts();
+//editor.getdoc().recalcAllObjs();
+//editor.redraw();
 window.editor = editor;

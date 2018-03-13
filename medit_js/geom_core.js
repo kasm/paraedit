@@ -529,7 +529,6 @@ var GeomCore = function() {
 
                     };
                     var ff2 = this.ff2();
-                    debugger;
 
                     var f = ff2[types];
                     var selector = f.selectors[reg][selector_number];
