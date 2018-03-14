@@ -258,8 +258,12 @@ var Editor = function (canvasElement) {
                         curr.rulers = [];
                         curr.stage = 0;
                         doc.doclines.push({rez: curr.data.rezid, func: 'mid', params: [r.id]})
+
+                        doc.recalcAllObjs();
+                        ret.redraw();
+                        return 0;
                     }
-                }
+                } // stage 1
             } // mid
 
             if (curr.type == 'int') {
@@ -316,8 +320,13 @@ var Editor = function (canvasElement) {
                         curr.rulers = [];
                         debugger;
                         doc.doclines.push({rez: curr.data.rezid, func: 'int', params: [curr.data.el1id, curr.data.el2id, s.toString(10)]});
+
+                        doc.recalcAllObjs();
+                        ret.redraw();
+
                         return 0;
                     }
+
                 } // stage 2
             } // int
 
@@ -358,6 +367,8 @@ var Editor = function (canvasElement) {
                         curr.tpnts = tpnts;
                         curr.r = curr.rezob.ob[1];
 
+                        doc.recalcAllObjs();
+                        ret.redraw();
                         return 0;
                     }
                 }; // stage 2
@@ -416,6 +427,9 @@ var Editor = function (canvasElement) {
                     doc.doclines.push({rez: curr.data.rezid, func: 'tan21', params: [curr.data.el0id, curr.data.el1id, di]});
                     //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, gc.selectors3.tan[di]]});
                     //doc.doclines.push({rez: curr.data.rezid, func: 'tan2', params: [curr.data.el0id, curr.data.el1id, JSON.stringify(gc.selectors3.tan[di])]});
+                    doc.recalcAllObjs();
+                    ret.redraw();
+
                     return 0;
 
 
@@ -445,9 +459,13 @@ var Editor = function (canvasElement) {
                         curr.stage = 0;
                         curr.rulers = [];
                         doc.doclines.push(line);
+
+                        doc.recalcAllObjs();
+                        ret.redraw();
                         return 0;
                     } // if r.id.lenght > 0
                 } // stage 1
+
             } // per ls
         } // entering Link
     }; // mouse click2
