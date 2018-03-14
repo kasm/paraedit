@@ -647,6 +647,14 @@ var Editor = function (canvasElement) {
             parser.splitter(s);
             parser.parser();
         },
+        'showHelp': function () {
+            var help = document.getElementById('helpModal');
+            help.style.display = 'block';
+        },
+        'closeHelp': function () {
+            var help = document.getElementById('helpModal');
+            help.style.display = 'none';
+        },
 
         getdoc: function () {
             return doc;

@@ -56,12 +56,99 @@
             top: 3px;
         }
 
+
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 700px; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
+<div id="helpModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="editor.closeHelp()">&times;</span>
+        <textarea style="height: 300px; width: 100%">Some text in the Modal..
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>sddddddddddddddddddddddddddddddddddddddddddddddddd
+sssss
+            Проверка русского языка
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            sdfds
+
+    </textarea>
+    </div>
+</div>
 <div>
     <table border="1" border-color="black">
-        <tr><td colspan="3" align="center" style="font-size:18pt">Web based graphics editor with geometry parametrization</td></tr>
+        <tr><td colspan="5" align="center" style="font-size:18pt">Web based graphics editor with geometry parametrization</td></tr>
 
         <tr>
             <td align="center">Elements<br>
@@ -75,7 +162,11 @@
                 <img src="img/per64x64.png" onclick="editor.per_ls()" class="imgButton">
                 <img src="img/int64x64.png" onclick="editor.int()" class="imgButton">
                 <img src="img/tan64x64.png" onclick="editor.tan2()" class="imgButton">
-        </td>
+        </td><td>  </td>
+            <td align = "center">
+                Help<br>
+                <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton">
+            </td>
         </tr>
    </table>
 
