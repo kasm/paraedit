@@ -92,6 +92,9 @@ var Editor = function (canvasElement) {
     parser.splitter(doctext);
     //parser.parseSplitted();
     //parser.parseText(doctext);
+    var status = {
+        drawPointNames: true
+    }
 
 
     //doc2.docData = parser.splitter(doctext);
@@ -574,6 +577,16 @@ var Editor = function (canvasElement) {
     var textAreaChanged = false;
 
     var ret = {
+        showPointTextsToggle: function () {
+            var t = document.getElementById('showPointTextsToggle');
+            if (status.drawPointNames) {
+                t.style = 'border: 2px; border-color: black; border-style: solid;'
+            } else {
+                t.style = 'border: 0px'
+            }
+            status.drawPointNames = !status.drawPointNames;
+            this.redraw();
+        },
         test: function () {
             alert('ttest');
         },
@@ -747,10 +760,12 @@ var Editor = function (canvasElement) {
 
             cvc.beginPath();
             cvc.fillStyle = '#00f';
-            for (pntid in pnts) {
-                p = pnts[pntid];
-                cvc.fillText(pntid+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
-            };
+            if (status.drawPointNames) {
+                for (pntid in pnts) {
+                    p = pnts[pntid];
+                    cvc.fillText(pntid+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
+                };
+            }
             for (elid in els) {
                 el = els[elid]; x=0; y=0; count = 0;
                 for (p in el.pnts) {
