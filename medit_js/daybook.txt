@@ -497,4 +497,8 @@ temporarily foget
 
 2018-03-07
 
+2018-03-17
+Rethink of entering (with text)
+
+
 

@@ -201,6 +201,25 @@ var Editor = function (canvasElement) {
         return rez;
     }
 
+    var enteringMouseClick = function (e) {
+        curr.stage++;
+        if (elfuncs[curr.type].ways[0].length == curr.stage) {
+            editorMode = 'wait';
+            curr.funcs = [];
+            curr.rulers = [];
+            curr.stage = 0;
+            return 0;
+        };
+    }
+
+    var enteringMouseMove = function(x, y) {
+        var ef = elfuncs[curr.type];
+        var iRuler = ef.ways[0][curr.stage];
+        curr.rulers[iRuler][0] = x;
+        curr.rulers[iRuler][1] = y;
+        curr.funcs[iRuler][0].apply(this, curr.funcs[iRuler][1]);
+    }
+
 
     var mouseClick2 = function (e) {
 
@@ -208,15 +227,8 @@ var Editor = function (canvasElement) {
         var y = parseInt(e.clientY - coords.top);
         if (y<0 || x>600) return 0;
         if (editorMode == 'entering') {
-            curr.stage++;
-            if (elfuncs[curr.type].ways[0].length == curr.stage) {
-                editorMode = 'wait';
-                curr.funcs = [];
-                curr.rulers = [];
-                curr.stage = 0;
-                return 0;
-            };
-        } // if entering
+            enteringMouseClick(e);
+       } // if entering
 
         if (editorMode == 'waitRuler') {
             //selectedPoint = '';
@@ -488,11 +500,7 @@ var Editor = function (canvasElement) {
         s+='x='+x+'; y='+y;
 
         if (editorMode == 'entering') {
-            var ef = elfuncs[curr.type];
-            var iRuler = ef.ways[0][curr.stage];
-            curr.rulers[iRuler][0] = x;
-            curr.rulers[iRuler][1] = y;
-            curr.funcs[iRuler][0].apply(this, curr.funcs[iRuler][1]);
+            enteringMouseMove(x, y);
         };
 
         var isover0 = '';
