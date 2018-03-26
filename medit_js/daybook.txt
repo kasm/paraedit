@@ -500,5 +500,22 @@ temporarily foget
 2018-03-17
 Rethink of entering (with text)
 
+2018-03-24
+Try to refactor simple link to make it 2-dir
+ls1.p1=mid(ls0.p0, ls0.p1)
+ls1.p1.0=(ls0.p0.0 + ls0.p1.0)
+ls1.p1.1=(ls0.p0.1 + ls0.p1.1)
+lets write in such way:
+ls1.p1.0 * 1 - 0.5*ls0.0.0 - 0.5*ls0.0.0 = 0
+ls1.1.1 * 1 - 0.5* ls0.0.1 - 0.5*ls0.1.1 = 0
+now all components are got same status (no data and result)
+so we can set known and unknown any element
 
+equation of perpendicular lines:
+line1.0 - line0.1 = 0
+line1.1 + line0.0 = 0
+
+equation of line segment:
+ax+bx+c=0
+p0, p1 (coords of begin and end)
 
