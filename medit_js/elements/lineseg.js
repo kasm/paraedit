@@ -60,6 +60,7 @@ var LineSeg = function () {
             //cvc.lineTo(element.pnts[1][0], element.pnts[1][1]);
             cvc.moveTo(element[0][0], element[0][1]);
             cvc.lineTo(element[1][0], element[1][1]);
+            console.log('lineseg drawn');
 
             cvc.stroke();
         },

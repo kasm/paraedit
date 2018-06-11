@@ -88,7 +88,8 @@ var Editor = function (canvasElement) {
 
 
     var Parser = require('./parser.js');
-    parser = Parser(doc2);
+    var doc = Doc(elfuncs, doc2);
+    parser = Parser(doc);
     parser.splitter(doctext);
     //parser.parseSplitted();
     //parser.parseText(doctext);
@@ -121,7 +122,7 @@ var Editor = function (canvasElement) {
     var gc = require('./geom_core.js')();
     var gl = require('./geom_links.js')();
 
-    var doc = Doc(elfuncs, doc2);
+
 
     var cvc = canvasElement.getContext('2d');
     var coords = canvasElement.getBoundingClientRect();
@@ -731,13 +732,42 @@ var Editor = function (canvasElement) {
             cvc.lineWidth = 1;
             cvc.fillRect(0,0,c1var.width,c1var.height);
             var elrec;
+
+            /*
             for (i=0; i<els.length; i++) {
                 elrec = els[i];
                 if (elrec.id == boldIds[0]) {
                     cvc.lineWidth = 3;
                 }
+
                 elfuncs[elrec.type].draw(cvc, elrec.ob);
                 cvc.lineWidth = 1;
+            };
+            */
+            cvc.fillStyle = '#00f';
+            for (obId in doc.docObjs) {
+                var dob = doc.docObjs[obId];
+                if (dob.layer == 'f') continue;
+                if (dob.type == 'point') {
+                    if (status.drawPointNames) {
+                        var p = dob.ob;
+                        cvc.fillText(obId+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
+                    }
+                };
+
+
+                if (!parser.isElem(doc.docObjs[obId].type)) continue;
+                elrec = doc.docObjs[obId];
+                elfuncs[doc.docObjs[obId].type].draw(cvc, elrec.ob);
+                el = dob.ob; x=0; y=0; count = 0;
+                for (p in el.pnts) {
+                    count++;
+                    x += el.pnts[p][0];
+                    y += el.pnts[p][1];
+                };
+                x = x/count - 15;
+                y = y/count;
+                cvc.fillText(obId, x, y);
             };
 
 
@@ -768,7 +798,11 @@ var Editor = function (canvasElement) {
 
             cvc.beginPath();
             cvc.fillStyle = '#00f';
+
+            /*
             if (status.drawPointNames) {
+
+
                 for (pntid in pnts) {
                     p = pnts[pntid];
                     cvc.fillText(pntid+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
@@ -785,6 +819,7 @@ var Editor = function (canvasElement) {
                 y = y/count;
                 cvc.fillText(elid, x, y);
             }
+            */
 
 
             //var ps = doc.getPnts();

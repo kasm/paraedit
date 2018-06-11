@@ -131,7 +131,12 @@ var Doc = function (elfuncs, doc_obj) {
     var lineid = 1000;
     var linesegid = 1000;
     var currfuncs = [];
+    var layers = [];
+    layers['0'] = {id: '0', visible: true};
+    layers['f'] = {id: 'f', visible: false};
+    currentLayer = '0';
     return {
+        currentLayer: currentLayer,
         clear: function () {
             doc = {objs: {},
                 pnts: {},
