@@ -83,6 +83,20 @@ var GeomLinks = function(DefPoint) {
         'lineseg_per_lineseg': function (rez, lineseg) {
             this.point_per_point_lineseg(rez[1], rez[0], lineseg);
         },
+        'point_len_point_line': function (rez, len, point, line) {
+            return gc.point_len_point_line(rez, len, point, line);
+        },
+        'point_len_point_lineseg': function (rez, len, point, lineseg) {
+            var l = []; l = gc.line_lineseg(l, lineseg);
+            return gc.point_len_point_line(rez, len, point, l);
+        },
+        'point_coin_point': function (rez, p) {
+            rez[0] = p[0];
+            rez[1] = p[1];
+
+            return rez;
+        },
+
 
 
         //                                                              POINTS

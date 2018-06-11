@@ -341,7 +341,8 @@ var Parser = function (doc) {
                     doc.objs[line.rez].func = gl['point_int' + line.params2.query];
                     break;
                 case 'coin':
-                    doc.objs[line.rez].query = 'line_coin' + line.params2.query;
+                    //doc.objs[line.rez].query = 'line_coin' + line.params2.query;
+                    doc.objs[line.rez].query = doc.objs[line.rez].type + '_coin' + line.params2.query;
                     doc.objs[line.rez].mainIds=line.params2.ids;
                     doc.objs[line.rez].mains=[doc.objs[line.rez].ob].concat(line.params2.main);
                     doc.objs[line.rez].func=gl[doc.objs[line.rez].query];
@@ -367,6 +368,12 @@ var Parser = function (doc) {
                     doc.objs[line.rez].mainIds = line.params2.ids;
                     doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(m);
                     doc.objs[line.rez].func  = gl[doc.objs[line.rez].query];
+                    break;
+                case 'len':
+                    doc.objs[line.rez].query = 'point_len_point_lineseg';
+                    doc.objs[line.rez].mainIds = line.params2.ids;
+                    doc.objs[line.rez].mains = [doc.objs[line.rez].ob].concat(line.params2.main);
+                    doc.objs[line.rez].func = gl[doc.objs[line.rez].query];
                     break;
 
             }

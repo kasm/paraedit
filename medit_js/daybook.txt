@@ -519,3 +519,22 @@ equation of line segment:
 ax+bx+c=0
 p0, p1 (coords of begin and end)
 
+2018-06-11
+implemented kinematics
+
+Кривошипно-шатунный механизм:
+ls000.p0=point("162","297")
+ls000.p1=point("209","315")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("209","315")
+ls001.p1=point("317","166")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls002.p0=point("46","164")
+ls002.p1=point("403","166")
+ls002=lineseg("ls002.p0","ls002.p1")
+ls000.p1=len("-50","ls000.p0","ls000")
+ls001.p0=coin("ls000.p1")
+c1000.c=point("209","315")
+c1000=circle("c1000.c","184")
+c1000.c=coin("ls000.p1")
+ls001.p1=int("c1000","ls002","0")

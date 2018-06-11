@@ -480,6 +480,7 @@ var Doc = function (elfuncs, doc_obj) {
                         //rez = geom[ob.query](ob.links);
                         //console.log('func:', JSON.stringify(ob.func));
                         //console.log('doc recalc:' + ob.id + '=' + ob.func.name + ':' + JSON.stringify(ob.mains));
+                        //debugger;
                         rez = ob.func.apply(gl, ob.mains);
                         ob.solved = true;
                     }

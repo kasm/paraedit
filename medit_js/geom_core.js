@@ -32,6 +32,17 @@ var GeomCore = function() {
             return this.point_int_line_line(rez, line, line1);
         },
 
+        // here calculated point on the line at the specified distance from point
+        'point_len_point_line': function (rez, len, point, line) {
+            var p0 = []; p0 = this.point_per_point_line(p0, point, line);
+            var l0 = []; l0 = this.line_per_point_line(l0, point, line);
+            l0[2]+=len;
+            //var rez = [];
+            rez = this.point_int_line_line(rez, line, l0);
+            return rez;
+        },
+
+
 
 
 
