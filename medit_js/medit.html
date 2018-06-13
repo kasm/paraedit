@@ -202,7 +202,10 @@ ls005.p1=int("c1001","c1002","0")
    </table>
 
 </div>
-228142
+
+<button onclick="bz3();">get Z3</button>
+<button onclick="bz11();">get Z11</button>
+<button onclick="bz26();">get Z26</button>
 <div>
 <div style="border-color: black; border: 3px" class="editor">
     <div>
@@ -227,5 +230,170 @@ ls005.p1=int("c1001","c1002","0")
 
 <script src="index.js"></script>
 
+<textarea id="z3" display="none">
+layer=layer("f")
+ls000.p0=point("112","215")
+ls000.p1=point("460","215")
+layer=layer("0")
+ls000=lineseg("ls000.p0","ls000.p1")
+layer=layer("f")
+ls001.p0=point("150","275")
+ls001.p1=point("150","36")
+layer=layer("0")
+ls001=lineseg("ls001.p0","ls001.p1")
+layer=layer("f")
+ls002.p0=point("150","215")
+ls002.p1=point("204","259")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+layer=layer("f")
+ls002.p0=int("ls001","ls000","0")
+ls002.p1=len("-70","ls002.p0","ls002")
+ls003.p0=point("204","259")
+ls003.p1=point("365","215")
+layer=layer("0")
+ls003=lineseg("ls003.p0","ls003.p1")
+layer=layer("f")
+c1000.c=point("204","259")
+c1000=circle("c1000.c","166")
+c1000.c=coin("ls002.p1")
+ls003.p0=coin("ls002.p1")
+ls003.p1=int("c1000","ls000","0")
+ls004.p0=point("285","237")
+ls004.p1=point("150","166")
+layer=layer("0")
+ls004=lineseg("ls004.p0","ls004.p1")
+layer=layer("f")
+ls004.p0=mid("ls003")
+c1001.c=point("285","237")
+c1001=circle("c1001.c","152")
+c1001.c=mid("ls003")
+ls004.p1=int("c1001","ls001","0")
+</textarea>
+<script>
+    function bz3() {
+        document.getElementById('t1').value=document.getElementById('z3').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+</script>
+
+<textarea id="z11">
+layer=layer("0")
+ls000.p0=point("232","333")
+ls000.p1=point("418","335")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("232","333")
+ls001.p1=point("278","280")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls001.p0=coin("ls000.p0")
+ls001.p1=len("-70","ls001.p0","ls001")
+c1000.c=point("278","280")
+layer=layer("f")
+c1000=circle("c1000.c","210")
+c1000.c=coin("ls001.p1")
+c1001.c=point("418","335")
+c1001=circle("c1001.c","101")
+ls002.p0=point("418","335")
+ls002.p1=point("487","262")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+c1001.c=coin("ls000.p1")
+ls002.p0=coin("ls000.p1")
+ls002.p1=int("c1000","c1001","0")
+ls003.p0=point("487","262")
+ls003.p1=point("278","280")
+ls003=lineseg("ls003.p0","ls003.p1")
+ls003.p0=int("c1000","c1001","0")
+ls003.p1=coin("ls001.p1")
+ls004.p0=point("474","214")
+ls004.p1=point("478","44")
+ls004=lineseg("ls004.p0","ls004.p1")
+ls005.p0=point("383","271")
+ls005.p1=point("478","59")
+ls005=lineseg("ls005.p0","ls005.p1")
+c1002.c=point("383","271")
+layer=layer("f")
+c1002=circle("c1002.c","232")
+c1002.c=mid("ls003")
+ls005.p0=mid("ls003")
+ls005.p1=int("c1002","ls004","0")
+</textarea>
+<script>
+    function bz11() {
+        document.getElementById('t1').value=document.getElementById('z11').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+</script>
+<textarea id="z26">
+layer=layer("0")
+ls000.p0=point("187","315")
+ls000.p1=point("429","314")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("429","314")
+ls001.p1=point("523","347")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls001.p0=coin("ls000.p1")
+ls001.p1=len("-100","ls001.p0","ls001")
+c1000.c=point("523","347")
+layer=layer("f")
+c1000=circle("c1000.c","216")
+c1001.c=point("319","418")
+c1001=circle("c1001.c","152")
+c1002.c=point("187","315")
+c1002=circle("c1002.c","168")
+c1003.c=point("187","315")
+c1003=circle("c1003.c","111")
+c1000.c=coin("ls001.p1")
+c1002.c=coin("ls000.p0")
+ls002.p0=point("523","347")
+ls002.p1=point("319","418")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+ls002.p0=coin("ls001.p1")
+ls002.p1=int("c1000","c1002","0")
+ls003.p0=point("187","315")
+ls003.p1=point("319","418")
+ls003=lineseg("ls003.p0","ls003.p1")
+ls003.p0=coin("ls000.p0")
+ls003.p1=int("c1002","c1000","1")
+c1001.c=coin("ls003.p1")
+c1003.c=coin("ls000.p0")
+ls004.p0=point("187","315")
+ls004.p1=point("288","270")
+ls004=lineseg("ls004.p0","ls004.p1")
+ls005.p0=point("319","418")
+ls005.p1=point("288","270")
+ls005=lineseg("ls005.p0","ls005.p1")
+ls004.p0=coin("ls000.p0")
+ls004.p1=int("c1003","c1001","0")
+ls005.p0=coin("ls003.p1")
+ls005.p1=int("c1003","c1001","0")
+ls006.p0=point("165","354")
+ls006.p1=point("168","72")
+ls006=lineseg("ls006.p0","ls006.p1")
+c1004.c=point("288","270")
+layer=layer("f")
+c1004=circle("c1004.c","195")
+c1004.c=int("c1003","c1001","0")
+ls007.p0=point("288","270")
+ls007.p1=point("168","116")
+layer=layer("0")
+ls007=lineseg("ls007.p0","ls007.p1")
+ls007.p0=int("c1003","c1001","0")
+ls007.p1=int("c1004","ls006","0")
+</textarea>
+<script>
+    function bz26() {
+        document.getElementById('t1').value=document.getElementById('z26').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+</script>
 </body>
+
 </html>
