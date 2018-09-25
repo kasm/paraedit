@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="969635208938-bp47bbnqslk7h82t3ki92hpgsom0dcsm.apps.googleusercontent.com">
     <title>Title</title>
     <style>
         .editor {
@@ -99,6 +101,7 @@
     </style>
 </head>
 <body>
+<div id = 'gtest'></div>
 <div id="helpModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="editor.closeHelp()">&times;</span>
@@ -174,6 +177,19 @@ ls005.p1=int("c1001","c1002","0")
     </textarea>
     </div>
 </div>
+<script>
+function onSignIn(googleUser) {
+var profile = googleUser.getBasicProfile();
+var gt = document.getElementById('gtest');
+console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+console.log('Name: ' + profile.getName());
+console.log('Image URL: ' + profile.getImageUrl());
+console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    var gtt = profile.getName();
+    //debugger;
+    gt.innerHTML = "<img src='" + profile.getImageUrl() + "'>" + gtt;
+};
+</script>
 <div>
     <table border="1" border-color="black">
         <tr><td colspan="5" align="center" style="font-size:18pt">Web based graphics editor with geometry parametrization<br>
@@ -197,6 +213,13 @@ ls005.p1=int("c1001","c1002","0")
                 Help<br>
                 <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton">
                 <img src="img/help64x64.png" onclick="editor.showPointTextsToggle()" class="imgButton" id = 'showPointTextsToggle'>
+
+            </td>
+            <td>
+                <div class="g-signin2" data-onsuccess="onSignIn">Enter with your google account</div>
+            </td>
+            <td>
+                <div><a href="https://www.youtube.com/watch?v=xYf8ZKfnsjg">VIDEO HOW IT WORKS</a></div>
             </td>
         </tr>
    </table>
