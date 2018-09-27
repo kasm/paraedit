@@ -25,7 +25,7 @@ var Circle = function () {
             if (e < 5 || cd1 + cd2 < 10) { return true; } else { return false; };
         },
         getRulers: function (rulers, circle) {
-            rulers[0] = circle[0]; // dicrect link, no need to update
+            rulers[0] = circle[0]; // direct link, no need to update
             rulers[1] = [];
             rulers[1][0] = circle[0][0] + circle[1];
             rulers[1][1] = circle[0][1];

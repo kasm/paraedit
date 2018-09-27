@@ -9,6 +9,12 @@ var GeomCore = function() {
 
     return {
         'eps': 0.000000001,
+        is_points_equal: function (p0, p1) {
+            var dx = p1[0] - p0[0];
+            var dy = p1[1] - p0[1];
+            var l = Math.sqrt(dx*dx + dy*dy);
+            return (l<this.eps);
+        },
 
         //                                                                  POINT
         'point_int_line_line': function (rez, line0, line1) {
@@ -550,48 +556,156 @@ var GeomCore = function() {
                 },
                 circle_univers: function (rez, el0, el1, types, selector_number) {
                     return this.point_univers(rez[0], el0, el1, rez[1], types, selector_number, 'tan');
-                }
+                },
 
 
 
 
 
-
-/*
-        'points_int': [],
-        'int': {
-            points: function(el0, el1, types) {
-
-            }
-
-            'lineline': {
+        //                                                          ANGLES
+        point_circle_angle: function (rez, c0, a0) {
+            rez[0] = c0[0][0] + c0[1]*a0[0];
+            rez[1] = c0[0][1] + c0[1]*a0[1];
+            return rez;
+        },
 
 
-            },
-            'linecircle': {
-                selectorArray: [-1, 1],
-                point: function(p, line, circle, selector) {
-                    p[0] = ljsdf + selector *h;
-                    return p;
-                }
-                points: function(line, circle) {
-                    var rez = []
-                    for (i =0; i<this.selectorArray.length; i++) {
-                        rez[i] = [];
-                        this.point(rez[i], selectorArra[i]);
-                    }
-                }
-            },
-            point: function(ob0, ob1, selector){
 
-            },
-            intArray: {
-                'lineline': [0],
-                'linecircle': [0, 1]
-            }
+        /// angle - a[0] cos, a[1] - sin, a[2] - if exists - radians
+        // angle - direction from point0 to point1
+        angle_point_point: function (rez, p0, p1) {
+            //var rez = [];
+            var dx = p1[0] - p0[0]; var dy = p1[1] - p0[1];
+            var l = Math.sqrt(dx*dx + dy*dy);
+            rez[0] = dx / l; rez[1] = dy/l;
+            return rez;
+        },
+
+        tan_angle: function (a) {
+            return a[1]/ a[0];
+        },
+        sin_angle: function (a) {
+            return a[1];
+        },
+        cos_angle: function (a) {
+            return a[0];
+        },
+        rad_angle: function (a) {
+            if (a.length < 3) a[2] = Math.atan2(a[1], a[0]);
+            return a[2];
+        },
+        angle_rad: function (r) {
+            var rez = [];
+            rez[0] = Math.cos(r);
+            rez[1] = Math.sin(r);
+            rez[2] = r;
+            return rez;
+        },
+        angle_point: function (p) {
+            var rez;
+            rez = this.angle_point_point(rez, [0,0], p);
+            return rez;
+        },
+
+
+        //                                                              ARC
+        // get arc by circle and two points
+        // arc: circle, angle0, angle1, dir (0 - from angle0, 1 from angle1) - dir used for path definition
+        arc_circle_point_ponint: function (rez, c0, p0, p1) {
+            var rez = [];
+            var a0 = []; this.angle_point_point(a0, c0[0], p0);
+            var a1 = []; this.angle_point_point(a1, c0[0], p1);
+            this.arc_circle_angle_angle(rez, c0, a0, a1);
+            return rez;
+        },
+        arc_circle_angle_angle: function (rez, c0, a0, a1) {
+            var rez = [];
+            rez[0] = c0;
+            rez[1] = a0;
+            rez[2] = a1;
+            return rez;
+        },
+        length_arc: function (rez, arc) {
+            var r0 = this.rad_angle(arc[1]);
+            var r1 = this.rad_angle(arc[2]);
+            return ( arc[0][1]* (r1-r0)); // radius * (r1-r0)
+        },
+        arc_point_point_point: function (rez, p0, p1, p2) { // first, mid , end
+            //
+            var l0 = []; this.line_point_point(l0, p0, p2);
+            var pmid = []; this.point_mid_point_point(pmid, p0, p2);
+            var lper = []; this.line_per_point_line(lper, pmid, l0);
+            var h; h = this.distance_point_line(p2, l0);
+            var half; half = this.distance_point_point(p0, p2);
+            var tg_alfa = h / half;
+            var H = half / tg_alfa;
+            var lpar = []; this.line_parallel_lsd(lpar, l0, 1, H);
+            var c = []; this.point_int_line_line(c, lper, lpar); // center
+            var rez = [];
+            var r = this.distance_point_point(c, p0);
+            var rez[0] = [c, r]; // circle
+            var rez[1] = []; this.angle_point_point(rez[1], c, p0);
+            var rez[2] = []; this.angle_point_point(rez[2], c, p2);
+            return rez;
+        },
+        points_arc: function (rez, arc) {
+            var rez=[[],[],[]];
+            var c = arc[0][0];
+            var r = arc[0][1];
+            var ab0 = arc[1]; // angle 0
+            var ab1 = arc[2]; // angle 1
+            var l0 = []; this.line_point_ab(l0, c, ab0);
+            var p0 = []; this.point_int_circle_line_radius_selector(p0, c, l0, r, [0]);
+            var l1 = []; this.line_point_ab(l1, c, ab1);
+            var p1 = []; this.point_int_circle_line_radius_selector(p1, c, l1, r, [0]);
+            var rad_mid = (this.rad_angle(arc[1]) + this.rad_angle(arc[2])) / 2;
+            var ang_mid = this.angle_rad(rad_mid);
+
+            var lmid = []; this.line_point_ab(lmid, c, ang_mid);
+            var pmid = []; this.point_int_circle_line_radius_selector(pmid, c, lmid, r, [0]);
+            rez[0] = p0;
+            rez[1] = pmid;
+            rez[2] = p1;
+            return rez;
         }
 
-*/
+
+
+        /*
+                'points_int': [],
+                'int': {
+                    points: function(el0, el1, types) {
+
+                    }
+
+                    'lineline': {
+
+
+                    },
+                    'linecircle': {
+                        selectorArray: [-1, 1],
+                        point: function(p, line, circle, selector) {
+                            p[0] = ljsdf + selector *h;
+                            return p;
+                        }
+                        points: function(line, circle) {
+                            var rez = []
+                            for (i =0; i<this.selectorArray.length; i++) {
+                                rez[i] = [];
+                                this.point(rez[i], selectorArra[i]);
+                            }
+                        }
+                    },
+                    point: function(ob0, ob1, selector){
+
+                    },
+                    intArray: {
+                        'lineline': [0],
+                        'linecircle': [0, 1]
+                    }
+                }
+
+        */
 
 
 
