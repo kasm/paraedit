@@ -613,3 +613,123 @@ ls005.p1=point("390","496")
 ls005=lineseg("ls005.p0","ls005.p1")
 ls005.p0=coin("c1001.c")
 ls005.p1=int("c1001","c1002","0")
+
+
+
+2018-09-28
+New idea to store data:
+all in float64array:
+point:
+x, y
+circle:
+x, y, r (can be retrieved center)
+lineseg:
+x0, y0, x1, y1
+line:
+a, b, c
+angle:
+a, b, radian
+arc:
+
+circle       angle0              angle1
+xc, yc, r, a0, b0, radian0, a1, b1, radian1
+
+
+general element's format:
+el[id] = {type: 'circle', data: 884} // 884 address of the first number in general array. 3 total numbers: x, y, r
+general constraint format:
+constraint[id] = {type, [id list]}
+
+general solving approach:
+when element is edited, constraint graph of this element is loaded and processed.
+what to do if existing constrain restricting to move drag point (for instace drag point owned by vertical line)
+if snapped to line - make perpendicular to line
+if snapped to circle - 'perpendicular to circle'
+
+if square
+
+2018-0930
+
+solving constraints for rectangular
+
+p00    lu   a      p01
+-----------------|
+|                |
+|ll              |lr
+|                |b
+|                |
+|----------------
+p10   lb         p11
+
+lu, ll, lr, lb - lines (a,b,c )
+p - points(x,y)
+a, b - width and height (variable)
+
+par(lb, lu+b)
+eq(lb[3], lu[3], '+', b) // lu[3]=lb[3]+b distance
+eq(lb[0], lu[0], '+', 0)  // parallel
+eq(lb[1], lu[1], '+', 1)
+par(lr, ll+a)
+eq(lr[3], ll[3], '+', al
+per(lu, ll)
+eq(lu[0], ll[1])
+eq(lu[1], ll[0])
+
+p00=int(lu, ll)
+dist(p00, lu, 0)
+dist(p00, ll, 0)
+
+an * point[0] + bn*point[1] + cn = 0;
+an * point[0] + bn*point[1] + cn - dist = 0;
+
+                p00
+       ll  \     -   /      lu
+            p10     p01
+       lr                   lb
+                 p11
+
+should use matrix operations at the angles
+lb.ab=lu.ab*[[1,0],[0,1]]  // no rotate, parallel
+lr.ab=ll.ab*[[1,0],[0,1]]
+lu.ab=ll.ab*[[0,1],[1,0]] // perpendicular
+lr.c-ll.c-a = 0   // for fixed width
+
+lu.ab*p00 + lu.c - dist = 0   // coin of lu and p00, dist == 0
+ll.ab*p00 + ll.c - dist = 0   // coin of ll and p00, dist == 0
+lu.ab*p01 + lu.c - dist = 0 // lu p01
+lr.ab*p01 + lr.c - dist = 0 // lr p01
+lr.ab*p11 + lr.c - dist = 0 // lr p11
+lb.ab*p11 + lb.c - dist = 0 // lb p11
+
+
+p00
+p01
+p10
+p11
+lu
+ll
+lr
+lb
+8*2 = 16 degrees of freedom
+
+lb lu
+lr ll
+lu ll
+lu p00
+ll p00
+lu p01
+lr p01
+ll p10
+lb p10
+lr p11
+lb p11
+11 constrains
+16-11 = 5 degrees remained
+1. change a
+2. change b
+3. rotate all
+4. move x all
+5. move y all
+
+question:
+How to get from elements and constrains to the list of allowed actions ?
