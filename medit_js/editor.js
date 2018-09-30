@@ -70,18 +70,21 @@ var splitLines = function (txt) {
 }
 
 var docTextArray = doctext.split('\n');
+
 var doc2={objs: {},
     pnts: {},
     linesegs: {},
     lines: {},
     circles: {},
     scalars: {},
+    arcs: {},
     docData: [],
     curr: {},
     doctext: doctext,
     doclines: [],
-    docTest2: []
+    docTest2: [],
 };
+
 
 var Editor = function (canvasElement) {
     document.getElementById('t1').innerHTML='ddd';
@@ -89,8 +92,7 @@ var Editor = function (canvasElement) {
 
     var Parser = require('./parser.js');
     var doc = Doc(elfuncs, doc2);
-    parser = Parser(doc);
-    parser.splitter(doctext);
+
     //parser.parseSplitted();
     //parser.parseText(doctext);
     var status = {
@@ -109,6 +111,9 @@ var Editor = function (canvasElement) {
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
     elfuncs['point'] = require('./elements/point.js')();
+    elfuncs['arc'] = require('./elements/arc.js')();
+    parser = Parser(doc, elfuncs);
+    parser.splitter(doctext);
 
     var linkParams = { // not used
         mid: ['point', 'element'],
@@ -142,6 +147,7 @@ var Editor = function (canvasElement) {
 
     var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) { var i;
         var el = parser.createElementAndPoints(curr.id, curr.type, elfuncs[curr.type].params);
+        debugger;
         curr.rulers = elfuncs[curr.type].getRulers(curr.rulers, el.ob);
         for (i=0; i<curr.rulers.length; i++) {
             var pntid = id + '.' + elfuncs[curr.type].rulerNames[i];
@@ -629,6 +635,15 @@ var Editor = function (canvasElement) {
             createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
 
         },
+        arc: function () {
+            curr.rulers = [];
+            curr.type = 'arc';
+            curr.stage = 0;
+            editorMode = 'entering';
+            curr.id = 'arc00' + Object.keys(doc.arcs).length;
+            createEmptyElementWithRulersAndTrackerFunctions(curr.id, curr.type);
+
+        },
         mid: function () {
             curr.data = {};
             curr.type = 'mid';
@@ -678,6 +693,7 @@ var Editor = function (canvasElement) {
             this.clearOb(doc.lines);
             this.clearOb(doc.linesegs);
             this.clearOb(doc.circles);
+            this.clearOb(doc.arcs);
             this.clearOb(doc.scalars);
             this.clearOb(doc.curr);
             this.clearOb(doc.pnts);

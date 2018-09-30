@@ -287,6 +287,15 @@ var GeomLinks = function(DefPoint) {
         },
         'circle_univers': function(rez, el0, el1, types, selector) {
             return gc.circle_univers(rez, el0, el1, types, selector);
+        },
+
+
+        ///                                                     ARC
+        'arc_point_point_point': function (rez, p0, p1, p2) {
+            return gc.arc_point_point_point(rez, p0, p1, p2);
+        },
+        'points_arc': function (rez, arc) {
+            return gc.points_arc(rez, arc);
         }
 
 

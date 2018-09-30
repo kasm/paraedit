@@ -1,6 +1,6 @@
 
 
-var Parser = function (doc) {
+var Parser = function (doc, elfunc) {
     console.log('parser doc', doc);
     var GL0 = require('./geom_links.js');
     var GC = require('./geom_core.js');
@@ -54,7 +54,26 @@ var Parser = function (doc) {
             };
             return paramsOb;
         },
+
+        // arc002.circle.c = point(0,0)
+        // arc002.circle = circle('arc002.circle.c', 20)
+        // anc002.ang0 = angle(1, 0)
+        // arc002.ang1 = angle(0, 1)
+        // arc002 = arc('arc002.circle', 'arc002.ang0', 'arc002.ang1')
+
+        createElementAndPoints2: function (id, type, params) {
+            var line = {};
+
+            for (i=0; i<params.length; i++) {
+                if (elfunc[type].paramTypes[i] === 'val') {
+
+                }
+            }
+
+        },
+
         createElementAndPoints: function (id, type, params) {
+            debugger;
             var strAndOb = this.createPointsAndFillParams(id, params);
             //var params3 = this.parseParam2(params2);
             var i;
@@ -83,6 +102,7 @@ var Parser = function (doc) {
         // main examples:
         // lineseg: [pointref, pointref]
         // circle [pointref, radius]
+        // arc [circleref, angleref0, angleref1]
         // TTRS:
         // main: [line, side, line, side, radius]
         // refs: [line, [main, 1], line1, [main, 3], [main, 4]]
@@ -241,7 +261,7 @@ var Parser = function (doc) {
         },
 
 
-            parser: function () { // from doc.doclines
+        parser: function () { // from doc.doclines
             var i;
             //doc.docObjs = {};
             for (i=0; i<doc.doclines.length; i++) {
@@ -250,16 +270,17 @@ var Parser = function (doc) {
                     doc.currentLayer = doc.doclines[i].params2.main[0];
                     continue;
                 }
+                debugger;
                 this.parseLine(doc.doclines[i])
             }
             return doc.doclines;
         },
 
         isElem: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'arc');
         },
         isElemAll: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'point');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'point' || t === 'arc');
         },
 
         isLink: function (t) {
@@ -308,6 +329,7 @@ var Parser = function (doc) {
                     doc.docObjs[line.rez].ob = doc.circles[line.rez];
                     doc.docObjs[line.rez].type = 'circle';
                     break;
+                case 'arc':
                 case 'mid':
                     doc.docObjs[line.rez].query = 'point_mid' + line.params2.query;
                     doc.docObjs[line.rez].mainIds = line.params2.ids;

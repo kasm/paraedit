@@ -643,9 +643,9 @@ var GeomCore = function() {
             var c = []; this.point_int_line_line(c, lper, lpar); // center
             var rez = [];
             var r = this.distance_point_point(c, p0);
-            var rez[0] = [c, r]; // circle
-            var rez[1] = []; this.angle_point_point(rez[1], c, p0);
-            var rez[2] = []; this.angle_point_point(rez[2], c, p2);
+            rez[0] = [c, r]; // circle
+            rez[1] = []; this.angle_point_point(rez[1], c, p0);
+            rez[2] = []; this.angle_point_point(rez[2], c, p2);
             return rez;
         },
         points_arc: function (rez, arc) {

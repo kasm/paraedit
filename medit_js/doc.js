@@ -129,6 +129,7 @@ var Doc = function (elfuncs, doc_obj) {
     var elid = 1000;
     var distid = 1000;
     var lineid = 1000;
+    var arcid = 1000;
     var linesegid = 1000;
     var currfuncs = [];
     var layers = [];
@@ -143,6 +144,7 @@ var Doc = function (elfuncs, doc_obj) {
                 linesegs: {},
                 lines: {},
                 circles: {},
+                arcs: {},
                 scalars: {},
                 docData: [],
                 curr: {},
@@ -266,6 +268,7 @@ var Doc = function (elfuncs, doc_obj) {
         linesegs: doc_obj.linesegs,
         circles: doc_obj.circles,
         lines: doc_obj.lines,
+        arcs: doc_obj.arcs,
         currfuncs: currfuncs,
         docObjs: docObjs,
         addObj: function (type, obj) {
