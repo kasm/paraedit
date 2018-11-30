@@ -147,7 +147,7 @@ var Editor = function (canvasElement) {
 
     var createEmptyElementWithRulersAndTrackerFunctions = function (id, type) { var i;
         var el = parser.createElementAndPoints(curr.id, curr.type, elfuncs[curr.type].params);
-        debugger;
+        //debugger;
         curr.rulers = elfuncs[curr.type].getRulers(curr.rulers, el.ob);
         for (i=0; i<curr.rulers.length; i++) {
             var pntid = id + '.' + elfuncs[curr.type].rulerNames[i];

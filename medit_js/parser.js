@@ -73,7 +73,7 @@ var Parser = function (doc, elfunc) {
         },
 
         createElementAndPoints: function (id, type, params) {
-            debugger;
+            //debugger;
             var strAndOb = this.createPointsAndFillParams(id, params);
             //var params3 = this.parseParam2(params2);
             var i;
