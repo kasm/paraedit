@@ -714,7 +714,7 @@ lb
 
 lb lu
 lr ll
-lu ll
+lu ll per
 lu p00
 ll p00
 lu p01
@@ -733,3 +733,35 @@ lb p11
 
 question:
 How to get from elements and constrains to the list of allowed actions ?
+
+2018-10-01
+should be added desireable constrains to make system of constrains fulfilled.
+lets suppose than p01 is moved then lets make p10 fixed and lb horizontal:
+lb.ab + [-1, 0] = 0
+p10.x+ coord1.x = 0
+p10.y + coord1.y = 0
+p01.x - mouse.x = 0
+p01.y - mouse.y = 0
+
+
+lets consider simple case: point and two lines
+lu, lr, p01
+lu.ab = -lr.ab (per)
+dist(p01, lu) = 0
+dist(p01, lr) = 0
+lu.ab = [1,0] (horizontal)
+Coordinates of point p01 defined implicitly:
+p01.x = const.x0
+p01.y = const.y0
+
+2018-10-01
+                                                        types of constrains:
+parallel:
+l1, l2
+l1.ab*1 + l2.ab*-1, = [0, 0]
+perpendicular:
+l1.ab * l2.ab = 0 (scalar multiplication)
+distance from point to line:
+l.ab * p + c = dist (can be used to tangent and coin)
+distance between points:
+
