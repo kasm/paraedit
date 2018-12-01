@@ -54,6 +54,11 @@ var Parser = function (doc) {
             };
             return paramsOb;
         },
+        createMultiLineSeg: function (id, paramValues) {
+
+        },
+
+        //  id - name of el (c1), type - circle, params - c, r
         createElementAndPoints: function (id, type, params) {
             var strAndOb = this.createPointsAndFillParams(id, params);
             //var params3 = this.parseParam2(params2);
@@ -169,6 +174,8 @@ var Parser = function (doc) {
             var a3 = a2[1].split(')');
             rez.params = a3[0].split(',');
         },
+
+        // rez, func, params
         splitter: function (text) {
             doc.jsonlines = {};
             this.JSONparserAll(doc.doclines, text);
@@ -241,7 +248,7 @@ var Parser = function (doc) {
         },
 
 
-            parser: function () { // from doc.doclines
+        parser: function () { // from doc.doclines
             var i;
             //doc.docObjs = {};
             for (i=0; i<doc.doclines.length; i++) {
@@ -256,10 +263,10 @@ var Parser = function (doc) {
         },
 
         isElem: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'pline');
         },
         isElemAll: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'point');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'pline' || t === 'point');
         },
 
         isLink: function (t) {
@@ -279,6 +286,11 @@ var Parser = function (doc) {
                 doc.docObjs[line.rez].parts = line.params2.parts;
             }
             switch (line.func) {
+                case 'pline': doc.plines[line.rez] = line.params2.main;
+                    doc.docObjs[line.rez] = this.obCreateIfNot(line.rez);
+                    doc.docObjs[line.rez].ob = doc.plines[line.rez];
+                    doc.docObjs[line.rez].type = 'pline';
+                    break;
                 case 'point': doc.pnts[line.rez] = line.params2.main;
                     doc.docObjs[line.rez] = this.obCreateIfNot(line.rez);
                     doc.docObjs[line.rez].ob = doc.pnts[line.rez];

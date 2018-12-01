@@ -613,3 +613,33 @@ ls005.p1=point("390","496")
 ls005=lineseg("ls005.p0","ls005.p1")
 ls005.p0=coin("c1001.c")
 ls005.p1=int("c1001","c1002","0")
+
+
+2018-12-01
+CNC visualisation
+
+1. Show pline as only array of points 2h
+2. Function which calcs parametric coord of point moving on pline 1.5h
+3. Animate concept, setinterval ... 2.5h
+4. Center of circle to moving point   1h
+5. show bitmap as background
+5.1. just show 2h
+5.2. position and scale 1h
+6. add form to enter cnc program 0.5h
+7. convert CNC program to paraedit format 1h
+
+
+text > drawing:
+parser.splitter > drawlines
+parser.parser > objects
+
+parser.parser >
+ parser.parseParam2 >
+ parser.parseLine >
+
+1. Show pline
+pline01.p00=point("100","100")
+pline01.p01=point("100","110")
+pline01.p02=point("110","110")
+pline01.p03=point("110","120")
+pline01=pline("pline01.p00", "pline01.p01", "pline01.p02", "pline01.p03")

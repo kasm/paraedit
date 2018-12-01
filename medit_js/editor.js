@@ -73,6 +73,7 @@ var docTextArray = doctext.split('\n');
 var doc2={objs: {},
     pnts: {},
     linesegs: {},
+    plines: {},
     lines: {},
     circles: {},
     scalars: {},
@@ -109,6 +110,7 @@ var Editor = function (canvasElement) {
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
     elfuncs['circle'] = require('./elements/circle.js')();
     elfuncs['point'] = require('./elements/point.js')();
+    elfuncs['pline'] = require('./elements/MultiLineSeg')();
 
     var linkParams = { // not used
         mid: ['point', 'element'],
@@ -677,6 +679,7 @@ var Editor = function (canvasElement) {
             this.clearOb(doc.pnts);
             this.clearOb(doc.lines);
             this.clearOb(doc.linesegs);
+            this.clearOb(doc.plines);
             this.clearOb(doc.circles);
             this.clearOb(doc.scalars);
             this.clearOb(doc.curr);
