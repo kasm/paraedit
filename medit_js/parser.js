@@ -277,6 +277,8 @@ var Parser = function (doc) {
         parseLine: function (line, byPoints) { // creating objects (elements, points, etc) and/or setting links
             var i;
 
+            var dd0 = {};
+
             //var params2 = this.parseParam2(line.params);
             if (this.isElem(line.func)) {
                 doc.docObjs[line.rez] = this.obCreateIfNot(line.rez);
@@ -285,7 +287,31 @@ var Parser = function (doc) {
                 doc.docObjs[line.rez].ids = line.params2.ids;
                 doc.docObjs[line.rez].parts = line.params2.parts;
             }
+
             switch (line.func) {
+                case 'setInterval_old':
+                    dd0.p = line.params;
+                    dd0.ob = doc.docObjs[dd0.p[1]].ob;
+                    debugger;
+
+                    // timeInterval, object, index, value
+                    function f2(dd) {
+                        var k = 5;
+                        k = parseInt(dd.ob[dd.p[2]]);
+                        dd.ob[dd.p[2]]= k + parseInt(dd.p[3]);
+                        console.log(dd);
+                    };
+                    var bb = window.setInterval(function () {
+                        f2(dd0);
+                        doc.editor.recalcAndRedraw();
+                        console.log('ssdfsd');
+
+                        //if (dd[0][dd[1]]> 100) window.clearInterval(bb);
+                    }, dd0.p[0]);
+                    break;
+                case 'setInterval':
+                    doc.intervals[line.rez] = line.params2.main;
+                    break;
                 case 'pline': doc.plines[line.rez] = line.params2.main;
                     doc.docObjs[line.rez] = this.obCreateIfNot(line.rez);
                     doc.docObjs[line.rez].ob = doc.plines[line.rez];

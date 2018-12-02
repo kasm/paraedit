@@ -74,6 +74,7 @@ var doc2={objs: {},
     pnts: {},
     linesegs: {},
     plines: {},
+    intervals: {},
     lines: {},
     circles: {},
     scalars: {},
@@ -588,6 +589,11 @@ var Editor = function (canvasElement) {
     var textAreaChanged = false;
 
     var ret = {
+        doc: doc,
+        recalcAndRedraw: function () {
+            doc.recalcAllObjs();
+            ret.redraw();
+        },
         showPointTextsToggle: function () {
             var t = document.getElementById('showPointTextsToggle');
             if (status.drawPointNames) {
@@ -684,11 +690,46 @@ var Editor = function (canvasElement) {
             this.clearOb(doc.scalars);
             this.clearOb(doc.curr);
             this.clearOb(doc.pnts);
+            this.clearOb(doc.intervals);
             doc.doclines.length = 0;
+            doc.recalcAndRedraw = ret.recalcAndRedraw;
             doc.doctext = s;
             editorMode = 'wait';
             parser.splitter(s);
             parser.parser();
+            this.setIntervalButtons();
+        },
+        'setIntervalButtons': function () {
+            var barea = document.querySelector('#intervalButtonsArea');
+            //barea.innerHTML='';
+            while (barea.firstChild) barea.removeChild(barea.firstChild);
+            var elbs = {};
+            var elbsr = {};
+            function f2(d) {
+                //     0       1     2       3      4        5
+                // interval, array, index, func, funcdata  window.interval
+                console.log('f2');
+                gc[d[3]](d);
+                ret.recalcAndRedraw();
+            };
+            for (var key in doc.intervals) {
+                elbs[key] = document.createElement('button');
+                barea.appendChild(elbs[key]);
+                elbs[key].innerHTML='start interval';
+                elbs[key].addEventListener('click', function () {
+                    console.log('added even listener');
+                    doc.intervals[key][5] = window.setInterval(f2, doc.intervals[key][0], doc.intervals[key]);
+                });
+
+                elbsr[key] = document.createElement('button');
+                barea.appendChild(elbsr[key]);
+                elbsr[key].innerHTML = 'stop interval';
+                elbsr[key].addEventListener('click', function () {
+                    console.log('stop interval even listener');
+                    window.clearInterval(doc.intervals[key][5]);
+                });
+                console.log('interval:', doc.intervals[key]);
+            }
         },
         'showHelp': function () {
             var help = document.getElementById('helpModal');
@@ -849,3 +890,4 @@ var editor = Editor(document.getElementById('c1'));
 //editor.getdoc().recalcAllObjs();
 //editor.redraw();
 window.editor = editor;
+//editor.doc.editor = editor;

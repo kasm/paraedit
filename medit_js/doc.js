@@ -131,6 +131,7 @@ var Doc = function (elfuncs, doc_obj) {
     var lineid = 1000;
     var plineid = 1000;
     var linesegid = 1000;
+
     var currfuncs = [];
     var layers = [];
     layers['0'] = {id: '0', visible: true};
@@ -141,6 +142,7 @@ var Doc = function (elfuncs, doc_obj) {
         clear: function () {
             doc = {objs: {},
                 pnts: {},
+                intervals: {},
                 linesegs: {},
                 plines: {},
                 lines: {},
@@ -182,7 +184,7 @@ var Doc = function (elfuncs, doc_obj) {
             parser.splitter(doc.doctext);
             debugger;
         },
-        updateObjFromDocLines: function () {
+        updateObjFromDocLines_check: function () {
             parser.parseSplitted();
         },
         toTextEls: function() {
@@ -270,6 +272,7 @@ var Doc = function (elfuncs, doc_obj) {
         circles: doc_obj.circles,
         lines: doc_obj.lines,
         plines: doc_obj.plines,
+        intervals: doc_obj.intervals,
         currfuncs: currfuncs,
         docObjs: docObjs,
         addObj: function (type, obj) {

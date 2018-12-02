@@ -10,6 +10,46 @@ var GeomCore = function() {
     return {
         'eps': 0.000000001,
 
+        'myinc2': function (d) {
+            // interval, array, index, func, funcdata
+            console.log('myinc2');
+            d[1][d[2]] += d[4];
+            return d[1][d[2]];
+        },
+        'mydec2': function (d) {
+            d[1][d[2]] -= d[4];
+            return d[1][d[2]];
+        },
+
+        'get_pline_para_point': function (rez, paraLength, pline) {
+            // if paralength more then all length then start from the beginning
+            var remained = paraLength;
+            var lengths = [];
+            var totalLength = 0;
+            for (i=1; i<pline.length; i++) {
+                lengths[i-1] = this.distance_point_point(pline[i], pline[i+1]);
+                totalLength += lengths[i-1];
+            };
+            remained = remained % totalLength;
+            var i=0;
+            while(remained > lengths[i]) {
+                i++;
+                remained -= lengths[i];
+            };
+            this.get_lineseg_para_point(rez, pline[i], pline[i+1], remained);
+            return rez;
+        },
+
+        'get_lineseg_para_point': function (rez, p0, p1, t) {
+            var len = this.distance_point_point(p0, p1);
+            var dx = p1[0] - p0[0];
+            var dy = p1[1] - p0[1];
+            var ratio = t / len;
+            rez[0] = p0[0] + dx * ratio;
+            rez[1] = p0[1] + dy * ratio;
+            return rez;
+        },
+
         //                                                                  POINT
         'point_int_line_line': function (rez, line0, line1) {
             var a0 = line0[0]; var b0=line0[1]; var c0=line0[2];

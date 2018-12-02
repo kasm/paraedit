@@ -643,3 +643,12 @@ pline01.p01=point("100","110")
 pline01.p02=point("110","110")
 pline01.p03=point("110","120")
 pline01=pline("pline01.p00", "pline01.p01", "pline01.p02", "pline01.p03")
+
+
+Animate:
+t=array("0", "1", "0.5")
+setInterval(timeInterval, "t", 0, "0.1") // t[0] {interval: ***, paramName: <sdjfk>, index: <sdfsd>, deltaValue: <val>}
+circle01.c=point("100", "200")
+circle01.c=paraPline("pline01", t)
+
+t=setInterval("100","c1000.c","0","myinc2","1")
