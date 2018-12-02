@@ -700,35 +700,43 @@ var Editor = function (canvasElement) {
             this.setIntervalButtons();
         },
         'setIntervalButtons': function () {
+            console.log('setIntervalButtons');
             var barea = document.querySelector('#intervalButtonsArea');
             //barea.innerHTML='';
             while (barea.firstChild) barea.removeChild(barea.firstChild);
             var elbs = {};
             var elbsr = {};
-            function f2(d) {
+            function f2(d321) {
                 //     0       1     2       3      4        5
                 // interval, array, index, func, funcdata  window.interval
-                console.log('f2');
-                gc[d[3]](d);
-                ret.recalcAndRedraw();
+                console.log('f2', d321);
+                return function () {
+                    console.log('inner f2', d321);
+                    gc[d321[3]](d321);
+                    ret.recalcAndRedraw();
+                };
             };
-            for (var key in doc.intervals) {
-                elbs[key] = document.createElement('button');
-                barea.appendChild(elbs[key]);
-                elbs[key].innerHTML='start interval';
-                elbs[key].addEventListener('click', function () {
-                    console.log('added even listener');
-                    doc.intervals[key][5] = window.setInterval(f2, doc.intervals[key][0], doc.intervals[key]);
-                });
 
-                elbsr[key] = document.createElement('button');
-                barea.appendChild(elbsr[key]);
-                elbsr[key].innerHTML = 'stop interval';
-                elbsr[key].addEventListener('click', function () {
-                    console.log('stop interval even listener');
-                    window.clearInterval(doc.intervals[key][5]);
-                });
-                console.log('interval:', doc.intervals[key]);
+            var lintervals = doc.intervals;
+            for (var key in doc.intervals) {
+                elbs[key]=barea.appendChild(document.createElement('button'));
+                elbs[key].innerHTML='start interval ' + key;
+                //elbs[key].myParam = doc.intervals[key]; // not used now
+                elbs[key].addEventListener('click', (function (linterval) {
+                    console.log('outer add event listener');
+                    return function () {
+                    console.log('inner add event listener');
+                    //doc.intervals[key][5] = window.setInterval(f2, doc.intervals[key][0], doc.intervals[key]);
+                    linterval[5] = window.setInterval(f2(linterval), linterval[0]);
+                    }})(lintervals[key]));
+
+                elbsr[key] = barea.appendChild(document.createElement('button'));
+                elbsr[key].innerHTML = 'stop interval ' + key;
+                elbsr[key].addEventListener('click', (function (linterval) {
+                    return function () {
+                    window.clearInterval(linterval[5]);
+                    }})(lintervals[key])); // passing interval Id (lintervals[key][5]) does not work
+                console.log('interval hadlers added to GUI:', key, doc.intervals[key]);
             }
         },
         'showHelp': function () {

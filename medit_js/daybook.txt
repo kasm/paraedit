@@ -651,4 +651,9 @@ setInterval(timeInterval, "t", 0, "0.1") // t[0] {interval: ***, paramName: <sdj
 circle01.c=point("100", "200")
 circle01.c=paraPline("pline01", t)
 
+working animation:
+c1000.c=point("358","136")
+c1000=circle("c1000.c","101")
 t=setInterval("100","c1000.c","0","myinc2","1")
+t2=setInterval("100","c1000","1","myinc2","1")
+t3=setInterval("100","c1000","1","mydec2","1")

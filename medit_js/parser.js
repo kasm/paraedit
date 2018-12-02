@@ -289,6 +289,7 @@ var Parser = function (doc) {
             }
 
             switch (line.func) {
+                /*
                 case 'setInterval_old':
                     dd0.p = line.params;
                     dd0.ob = doc.docObjs[dd0.p[1]].ob;
@@ -309,7 +310,9 @@ var Parser = function (doc) {
                         //if (dd[0][dd[1]]> 100) window.clearInterval(bb);
                     }, dd0.p[0]);
                     break;
+                    */
                 case 'setInterval':
+                    console.log('parse setinterval');
                     doc.intervals[line.rez] = line.params2.main;
                     break;
                 case 'pline': doc.plines[line.rez] = line.params2.main;

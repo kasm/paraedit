@@ -20,6 +20,9 @@ var GeomCore = function() {
             d[1][d[2]] -= d[4];
             return d[1][d[2]];
         },
+        'myincResume': function (d) {
+            console.log('my inc resume', d);
+        },
 
         'get_pline_para_point': function (rez, paraLength, pline) {
             // if paralength more then all length then start from the beginning
