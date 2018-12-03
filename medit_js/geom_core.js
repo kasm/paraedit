@@ -24,20 +24,20 @@ var GeomCore = function() {
             console.log('my inc resume', d);
         },
 
-        'get_pline_para_point': function (rez, paraLength, pline) {
+        'get_pline_para_point': function (rez, pline, paraLength) {
             // if paralength more then all length then start from the beginning
             var remained = paraLength;
             var lengths = [];
             var totalLength = 0;
             for (i=1; i<pline.length; i++) {
-                lengths[i-1] = this.distance_point_point(pline[i], pline[i+1]);
+                lengths[i-1] = this.distance_point_point(pline[i-1], pline[i]);
                 totalLength += lengths[i-1];
             };
             remained = remained % totalLength;
             var i=0;
             while(remained > lengths[i]) {
-                i++;
                 remained -= lengths[i];
+                i++;
             };
             this.get_lineseg_para_point(rez, pline[i], pline[i+1], remained);
             return rez;

@@ -422,6 +422,14 @@ var Parser = function (doc) {
                     doc.docObjs[line.rez].mains = [doc.docObjs[line.rez].ob].concat(line.params2.main);
                     doc.docObjs[line.rez].func = gl[doc.docObjs[line.rez].query];
                     break;
+                case 'plineMove':
+                    // right now no scalar, but one of coords of point
+                    doc.docObjs[line.rez].query = 'point_plineMove_pline_scalar';
+                    doc.docObjs[line.rez].mainIds = line.params2.ids;
+                    // mains - array to pass to query function (conains rez ref and data)
+                    doc.docObjs[line.rez].mains = [doc.docObjs[line.rez].ob].concat(line.params2.main);
+                    doc.docObjs[line.rez].func = gl[doc.docObjs[line.rez].query];
+                    break;
                 case 'setVar':
 
 

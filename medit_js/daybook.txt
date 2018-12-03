@@ -628,6 +628,8 @@ CNC visualisation
 6. add form to enter cnc program 0.5h
 7. convert CNC program to paraedit format 1h
 
+move point through pline 1h
+
 
 text > drawing:
 parser.splitter > drawlines
@@ -657,3 +659,19 @@ c1000=circle("c1000.c","101")
 t=setInterval("100","c1000.c","0","myinc2","1")
 t2=setInterval("100","c1000","1","myinc2","1")
 t3=setInterval("100","c1000","1","mydec2","1")
+
+
+move point through pline 1h : 1h 18m
+c1000.c=plineMove("pline01", param)
+
+pline01.p00=point("100","100")
+pline01.p01=point("100","150")
+pline01.p02=point("110","110")
+pline01.p03=point("110","180")
+pline01.p04=point("120","150")
+p01=point("20","20")
+pline01=pline("pline01.p00", "pline01.p01", "pline01.p02", "pline01.p03", "pline01.p04")
+c1000.c=point("200", "200")
+c1000=circle("c1000.c","20")
+c1000.c=plineMove("pline01","p01", "0")
+t01=setInterval("100","p01","0","myinc2","1")

@@ -8,6 +8,10 @@ var GeomLinks = function(DefPoint) {
     var DefaultPoint = DefPoint;
     return {
         selectionRange: 5,
+        'point_plineMove_pline_scalar': function (rez, pline, vala, ind) {
+            return gc.get_pline_para_point(rez, pline, vala[ind]);
+        },
+
         'getElementFromPath': function (elRef, path) {
             // for instance lineseg1.p1.x
             var rootEl = doc_objs;
