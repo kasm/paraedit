@@ -675,3 +675,91 @@ c1000.c=point("200", "200")
 c1000=circle("c1000.c","20")
 c1000.c=plineMove("pline01","p01", "0")
 t01=setInterval("100","p01","0","myinc2","1")
+c1001.c=point("30","300")
+c1001=circle("c1001.c","30")
+move_right=setInterval("100","c1001.c","0","myinc2","1")
+move_down=setInterval("100","c1001.c","1","myinc2","1")
+move_left=setInterval("100","c1001.c","0","mydec2","1")
+move_up=setInterval("100","c1001.c","1","mydec2","1")
+bigger=setInterval("100","c1001","1","myinc2","1")
+smaller=setInterval("100","c1001","1","mydec2","1")
+
+
+
+
+pline01.p00=point("100","100")
+pline01.p01=point("100","450")
+pline01.p02=point("210","310")
+pline01.p03=point("210","480")
+pline01.p04=point("500","500")
+pline01.p05=point("500","100")
+pline01.p06=point("100","100")
+p01=point("595906","20")
+pline01=pline("pline01.p00","pline01.p01","pline01.p02","pline01.p03","pline01.p04","pline01.p05","pline01.p06")
+c1000.c=point("100","358")
+c1000=circle("c1000.c","20")
+c1000.c=plineMove("pline01","p01","0")
+t01=setInterval("10","p01","0","myinc2","1")
+c1001.c=point("326","293")
+c1001=circle("c1001.c","60")
+move_right=setInterval("100","c1001.c","0","myinc2","1")
+move_down=setInterval("100","c1001.c","1","myinc2","1")
+move_left=setInterval("100","c1001.c","0","mydec2","1")
+move_up=setInterval("100","c1001.c","1","mydec2","1")
+bigger=setInterval("100","c1001","1","myinc2","1")
+smaller=setInterval("100","c1001","1","mydec2","1")
+c1002.c=point("272","430")
+c1002=circle("c1002.c","207")
+c1002=tan21("c1001","c1000","4")
+c1003.c=point("410","312")
+c1003=circle("c1003.c","26")
+c1003=tan21("c1002","c1001","1")
+ls000.p0=point("210","458")
+ls000.p1=point("209","135")
+ls000=lineseg("ls000.p0","ls000.p1")
+c1004.c=point("243","191")
+c1004=circle("c1004.c","34")
+c1004=tan21("c1002","ls000","2")
+c1005.c=point("217","439")
+c1005=circle("c1005.c","122")
+c1005=tan21("c1001","c1000","7")
+
+
+2018-12-05
+Idea - to make some elements temporary - it may be useful for creating videos.
+For instance author draws red circle to attract attention and this circle disappears after 2-3 seconds
+
+2018-12-06
+Imlementing CNC visualisation
+
+restore how to data managed:
+
+
+user leaves TextArea:
+// text > objs
+editor.save()
+ {
+parser.splitter(); // fills doclines from text
+parser.parser(); // fills docObjs from doclines
+}
+
+parser.parser()
+{
+parserParam2();
+parseLine();
+};
+
+
+// objs > text
+doc.toText() {
+doc.updateDocLinesFromObj(); // meaning in the name
+s+=doclines.rez+"="+doclines.params[i] // actions to fill text
+}
+
+CNC format:
+<G02> X12.3 Y23 <I10> <J22> FE
+
+CNC text > CNCpointsarray > TextArea format > doclines > editor
+
+THEREFORE, should be implemented function CNC2doclineы to create points and
+pline from CNC program

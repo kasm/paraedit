@@ -200,6 +200,79 @@ var Parser = function (doc) {
             return lines;
         },
 
+        CNCRegexSplitter: function (t) {
+            var r = t.match(/([A-Z]{1}[\-0-9]+\.?[0-9]*)/g);
+            return r;
+        },
+
+        // text to array of objects {gmode:'01', 'X':undefined, 'Y':'22.8'}
+        CNCsplitter: function (CNCText) {
+            function getCNCparam(p) {
+                return [p[0], p.substr(1, p.length-1)];
+            }
+            var GMode = '01'; // G01, G02, G03
+            // gmode = (g - 1) * 2 - (g>1) * 3    // 0 for G01, 1 for G02, -1 for G03
+            var lines = [];
+            var lines1 = CNCText.match(/[^\r\n]+/g);
+            if (!(lines1 === null)) {
+                for (i=0; i<lines1.length; i++) {
+                    lines[i] = {};
+                    lines[i].raw = lines1[i];
+                    lines[i].splitted = this.CNCRegexSplitter(lines[i].raw);
+                    for (j=0; j<lines[i].splitted.length; j++) {
+                        var par1 = getCNCparam(lines[i].splitted[j]);
+                        if (par1[0] === 'G') {
+                            GMode = par1[2];
+                        };
+                        lines[i].gmode = GMode;
+                        lines[i][par1[0]] = par1[1];
+                    };
+                    //if (lines[i]['X'] === undefined) lines[i]['X']=0;
+                }
+            }
+            return lines;
+        },
+        CNCsplitted2pointsArray: function (CNClines) {
+            var pa = [];
+            var GMode = '01';
+            for (i =0; i<CNClines.length; i++) {
+                li = CNClines[i];
+                if (li.G) GMode = li.G;
+                li.G = GMode;
+                if (li.X === undefined && li.Y === undefined) continue;
+                pa_current = pa[pa.length-1];
+                /*
+                if (li.X === undefined) li.X = pa_current[0];
+                if (li.Y === undefined) li.Y = pa_current[0];
+                */
+                var p1 = [Number(li.X), Number(li.Y)];
+                if (li.G === '01') {
+                    pa.push(p1);
+                } else { /// 02 or 03
+                    var sign1 = 1;
+                    var c0 = [Number(li.I), Number(li.J)]
+                    if (li.G === '02') sign1 = -1;
+                    gc.get_points_from_arc(pa, pa_current, p1, c0, 7, sign1);
+                };
+            };
+            return pa;
+        },
+
+        CNCpointsArray2paraeditText: function (pa) {
+            var s = ""; var i;
+            var pl_string = 'pline000=pline(';
+            for (i=0; i<pa.length; i++) {
+                var pname = 'pline000' + i;
+                s+=pname +'=point("'+pa[i][0].toString() + '","' +
+                    pa[i][1].toString() + '")\n';
+                pl_string+='"'+pname +'"';
+                if (i < pa.length-1) pl_string+= ',';
+            };
+            s+=pl_string + ')\n';
+            return s;
+        },
+
+
         JSONparserAll: function (rez, text) {
             rez.length = 0;
             var lines1 = text.match(/[^\r\n]+/g);

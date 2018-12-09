@@ -11,6 +11,9 @@ var GeomLinks = function(DefPoint) {
         'point_plineMove_pline_scalar': function (rez, pline, vala, ind) {
             return gc.get_pline_para_point(rez, pline, vala[ind]);
         },
+        'pline_points': function (rez, points) {
+
+        },
 
         'getElementFromPath': function (elRef, path) {
             // for instance lineseg1.p1.x

@@ -53,6 +53,29 @@ var GeomCore = function() {
             return rez;
         },
 
+        // rez, start point, center of arc, end point, Rotation (0 - clockwise), n - number of segments
+        // c0 - I, J as increments from p0
+        'get_points_from_arc': function (rez, p0, p1, c0, n, sign) {
+            var ca = [p0[0] + c0[0], p0[1] + c0[1]];
+            var d0 = [p0[0] - ca[0], p0[1] - ca[1]];
+            var d1 = [p1[0] - ca[0], p1[1] - ca[1]];
+            var r0 = Math.sqrt( d0[0]*d0[0] + d0[1]*d0[1]);
+            var r1 = Math.sqrt( d1[0]*d1[0] + d1[1]*d1[1]);
+            var d0n = [sign * d0[0]/r0, sign * d0[1]/r0];
+            var d1n = [sign * d1[0]/r1, sign * d1[1]/r1];
+            var a0 = Math.atan2(d0n[1],d0n[0]);
+            var a1 = Math.atan2(d1n[1],d1n[0]);
+            var da = (a1 - a0) / n;
+            //rez.length = 0;
+            var i;
+            for (i=0; i<n; i++) {
+                var ai = a0 + da * (i+1);
+                rez.push([ca[0] + Math.cos(ai) * r0, ca[1] + Math.sin(ai) * r0]);
+            };
+            return rez;
+        },
+
+
         //                                                                  POINT
         'point_int_line_line': function (rez, line0, line1) {
             var a0 = line0[0]; var b0=line0[1]; var c0=line0[2];

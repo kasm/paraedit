@@ -590,6 +590,7 @@ var Editor = function (canvasElement) {
 
     var ret = {
         doc: doc,
+        parser: parser,
         recalcAndRedraw: function () {
             doc.recalcAllObjs();
             ret.redraw();
@@ -783,6 +784,9 @@ var Editor = function (canvasElement) {
             cvc.strokeStyle='green';
             cvc.lineWidth = 1;
             cvc.fillRect(0,0,c1var.width,c1var.height);
+            var i2 = new Image();
+            i2.src="./img/mid64x64.png";
+            cvc.drawImage(i2, 50,50, 200, 100);
             var elrec;
 
             /*
@@ -883,6 +887,8 @@ var Editor = function (canvasElement) {
                 cvc.lineTo(ps[i][0] - holderSize, ps[i][1] + holderSize);
                 cvc.lineTo(ps[i][0] - holderSize, ps[i][1] - holderSize);
             }
+
+
             cvc.stroke();
         }, // redraw
         recalc: function () { var el; var i; var tpnt; var els = doc.getEls();
