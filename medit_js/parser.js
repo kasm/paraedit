@@ -249,9 +249,9 @@ var Parser = function (doc) {
                 if (li.G === '01') {
                     pa.push(p1);
                 } else { /// 02 or 03
-                    var sign1 = 1;
+                    var sign1 = -1;
                     var c0 = [Number(li.I), Number(li.J)]
-                    if (li.G === '02') sign1 = -1;
+                    if (li.G === '02') sign1 = 1;
                     gc.get_points_from_arc(pa, pa_current, p1, c0, 7, sign1);
                 };
             };

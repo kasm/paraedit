@@ -786,7 +786,7 @@ var Editor = function (canvasElement) {
             cvc.fillRect(0,0,c1var.width,c1var.height);
             var i2 = new Image();
             i2.src="./img/mid64x64.png";
-            cvc.drawImage(i2, 50,50, 200, 100);
+            //cvc.drawImage(i2, 50,50, 200, 100);
             var elrec;
 
             /*
@@ -807,7 +807,8 @@ var Editor = function (canvasElement) {
                 if (dob.type == 'point') {
                     if (status.drawPointNames) {
                         var p = dob.ob;
-                        cvc.fillText(obId+'('+Math.round(p[0])+','+Math.round(p[1])+')', p[0], p[1]);
+                        var vp = gc.point_model2view(p);
+                        cvc.fillText(obId+'('+Math.round(p[0])+','+Math.round(p[1])+')', vp[0], vp[1]);
                     }
                 };
 
@@ -823,7 +824,10 @@ var Editor = function (canvasElement) {
                 };
                 x = x/count - 15;
                 y = y/count;
-                cvc.fillText(obId, x, y);
+
+                var vxy = gc.point_model2view([x,y]);
+                // print id of the element
+                cvc.fillText(obId, vxy[0], vxy[1]);
             };
 
 

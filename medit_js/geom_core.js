@@ -6,9 +6,17 @@
 
 var GeomCore = function() {
     var eps = 0.00000001;
+    var wcs = {orig: [0, 600], ort: [1, -1], scale: 1};
 
     return {
         'eps': 0.000000001,
+
+        'point_model2view': function (p0) {
+            return [wcs.orig[0]+p0[0]*wcs.ort[0], wcs.orig[1] + p0[1] * wcs.ort[1]];
+        },
+        'point_view2model': function (p0) {
+            return [wcs.ort[0] * (p0[0] - wcs.orig[0]), wcs.ort[1] * (p0[1] - wcs.orig[1])];
+        },
 
         'myinc2': function (d) {
             // interval, array, index, func, funcdata
@@ -56,22 +64,37 @@ var GeomCore = function() {
         // rez, start point, center of arc, end point, Rotation (0 - clockwise), n - number of segments
         // c0 - I, J as increments from p0
         'get_points_from_arc': function (rez, p0, p1, c0, n, sign) {
+            function myXOR(a,b) {
+                return ( a || b ) && !( a && b );
+            }
             var ca = [p0[0] + c0[0], p0[1] + c0[1]];
             var d0 = [p0[0] - ca[0], p0[1] - ca[1]];
             var d1 = [p1[0] - ca[0], p1[1] - ca[1]];
             var r0 = Math.sqrt( d0[0]*d0[0] + d0[1]*d0[1]);
             var r1 = Math.sqrt( d1[0]*d1[0] + d1[1]*d1[1]);
-            var d0n = [sign * d0[0]/r0, sign * d0[1]/r0];
-            var d1n = [sign * d1[0]/r1, sign * d1[1]/r1];
+            //var d0n = [sign * d0[0]/r0, sign * d0[1]/r0];
+            var d0n = [d0[0]/r0, d0[1]/r0];
+            //var d1n = [sign * d1[0]/r1, sign * d1[1]/r1];
+            var d1n = [d1[0]/r1, d1[1]/r1];
             var a0 = Math.atan2(d0n[1],d0n[0]);
             var a1 = Math.atan2(d1n[1],d1n[0]);
+            if (a0 < 0) a0+= Math.PI * 2;
+            if (a1 < 0) a1+= Math.PI * 2;
+            if (sign == 1 && a0 < a1) a0+= Math.PI * 2;
+            if (sign == -1 && a0 > a1) a1+= Math.PI * 2;
+
+            //if (myXOR((sign == -1), (a0 > a1))) a0+= Math.PI * 2;
+
+            console.log('alfa', a0, a1);
             var da = (a1 - a0) / n;
+            debugger;
             //rez.length = 0;
             var i;
             for (i=0; i<n; i++) {
                 var ai = a0 + da * (i+1);
                 rez.push([ca[0] + Math.cos(ai) * r0, ca[1] + Math.sin(ai) * r0]);
             };
+            rez.push(ca);
             return rez;
         },
 

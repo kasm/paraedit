@@ -58,8 +58,11 @@ var LineSeg = function () {
 
             //cvc.moveTo(element.pnts[0][0], element.pnts[0][1]);
             //cvc.lineTo(element.pnts[1][0], element.pnts[1][1]);
-            cvc.moveTo(element[0][0], element[0][1]);
-            cvc.lineTo(element[1][0], element[1][1]);
+            var el0 = gc.point_model2view(element[0]);
+            var el1 = gc.point_model2view(element[1]);
+            debugger;
+            cvc.moveTo(el0[0], el0[1]);
+            cvc.lineTo(el1[0], el1[1]);
             console.log('lineseg drawn');
 
             cvc.stroke();
