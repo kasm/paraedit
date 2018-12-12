@@ -5,6 +5,7 @@
 
 var Circle = function () {
     var gl = require('../geom_links')();
+    var gc=require('../geom_core')();
     type = 'circle';
     return {
         nRulers: 2,
@@ -14,7 +15,8 @@ var Circle = function () {
         ob: [[0, 0], 10],
         draw: function (cvc, circle) {
             cvc.beginPath();
-            cvc.arc(circle[0][0], circle[0][1], circle[1], 0, Math.PI * 2);
+            var c = gc.point_model2view(circle[0]);
+            cvc.arc(c[0], c[1], circle[1], 0, Math.PI * 2);
             cvc.stroke();
         },
         isOver: function (circle, x, y) {

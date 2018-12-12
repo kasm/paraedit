@@ -18,7 +18,7 @@
         .text1 {
             float: left;
             width: 300px;
-            height: 600px;
+            height: 400px;
             border: 1px;
             background-color:#eee;
             border-color: black;
@@ -246,7 +246,8 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </div>
     <div class="text1">
         Text area:
-        <textarea title="" id="t1" class="text1" style="border: 1px; border-color: green; border-style: solid;"
+        <textarea title="Editor text area" id="t1" class="text1" style=
+                "border: 1px; border-color: green; border-style: solid;"
                   onmouseout="editor.textAreaLeave()" onkeyup="editor.textAreaChanged()">
 
         </textarea>
@@ -258,7 +259,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 
 <script src="index.js"></script>
 
-<textarea id="z3" display="none">
+<textarea id="z3" style="display: none;">
 layer=layer("f")
 ls000.p0=point("112","215")
 ls000.p1=point("460","215")
@@ -307,7 +308,7 @@ ls004.p1=int("c1001","ls001","0")
     };
 </script>
 
-<textarea id="z11">
+<textarea id="z11" style="display: none;">
 layer=layer("0")
 ls000.p0=point("232","333")
 ls000.p1=point("418","335")
@@ -356,7 +357,7 @@ ls005.p1=int("c1002","ls004","0")
 
     };
 </script>
-<textarea id="z26">
+<textarea id="z26" style="display: none;">
 layer=layer("0")
 ls000.p0=point("187","315")
 ls000.p1=point("429","314")
@@ -414,7 +415,7 @@ ls007=lineseg("ls007.p0","ls007.p1")
 ls007.p0=int("c1003","c1001","0")
 ls007.p1=int("c1004","ls006","0")
 </textarea>
-<textarea id="anim00">
+<textarea id="anim00" style="display: none;">
 pline01.p00=point("100","100")
 pline01.p01=point("100","450")
 pline01.p02=point("210","310")
@@ -452,7 +453,7 @@ c1005.c=point("217","439")
 c1005=circle("c1005.c","122")
 c1005=tan21("c1001","c1000","7")
 </textarea>
-<textarea id="CNC">
+<textarea id="CNC1" style="width: 300px; height: 200px;">
     G01
     X10 Y20
     X30 Y30
@@ -460,6 +461,28 @@ c1005=tan21("c1001","c1000","7")
     X100 Y300
     G03
     X300 Y300 I100 J235
+</textarea>
+
+<textarea id="CNC" style="width: 300px; height: 200px;">
+    G01
+    X10 Y10
+    X140 Y100
+    X360 Y100
+    G03 X400 Y140 I0 J40
+    G01
+    X400 Y260
+    G03 X360 Y300 I-40 J0
+    G01 X140 Y300
+    G03 X100 Y260 I0 J-40
+    G01 X100 Y140
+    G03 X140 Y100 I40 J0
+    G01 X100 Y10
+    X10 Y10
+</textarea>
+<textarea id='CNCround_rect_aux' style="display: none;">
+
+
+
 </textarea>
 <script>
     function bz26() {
@@ -483,6 +506,9 @@ c1005=tan21("c1001","c1000","7")
         editor.textAreaChanged();
         editor.textAreaLeave();
 
+    }
+    function loadCNCroundrect() {
+        
     }
 </script>
 </body>

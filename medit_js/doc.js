@@ -131,6 +131,7 @@ var Doc = function (elfuncs, doc_obj) {
     var lineid = 1000;
     var plineid = 1000;
     var linesegid = 1000;
+    var imageid = 1000;
 
     var currfuncs = [];
     var layers = [];
@@ -143,6 +144,7 @@ var Doc = function (elfuncs, doc_obj) {
             doc = {objs: {},
                 pnts: {},
                 intervals: {},
+                images: {},
                 linesegs: {},
                 plines: {},
                 lines: {},
@@ -272,6 +274,7 @@ var Doc = function (elfuncs, doc_obj) {
         circles: doc_obj.circles,
         lines: doc_obj.lines,
         plines: doc_obj.plines,
+        images: doc_obj.images,
         intervals: doc_obj.intervals,
         currfuncs: currfuncs,
         docObjs: docObjs,

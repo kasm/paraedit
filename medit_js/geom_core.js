@@ -87,14 +87,14 @@ var GeomCore = function() {
 
             console.log('alfa', a0, a1);
             var da = (a1 - a0) / n;
-            debugger;
             //rez.length = 0;
             var i;
             for (i=0; i<n; i++) {
                 var ai = a0 + da * (i+1);
                 rez.push([ca[0] + Math.cos(ai) * r0, ca[1] + Math.sin(ai) * r0]);
             };
-            rez.push(ca);
+            // push center of the arc
+            //rez.push(ca);
             return rez;
         },
 

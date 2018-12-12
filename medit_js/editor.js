@@ -73,6 +73,7 @@ var docTextArray = doctext.split('\n');
 var doc2={objs: {},
     pnts: {},
     linesegs: {},
+    images: {},
     plines: {},
     intervals: {},
     lines: {},
@@ -109,6 +110,8 @@ var Editor = function (canvasElement) {
 
     elfuncs['line'] = require('./elements/line.js')();
     elfuncs['lineseg'] = require('./elements/lineseg.js')();
+    elfuncs['image'] = require('./elements/image.js')();
+
     elfuncs['circle'] = require('./elements/circle.js')();
     elfuncs['point'] = require('./elements/point.js')();
     elfuncs['pline'] = require('./elements/MultiLineSeg')();
@@ -686,6 +689,7 @@ var Editor = function (canvasElement) {
             this.clearOb(doc.pnts);
             this.clearOb(doc.lines);
             this.clearOb(doc.linesegs);
+            this.clearOb(doc.images);
             this.clearOb(doc.plines);
             this.clearOb(doc.circles);
             this.clearOb(doc.scalars);
@@ -753,6 +757,7 @@ var Editor = function (canvasElement) {
             return doc;
         },
         redraw: function () { var els = doc.getToRedraw(); var pnts = doc.getPnts();
+
             var i;
             var tt = document.getElementById('status'); var s='<font size="2">';
             var k = Object.keys(doc.docObjs);
@@ -781,12 +786,12 @@ var Editor = function (canvasElement) {
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
             cvc.strokeStyle = "#000000";
-            cvc.strokeStyle='green';
+            cvc.strokeStyle='red';
             cvc.lineWidth = 1;
             cvc.fillRect(0,0,c1var.width,c1var.height);
             var i2 = new Image();
             i2.src="./img/mid64x64.png";
-            //cvc.drawImage(i2, 50,50, 200, 100);
+            cvc.drawImage(i2, 100,100, 228, 228);
             var elrec;
 
             /*

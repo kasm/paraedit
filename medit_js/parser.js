@@ -260,15 +260,22 @@ var Parser = function (doc) {
 
         CNCpointsArray2paraeditText: function (pa) {
             var s = ""; var i;
-            var pl_string = 'pline000=pline(';
+            var pl_string = 'plineCNC=pline(';
             for (i=0; i<pa.length; i++) {
-                var pname = 'pline000' + i;
+                var pname = 'plineCNC' + i;
                 s+=pname +'=point("'+pa[i][0].toString() + '","' +
                     pa[i][1].toString() + '")\n';
                 pl_string+='"'+pname +'"';
                 if (i < pa.length-1) pl_string+= ',';
             };
-            s+=pl_string + ')\n';
+            s+=pl_string +
+                  //  ')\npCNC=point("0","0")\n'+
+
+                ')\npCNC=point("0","10")\npmCNC=point("0","0")\n'+
+            'pmCNC=plineMove("plineCNC","pCNC","0")\n'+
+
+            'tCNC=setInterval("10","pCNC","0","myinc2","1")\n'+
+            'cCNC=circle("pmCNC","10")\n';
             return s;
         },
 
@@ -336,14 +343,19 @@ var Parser = function (doc) {
         },
 
         isElem: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'pline');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' ||
+            t === 'pline' || t === 'image'
+            );
         },
         isElemAll: function (t) {
-            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'pline' || t === 'point');
+            return (t === 'line' || t === 'circle' || t === 'lineseg' || t === 'pline'
+            || t === 'point' || t === 'image'
+            );
         },
 
         isLink: function (t) {
-            return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq' || t === 'tan2' || t ==='tan3');
+            return (t === 'mid' || t === 'int' || t === 'per' || t === 'eq' ||
+            t === 'tan2' || t ==='tan3');
         },
         // line format:
         //
@@ -503,6 +515,13 @@ var Parser = function (doc) {
                     doc.docObjs[line.rez].mains = [doc.docObjs[line.rez].ob].concat(line.params2.main);
                     doc.docObjs[line.rez].func = gl[doc.docObjs[line.rez].query];
                     break;
+                case 'image':
+                    doc.images[line.rez] = line.params2.main;
+                    this.obCreateIfNot(line.rez);
+                    doc.docObjs[line.rez].ob = doc.images[line.rez];
+                    doc.docObjs[line.rez].type = 'image';
+                    break;
+
                 case 'setVar':
 
 
