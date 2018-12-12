@@ -233,6 +233,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 <button onclick="bz26();">get Z26</button>
 <button onclick="bzanim00();">get animation</button>
 <button onclick="loadCNC();">load CNC</button>
+<button onclick="loadCNCroundrect();">loadCNCroundrect</button>
 <div>
 <div style="border-color: black; border: 3px" class="editor">
     <div>
@@ -465,6 +466,19 @@ c1005=tan21("c1001","c1000","7")
 
 <textarea id="CNC" style="width: 300px; height: 200px;">
     G01
+    X140 Y110
+    X360 Y110
+    G03 X390 Y140 I0 J30
+    G01
+    X390 Y260
+    G03 X360 Y290 I-30 J0
+    G01 X140 Y290
+    G03 X110 Y260 I0 J-30
+    G01 X110 Y140
+    G03 X140 Y110 I30 J0
+</textarea>
+<textarea id="CNCround_rect" style="width: 300px; height: 200px;">
+    G01
     X10 Y10
     X140 Y100
     X360 Y100
@@ -480,9 +494,7 @@ c1005=tan21("c1001","c1000","7")
     X10 Y10
 </textarea>
 <textarea id='CNCround_rect_aux' style="display: none;">
-
-
-
+i3=image("./CNC/round_rect.png","102","103","298","195")
 </textarea>
 <script>
     function bz26() {
@@ -508,7 +520,14 @@ c1005=tan21("c1001","c1000","7")
 
     }
     function loadCNCroundrect() {
-        
+        var s = document.getElementById('CNCround_rect').value;
+        var s2= document.getElementById('CNCround_rect_aux').value;
+        var CNClines = editor.parser.CNCsplitter(s);
+        var pa = editor.parser.CNCsplitted2pointsArray(CNClines);
+        var ta = editor.parser.CNCpointsArray2paraeditText(pa);
+        document.getElementById('t1').value = s2 + ta;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
     }
 </script>
 </body>

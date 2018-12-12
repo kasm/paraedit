@@ -789,9 +789,11 @@ var Editor = function (canvasElement) {
             cvc.strokeStyle='red';
             cvc.lineWidth = 1;
             cvc.fillRect(0,0,c1var.width,c1var.height);
+            /*
             var i2 = new Image();
             i2.src="./img/mid64x64.png";
             cvc.drawImage(i2, 100,100, 228, 228);
+            */
             var elrec;
 
             /*
@@ -888,8 +890,10 @@ var Editor = function (canvasElement) {
 
 
             //var ps = doc.getPnts();
-            var ps = curr.rulers;
-            for (i in ps) {
+            var ps2 = curr.rulers;
+            var ps = [];
+            for (i in ps2) {
+                ps[i]=gc.point_model2view(ps2[i]);
                 cvc.moveTo(ps[i][0] - holderSize, ps[i][1] - holderSize);
                 cvc.lineTo(ps[i][0] + holderSize, ps[i][1] - holderSize);
                 cvc.lineTo(ps[i][0] + holderSize, ps[i][1] + holderSize);

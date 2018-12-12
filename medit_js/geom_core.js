@@ -6,7 +6,7 @@
 
 var GeomCore = function() {
     var eps = 0.00000001;
-    var wcs = {orig: [0, 600], ort: [1, -1], scale: 1};
+    var wcs = {orig: [0, 0], ort: [1, 1], scale: 1};
 
     return {
         'eps': 0.000000001,
