@@ -83,7 +83,8 @@ var doc2={objs: {},
     curr: {},
     doctext: doctext,
     doclines: [],
-    docTest2: []
+    docTest2: [],
+    currentProps: {strokeStyle: 'green', lineWidth: 1}
 };
 
 var Editor = function (canvasElement) {
@@ -98,7 +99,14 @@ var Editor = function (canvasElement) {
     //parser.parseText(doctext);
     var status = {
         drawPointNames: true
-    }
+//        currentStyle: 'red',
+  //      currentWidth: 1,
+    ///    defaultStyle: 'green',
+       // defaultWidth: 3
+    };
+
+    status.currentStyle = status.defaultStyle;
+    status.currentWidth = status.defaultWidth;
 
 
     //doc2.docData = parser.splitter(doctext);
@@ -593,6 +601,7 @@ var Editor = function (canvasElement) {
 
     var ret = {
         doc: doc,
+        gc: gc,
         parser: parser,
         recalcAndRedraw: function () {
             doc.recalcAllObjs();
@@ -785,9 +794,7 @@ var Editor = function (canvasElement) {
 
             var k = 5;
             cvc.fillStyle = "#FFFFFF";
-            cvc.strokeStyle = "#000000";
-            cvc.strokeStyle='red';
-            cvc.lineWidth = 1;
+
             cvc.fillRect(0,0,c1var.width,c1var.height);
             /*
             var i2 = new Image();
@@ -811,6 +818,7 @@ var Editor = function (canvasElement) {
             for (obId in doc.docObjs) {
                 var dob = doc.docObjs[obId];
                 if (dob.layer == 'f') continue;
+
                 if (dob.type == 'point') {
                     if (status.drawPointNames) {
                         var p = dob.ob;
@@ -818,6 +826,9 @@ var Editor = function (canvasElement) {
                         cvc.fillText(obId+'('+Math.round(p[0])+','+Math.round(p[1])+')', vp[0], vp[1]);
                     }
                 };
+
+                cvc.strokeStyle=dob.props.strokeStyle;
+                cvc.lineWidth = dob.props.lineWidth;
 
 
                 if (!parser.isElem(doc.docObjs[obId].type)) continue;

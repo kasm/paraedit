@@ -6,7 +6,7 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="969635208938-bp47bbnqslk7h82t3ki92hpgsom0dcsm.apps.googleusercontent.com">
     -->
-    <title>Title</title>
+    <title>Paraedit</title>
     <style>
         .editor {
             float: left;
@@ -48,6 +48,28 @@
             text-decoration:none;
             text-shadow:0px 1px 0px #2f6627;
         }
+
+        .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
         .myButton:hover {
             background-color:#5cbf2a;
         }
@@ -194,15 +216,17 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </script>
 <div>
     <table border="1" border-color="black">
-        <tr><td colspan="5" align="center" style="font-size:18pt">Web based graphics editor with geometry parametrization<br>
-            <span style="font-size:12pt">(c) Dmitry Rukavishnikov</span></td></tr>
+        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedit<br>
+            <span style="font-size:12pt;display: none;"
+            >(c) Dmitry Rukavishnikov</span></td></tr>
 
         <tr>
             <td align="center">Elements<br>
                 <img src="img/lineseg64x64.png" onclick="editor.lineseg()" class="imgButton">
                 <img src="img/line64x64.png" onclick="editor.line()" class="imgButton" >
                 <img src="img/circle64x64.png" onclick="editor.circle()" class="imgButton">
-                <img src="img/circle64x64.png" onclick="editor.text()" class="imgButton">
+                <img src="img/circle64x64.png" onclick="editor.text()" class="imgButton"
+                style="display: none;">
             </td><td>  </td>
             <td align="center">
                 Links<br>
@@ -218,7 +242,8 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 
             </td>
             <td>
-                <div class="g-signin2" data-onsuccess="onSignIn">Enter with your google account</div>
+                <div class="g-signin2" data-onsuccess="onSignIn"
+                style="display: none;">Enter with your google account</div>
             </td>
             <td>
                 <div><a href="https://www.youtube.com/watch?v=xYf8ZKfnsjg">VIDEO HOW IT WORKS</a></div>
@@ -227,13 +252,16 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
    </table>
 
 </div>
-
+<div style="display: none;">
 <button onclick="bz3();">get Z3</button>
 <button onclick="bz11();">get Z11</button>
 <button onclick="bz26();">get Z26</button>
-<button onclick="bzanim00();">get animation</button>
-<button onclick="loadCNC();">load CNC</button>
-<button onclick="loadCNCroundrect();">loadCNCroundrect</button>
+    <button class="btn" onclick="loadCNC();">load CNC</button>
+</div>
+<button onclick="bzanim00();">animation example</button>
+
+<button class="myButton;" onclick="loadCNCroundrect();">Round Rectangle example</button>
+<button class="myButton;" onclick="loadCNCroundrect();">Shaped halfmuff example</button>
 <div>
 <div style="border-color: black; border: 3px" class="editor">
     <div>
@@ -454,7 +482,7 @@ c1005.c=point("217","439")
 c1005=circle("c1005.c","122")
 c1005=tan21("c1001","c1000","7")
 </textarea>
-<textarea id="CNC1" style="width: 300px; height: 200px;">
+<textarea id="CNC1" style="width: 300px; height: 200px;display: none;">
     G01
     X10 Y20
     X30 Y30
@@ -463,8 +491,9 @@ c1005=tan21("c1001","c1000","7")
     G03
     X300 Y300 I100 J235
 </textarea>
-
-<textarea id="CNC" style="width: 300px; height: 200px;">
+<br>
+CNC Program:<br>
+<textarea id="CNC" style="width: 300px; height: 200px;display: none;">
     G01
     X140 Y110
     X360 Y110
@@ -509,7 +538,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         editor.textAreaLeave();
 
     }
-    function loadCNC() {
+    function loadCNC2() {
         var s = document.getElementById('CNC').value;
         var CNClines = editor.parser.CNCsplitter(s);
         var pa = editor.parser.CNCsplitted2pointsArray(CNClines);
@@ -528,6 +557,114 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         document.getElementById('t1').value = s2 + ta;
         editor.textAreaChanged();
         editor.textAreaLeave();
+    }
+    function getPointsMuff(alfa) {
+        var rez = {};
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var a1 = 27 * Math.PI / 180.;
+        var a2 = 45 * Math.PI / 180.;
+        var p0 = [R0 * Math.sin(alfa), R0 * Math.cos(alfa)];
+        var p1 = [R1 * Math.sin(alfa+a1), R1 * Math.cos(alfa+a1)];
+        var p2 = [R0 * Math.sin(alfa+a2), R0 * Math.cos(alfa+a2)];
+        var L01 = Math.sqrt( (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+            (p1[1] - p0[1]) * (p1[1] - p0[1]));
+        var h = Math.sqrt( Ri*Ri - L01*L01/4);
+        var pm = [ (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+        var lm = []; editor.gc.line_point_point(lm, p0,p1);
+        var c = [pm[0] - h * lm[0], pm[1] - h * lm[1]];
+        rez.p0 = p0;
+        rez.p1 = p1;
+        rez.p2 = p2;
+        rez.c = c;
+        return rez;
+    };
+    function getKeyPointsTool() {
+        var scale = 4;
+        var cx = 00;
+        var cy = 00;
+        var a = []; var ps = [];
+        var Ri = 18*scale; var Rt = 3*scale;
+        var n = 8;
+        var s = '';
+        for (i=0; i<n; i++) {
+            var da = 2 * Math.PI / n;
+            a.push(getPointsMuff(i * da));
+            var l1 = []; editor.gc.line_point_point(l1, a[i].p1, a[i].p2);
+            var l2 = [l1[0], l1[1], l1[2] + Rt];
+            a[i].l1 = l1;
+            a[i].l2 = l2;
+            a[i].c1 = [[a[i].c[0], a[i].c[1]], Ri];
+        };
+        for (i=0; i<n; i++) {
+            a[i].p0t = [0, 0]; editor.gc.point_int_line_circle_radius_selector(
+                a[i].p0t, a[(i + n -1) % n].l1, a[i].c1, Rt, [1, -1, 1]);
+            a[i].p1t = [0, 0]; editor.gc.point_int_line_circle_radius_selector(
+                a[i].p1t, a[i].l1, a[i].c1, Rt, [-1, -1, 1]);
+            a[i].p0t[0] = Math.trunc(a[i].p0t[0] );
+            a[i].p0t[1] = Math.trunc(a[i].p0t[1] );
+            a[i].p1t[0] = Math.trunc(a[i].p1t[0] );
+            a[i].p1t[1] = Math.trunc(a[i].p1t[1] );
+            ps.push(a[i].p0);
+            ps.push(a[i].p1);
+
+        };
+        for (i=0; i<n; i++) {
+            ps.push(a[i].p0t);
+            ps.push(a[i].p1t);
+
+        }
+
+        return {ps: ps, cs: a[0].cout, csss: s, a: a};
+
+    };
+    var ps11 = getKeyPointsTool();
+
+    loadCNCpnts(ps11);
+
+    function loadCNCpnts(ps1) {
+        var cx = 300; var cy = 300;
+        var s = '';
+        var scnc = 'G01 X0 Y0\n';
+
+        for (i=0; i<ps1.ps.length; i++) {
+            ps1.ps[i][0]=cx + Number(ps1.ps[i][0]);
+            ps1.ps[i][1]=cy + ps1.ps[i][1];
+        };
+        for (i=0; i<ps1.a.length; i++) {
+
+            ps1.a[i].cout = [[ps1.a[i].c1[0][0]+cx, ps1.a[i].c1[0][1]+cy],ps1.a[i].c1[1]];
+            s+=parser.textCircle(ps1.a[i].cout);
+            var II = -(ps1.a[i].p0t[0] - ps1.a[i].cout[0][0]);
+            var IJ = -(ps1.a[i].p0t[1] - ps1.a[i].cout[0][1]);
+            var t = 'G01 X'+ps1.a[i].p0t[0].toString()+' Y'+ps1.a[i].p0t[1].toString()+'\n';
+                    if (i==0) t = 'G01 X210 Y553\n'+t;
+            scnc+=t;
+            scnc+='G02 X';
+            scnc+=ps1.a[i].p1[0].toString()+ ' Y'+ps1.a[i].p1[1].toString()+
+                    ' I'+II.toString()+' J'+IJ.toString()+' \n';
+        };
+        //ps1.ps.length=3;
+        var ta;
+        ta+='i2=image("./CNC/muff.png","0","0","600","600")\n';
+        ta+= editor.parser.CNCpointsArray2paraeditText(ps1.ps);
+        ta+='c00.p0=point("300","300")\nc00=circle("c00.p0","5")\n';
+        ta+=s;
+
+        document.getElementById('CNCround_rect').value = scnc;
+
+        var taCNC=parser.CNCsplitter(scnc);
+        var taPA=parser.CNCsplitted2pointsArray(taCNC);
+
+        ta+= parser.CNCpointsArray2paraeditText(taPA);
+        document.getElementById('t1').value = ta;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
     }
 </script>
 </body>

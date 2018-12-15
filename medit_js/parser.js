@@ -7,9 +7,19 @@ var Parser = function (doc) {
     var gl = GL0();
     var gc = GC();
     var lines;
+    function clone(obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
+    }
     return {
+
         obCreateDefault: function () {
-            return {type: '', id: '', solved: true, mainIds: [], linkIds: [], mains: [], links: [], query: '', solvers: []};
+            return {type: '', id: '', solved: true, mainIds: [], linkIds: [], mains: [],
+                links: [], query: '', solvers: [], props: clone(doc.doc.currentProps)};
         },
         obCreateIfNot: function(id) {
             if (doc.docObjs.hasOwnProperty(id)) {
@@ -42,7 +52,7 @@ var Parser = function (doc) {
                         mains: [],
                         mainIds: [],
                         solved: true,
-                        ob: doc.pnts[fullId]
+                        ob: doc.pnts[fullId],
                     };
                     paramsOb.str[i] = fullId;
                     doc.doclines.push({rez: fullId, func: 'point', params: ['0', '0']});
@@ -252,10 +262,29 @@ var Parser = function (doc) {
                     var sign1 = -1;
                     var c0 = [Number(li.I), Number(li.J)]
                     if (li.G === '02') sign1 = 1;
-                    gc.get_points_from_arc(pa, pa_current, p1, c0, 7, sign1);
+                    gc.get_points_from_arc(pa, pa_current, p1, c0, 11, sign1);
                 };
             };
             return pa;
+        },
+
+        // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+
+        makeid: function makeid() {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+            return text;
+        },
+
+        textCircle: function (data) {
+            var id = this.makeid();
+            var s = '';
+            var point_id = 'point_'+id+'.c';
+            s+=point_id+'=point("'+data[0][0].toString()+'","'+data[0][1].toString() +'")\n';
+            s+='circle_'+id + '=circle("'+point_id+'","'+data[1].toString()+'")\n';
+            return s;
         },
 
         CNCpointsArray2paraeditText: function (pa) {
@@ -263,6 +292,11 @@ var Parser = function (doc) {
             var pl_string = 'plineCNC=pline(';
             for (i=0; i<pa.length; i++) {
                 var pname = 'plineCNC' + i;
+                var pa13 = pa[i];
+                var pa130 = pa13[0];
+                var pa131 = pa13[1];
+                var pa132 = 5.3; pa132 = pa[i][1];
+
                 s+=pname +'=point("'+pa[i][0].toString() + '","' +
                     pa[i][1].toString() + '")\n';
                 pl_string+='"'+pname +'"';
@@ -274,8 +308,8 @@ var Parser = function (doc) {
                 ')\npCNC=point("0","10")\npmCNC=point("0","0")\n'+
             'pmCNC=plineMove("plineCNC","pCNC","0")\n'+
 
-            'tCNC=setInterval("10","pCNC","0","myinc2","1")\n'+
-            'cCNC=circle("pmCNC","10")\n';
+            'tCNC=setInterval("10","pCNC","0","myinc2","1")\n';
+            s+='cCNC=circle("pmCNC","12")\n';
             return s;
         },
 
@@ -336,7 +370,19 @@ var Parser = function (doc) {
                 if (doc.doclines[i].func == 'layer') {
                     doc.currentLayer = doc.doclines[i].params2.main[0];
                     continue;
-                }
+                };
+                if (doc.doclines[i].func == 'props') {
+                    doc.doc.currentProps[doc.doclines[i].params2.main[0]] =
+                        doc.doclines[i].params2.main[1];
+
+
+//                    var propsChanges = JSON.parse(doc.doclines[i].params2.main[0]);
+  //                  for (pid in propsChanges) {
+    //                    doc.doc.currentProps[pid] = propsChanges[pid];
+      //              };
+
+                    continue;
+                };
                 this.parseLine(doc.doclines[i])
             }
             return doc.doclines;
@@ -361,6 +407,14 @@ var Parser = function (doc) {
         //
         parseLine: function (line, byPoints) { // creating objects (elements, points, etc) and/or setting links
             var i;
+            function clone(obj) {
+                if (null == obj || "object" != typeof obj) return obj;
+                var copy = obj.constructor();
+                for (var attr in obj) {
+                    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+                }
+                return copy;
+            }
 
             var dd0 = {};
 
@@ -368,6 +422,7 @@ var Parser = function (doc) {
             if (this.isElem(line.func)) {
                 doc.docObjs[line.rez] = this.obCreateIfNot(line.rez);
                 doc.docObjs[line.rez].layer = doc.currentLayer;
+                doc.docObjs[line.rez].props = clone(doc.doc.currentProps);
                 doc.docObjs[line.rez].raw = line.raw;
                 doc.docObjs[line.rez].ids = line.params2.ids;
                 doc.docObjs[line.rez].parts = line.params2.parts;

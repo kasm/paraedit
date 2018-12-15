@@ -139,6 +139,7 @@ var Doc = function (elfuncs, doc_obj) {
     layers['f'] = {id: 'f', visible: false};
     currentLayer = '0';
     return {
+        doc: doc,
         currentLayer: currentLayer,
         clear: function () {
             doc = {objs: {},
