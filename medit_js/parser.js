@@ -287,11 +287,11 @@ var Parser = function (doc) {
             return s;
         },
 
-        CNCpointsArray2paraeditText: function (pa) {
+        pointsArray2PlineText: function (id, pa) {
             var s = ""; var i;
-            var pl_string = 'plineCNC=pline(';
+            var pl_string = 'plineCNC'+id+'=pline(';
             for (i=0; i<pa.length; i++) {
-                var pname = 'plineCNC' + i;
+                var pname = 'plineCNC'+id + i;
                 var pa13 = pa[i];
                 var pa130 = pa13[0];
                 var pa131 = pa13[1];
@@ -302,14 +302,42 @@ var Parser = function (doc) {
                 pl_string+='"'+pname +'"';
                 if (i < pa.length-1) pl_string+= ',';
             };
-            s+=pl_string +
+            s+=pl_string + `)\n`;
+            return s;
+        },
+
+        CNCpointsArray2paraeditText: function (CNCid, pa, isInterval) {
+            var s = ""; var i;
+            var pl_string = 'plineCNC'+CNCid+'=pline(';
+            for (i=0; i<pa.length; i++) {
+                var pname = 'plineCNC'+CNCid + i;
+                var pa13 = pa[i];
+                var pa130 = pa13[0];
+                var pa131 = pa13[1];
+                var pa132 = 5.3; pa132 = pa[i][1];
+
+                s+=pname +'=point("'+pa[i][0].toString() + '","' +
+                    pa[i][1].toString() + '")\n';
+                pl_string+='"'+pname +'"';
+                if (i < pa.length-1) pl_string+= ',';
+            };
+            s+=pl_string + `)\n`;
+            if (isInterval) s+=`pCNC${CNCid}=point("0","10")\npmCNC${CNCid}=point("0","0")\n
+pmCNC${CNCid}=plineMove("plineCNC${CNCid}","pCNC${CNCid}","0")\n
+tCNC${CNCid}=setInterval("10","pCNC${CNCid}","0","myinc2","1")\n
+cCNC${CNCid}=circle("pmCNC${CNCid}","12")\n`;
+
                   //  ')\npCNC=point("0","0")\n'+
 
+
+
+            /*
                 ')\npCNC=point("0","10")\npmCNC=point("0","0")\n'+
             'pmCNC=plineMove("plineCNC","pCNC","0")\n'+
 
             'tCNC=setInterval("10","pCNC","0","myinc2","1")\n';
             s+='cCNC=circle("pmCNC","12")\n';
+            */
             return s;
         },
 

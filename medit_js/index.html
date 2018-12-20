@@ -274,7 +274,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
     </div>
 </div>
     <div class="text1">
-        Text area:
+        <div>Text area:</div>
         <textarea title="Editor text area" id="t1" class="text1" style=
                 "border: 1px; border-color: green; border-style: solid;"
                   onmouseout="editor.textAreaLeave()" onkeyup="editor.textAreaChanged()">
@@ -558,6 +558,166 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         editor.textAreaChanged();
         editor.textAreaLeave();
     }
+
+    function getPointsMuff2(alfa) {
+        var rez = {};
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var a1 = 27 * Math.PI / 180.;
+        var a2 = 45 * Math.PI / 180.;
+        var p0 = [R0 * Math.sin(alfa), R0 * Math.cos(alfa)];
+        var p1 = [R1 * Math.sin(alfa+a1), R1 * Math.cos(alfa+a1)];
+        var p2 = [R0 * Math.sin(alfa+a2), R0 * Math.cos(alfa+a2)];
+        var c0 = [p0,Ri];
+        var c1 = [p1,Ri];
+        var c = [[0,0],0];
+
+        //     find center of the circle
+
+        editor.gc.point_int_circle_circle_radius_selector(
+            c,         //   result
+            [p0,Ri],   //   circle at p0 with R = Ri
+            [p1,Ri],   //   circle at p1 with R = Ri
+            0,         //   radius of the "tangent circle"
+            [1, 1, 1]  //   selector
+        );
+
+
+        rez.p0 = p0;
+        rez.p1 = p1;
+        rez.p2 = p2;
+        rez.c = c;
+        return rez;
+    };
+    function addPnt(a, p, d) {
+        a.push([p[0] + d[0], p[1]+d[1]]);
+    };
+    function getPlinePointsCNC(offset) {
+        var n = 8;
+        var a = [];
+        var ps = [];
+        var d = [300,300];
+        var s = '';
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var ps0 = [];
+
+        for (i=0; i<n; i++) {
+            var da = 2 * Math.PI / n;
+            var ci;
+            var p0t = [0, 0];
+            var p1t = [0, 0];
+            a.push(getPointsMuff2(i * da));
+            a[i].ci = [[a[i].c[0], a[i].c[1]], Ri - offset];
+        };
+
+        for (i=0; i<n; i++) {
+            a[i].p0t = [0, 0];
+            var ap = a[(i + n - 1) % n].p1;   //   p1 of prev section
+            //   find point p0t
+            editor.gc.point_int_lineseg_circle_radius_selector(
+                a[i].p0t,         //  result
+                [ap, a[i].p0],    //  line segment with prev p1 and p0
+                [a[i].c, Ri],     //  circle equation
+                offset,           //  tool radius
+                [1, -1, 1]        //  selector
+            );
+            a[i].p1t = [0, 0];
+            //   find point p1t
+            editor.gc.point_int_lineseg_circle_radius_selector(
+                a[i].p1t, [a[i].p1, a[i].p2], [a[i].c, Ri ], offset, [-1, -1, 1]
+            );
+        };
+
+        for (i=0; i<n; i++) {
+            //a[i].ci = [[a[i].c[0], a[i].c[1]], Ri - offset];
+            s+= 'G01 X' + (d[0]+a[i].p0t[0]).toFixed(3) +
+            ' Y' + (d[1] + a[i].p0t[1]).toFixed(3)+'\n';
+
+            s+= 'G02 X' + (d[0]+a[i].p1t[0]).toFixed(3) +
+                ' Y' + (d[1] + a[i].p1t[1]).toFixed(3)+
+                    //'\n';
+                    ' I'+ (a[i].c[0]-a[i].p0t[0]).toFixed(3)+
+                    ' J'+ (a[i].c[1]-a[i].p0t[1]).toFixed(3)+'\n';
+            s+= 'G01 X' + (d[0]+a[(i+1)%n].p0t[0]).toFixed(3) +
+                ' Y' + (d[1] + a[(i+1)%n].p0t[1]).toFixed(3)+'\n';
+
+            //addPnt(ps, a[i].p0, d);
+            //addPnt(ps, a[i].p1, d);
+            addPnt(ps, a[i].p0t, d);
+            addPnt(ps, a[i].p1t, d);
+
+        };
+        var tt = parser.CNCsplitter(s);
+        var tt2 = parser.CNCsplitted2pointsArray(tt);
+
+
+        return {CNC: s, ps: ps, a: a, tt: tt2};
+    };
+    function loadCNCpnt2() {
+        var d0 = getPlinePointsCNC(0);
+        var d1 = getPlinePointsCNC(12);
+        var ps = [];
+        var ta2 = '';
+        var dp = [300, 300];
+
+        var ta0 = editor.parser.CNCpointsArray2paraeditText('t0', d0.tt, false);
+        ta0+='st0=props("lineWidth","3")\n';
+        var ta1 = editor.parser.CNCpointsArray2paraeditText('t1', d1.tt, true);
+        ta0+=ta1;
+        for (i=0; i<8; i++) {
+          //  ta2+=editor.parser.textCircle(
+         //       [addP2dp(d1.a[i].c, dp), 4*18]
+
+            //);
+        }
+        ta0+=ta2;
+        document.getElementById('CNCround_rect').value = d1.CNC;
+document.getElementById('t1').value = ta0;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    }
+
+    function addPA2dp(pa, dp) {
+        for (i=0; i<pa.length; i++) {
+            pa[i][0]+=dp[0]; pa[i][1]+=dp[1];
+        }
+        return (pa);
+    };
+    function addP2dp(p, dp) {
+        p[0]+=dp[0]; p[1]+=dp[1]; return (p);
+    };
+
+    loadCNCpnt2();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function getPointsMuff(alfa) {
         var rez = {};
         var scale = 4;
@@ -583,6 +743,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         rez.c = c;
         return rez;
     };
+
     function getKeyPointsTool() {
         var scale = 4;
         var cx = 00;
@@ -593,7 +754,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         var s = '';
         for (i=0; i<n; i++) {
             var da = 2 * Math.PI / n;
-            a.push(getPointsMuff(i * da));
+            a.push(getPointsMuff2(i * da));
             var l1 = []; editor.gc.line_point_point(l1, a[i].p1, a[i].p2);
             var l2 = [l1[0], l1[1], l1[2] + Rt];
             a[i].l1 = l1;
@@ -611,20 +772,16 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
             a[i].p1t[1] = Math.trunc(a[i].p1t[1] );
             ps.push(a[i].p0);
             ps.push(a[i].p1);
-
         };
         for (i=0; i<n; i++) {
             ps.push(a[i].p0t);
             ps.push(a[i].p1t);
-
         }
-
         return {ps: ps, cs: a[0].cout, csss: s, a: a};
-
     };
     var ps11 = getKeyPointsTool();
 
-    loadCNCpnts(ps11);
+    //loadCNCpnts(ps11);
 
     function loadCNCpnts(ps1) {
         var cx = 300; var cy = 300;
@@ -651,7 +808,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         //ps1.ps.length=3;
         var ta;
         ta+='i2=image("./CNC/muff.png","0","0","600","600")\n';
-        ta+= editor.parser.CNCpointsArray2paraeditText(ps1.ps);
+        ta+= editor.parser.CNCpointsArray2paraeditText('id1', ps1.ps, 100);
         ta+='c00.p0=point("300","300")\nc00=circle("c00.p0","5")\n';
         ta+=s;
 
@@ -660,7 +817,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         var taCNC=parser.CNCsplitter(scnc);
         var taPA=parser.CNCsplitted2pointsArray(taCNC);
 
-        ta+= parser.CNCpointsArray2paraeditText(taPA);
+        ta+= parser.CNCpointsArray2paraeditText('id2', taPA, 100);
         document.getElementById('t1').value = ta;
         editor.textAreaChanged();
         editor.textAreaLeave();
