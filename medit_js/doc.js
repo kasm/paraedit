@@ -106,6 +106,9 @@ a * (x0 + xt*t) + b*(y0+yt*t) + c = 0
 var Doc = function (elfuncs, doc_obj) {
     var doc = doc_obj; //                                                    DIRTY !!!
     var Parser = require('./parser.js');
+    var MultiTree = require('./MultiTree.js');
+    var tr1 = MultiTree(0);
+
     parser = Parser(doc_obj);
     parser.splitter(doc_obj.doctext); // put to doclines
     parser.parser();
@@ -140,6 +143,16 @@ var Doc = function (elfuncs, doc_obj) {
     currentLayer = '0';
     return {
         doc: doc,
+        lispParser: function (str) {
+            var cmds = [];
+            tr1.lispParser(str, cmds);
+            for (var i=0; i<cmds.length; i++) {
+                parser.createElementAndGenereateID(cmds[i].cmd, cmds[i].params);
+            }
+            var k =5;
+            k=4;
+            debugger;
+        },
         currentLayer: currentLayer,
         clear: function () {
             doc = {objs: {},

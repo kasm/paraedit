@@ -288,7 +288,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </div>
 <div id="intervalButtonsArea"></div>
 
-<script src="i2.js"></script>
+<script src="index.js"></script>
 
 <textarea id="z3" style="display: none;">
 layer=layer("f")
@@ -527,9 +527,29 @@ CNC Program:<br>
 <textarea id='CNCround_rect_aux' style="display: none;">
 i3=image("./CNC/round_rect.png","102","103","298","195")
 </textarea>
+<br>autolisp
 
-
+<button onclick="LoadLisp();">load lisp</button>
+<textarea id="a2">
+    (
+    (setq b (+ 200 100))
+    (setq p1 (list b 30))
+    (setq p2 (list 100 300))
+    (command lineseg p1 p2)
+    )
+</textarea>
 <script>
+    function LoadLisp() {
+        var tt;
+        var ta = document.querySelector('#a2');
+        editor.loadLisp(ta.value);
+
+    }
+</script>
+<script>
+
+
+
     function bz26() {
         document.getElementById('t1').value=document.getElementById('z26').value;
         editor.textAreaChanged();

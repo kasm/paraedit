@@ -44,7 +44,7 @@ var Parser = function (doc) {
             var paramsOb = {str: [], ob: []}; var fullId;
             for (i = 0; i<paramsStrArray.length; i++) {
                 if (isNaN(parseInt(paramsStrArray[i]))) {
-                    fullId = id+'.'+paramsStrArray[i]
+                    fullId = id + '.' + paramsStrArray[i]
                     doc.pnts[fullId] = [0, 0];
                     doc.docObjs[fullId] = {
                         id: fullId,
@@ -57,6 +57,22 @@ var Parser = function (doc) {
                     paramsOb.str[i] = fullId;
                     doc.doclines.push({rez: fullId, func: 'point', params: ['0', '0']});
                     paramsOb.ob[i] = doc.pnts[fullId];
+                } else if (Array.isArray(paramsStrArray[i])) {
+                    // passed array as param
+                    fullId = id + '.' + i;
+                    doc.pnts[fullId] = paramsStrArray[i];
+                    doc.docObjs[fullId] = {
+                        id: fullId,
+                        type: 'point',
+                        mains: [],
+                        mainIds: [],
+                        solved: true,
+                        ob: doc.pnts[fullId]
+                    };
+                    paramsOb.str[i] = fullId;
+                    doc.doclines.push({rez: fullId, func: 'point', params: doc.pnts[fullId]});
+                    paramsOb.ob[i] = doc.pnts[fullId];
+
                 } else {
                     paramsOb.ob[i] = parseInt(paramsStrArray[i]);
                     paramsOb.str[i] = paramsStrArray[i];
@@ -92,6 +108,18 @@ var Parser = function (doc) {
             doc.docObjs[id].parts = params;
             return doc.docObjs[id];
             */
+        },
+
+        // create element and generate ID
+        createElementAndGenereateID: function (type, params) {
+            var elobs = {
+                'lineseg': doc.linesegs,
+                'circle': doc.circles
+            };
+            var obar = elobs[type];
+            var id = type + '00' + obar.length;
+            this.createElementAndPoints(id, type, params);
+
         },
 
         // return main array (for solver) and part of query and optional - ref array

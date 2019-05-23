@@ -601,6 +601,12 @@ var Editor = function (canvasElement) {
 
     var ret = {
         doc: doc,
+        loadLisp: function (str) {
+            doc.lispParser(str);
+            doc.recalcAllObjs();
+            ret.redraw();
+            debugger;
+        },
         gc: gc,
         parser: parser,
         recalcAndRedraw: function () {
