@@ -827,8 +827,8 @@ var Editor = function (canvasElement) {
                     }
                 };
 
-                cvc.strokeStyle=dob.props.strokeStyle;
-                cvc.lineWidth = dob.props.lineWidth;
+                //cvc.strokeStyle=dob.props.strokeStyle;
+                //cvc.lineWidth = dob.props.lineWidth;
 
 
                 if (!parser.isElem(doc.docObjs[obId].type)) continue;

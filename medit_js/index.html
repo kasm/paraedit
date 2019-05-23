@@ -216,7 +216,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </script>
 <div>
     <table border="1" border-color="black">
-        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedit<br>
+        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedittt<br>
             <span style="font-size:12pt;display: none;"
             >(c) Dmitry Rukavishnikov</span></td></tr>
 
@@ -237,7 +237,8 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
         </td><td>  </td>
             <td align = "center">
                 Help<br>
-                <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton">
+                <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton"
+                style="display: none">
                 <img src="img/help64x64.png" onclick="editor.showPointTextsToggle()" class="imgButton" id = 'showPointTextsToggle'>
 
             </td>
@@ -263,7 +264,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 <button class="myButton;" onclick="loadCNCroundrect();">Round Rectangle example</button>
 <button class="myButton;" onclick="loadCNCroundrect();">Shaped halfmuff example</button>
 <div>
-<div style="border-color: black; border: 3px" class="editor">
+<div style="border-color: black; border: 3px;" class="editor">
     <div>
     Editor working area:<br>
     <canvas id='c1' width="600px" height="600px" style="border: 1px; border-color: green; border-style: solid; width: 600px; height: 600px" ></canvas>
@@ -273,12 +274,13 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 
     </div>
 </div>
-    <div class="text1">
+    <div style="float: left;">
         <div>Text area:</div>
+        <div>
         <textarea title="Editor text area" id="t1" class="text1" style=
                 "border: 1px; border-color: green; border-style: solid;"
                   onmouseout="editor.textAreaLeave()" onkeyup="editor.textAreaChanged()">
-
+        </div>
         </textarea>
 
     </div>
@@ -286,7 +288,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </div>
 <div id="intervalButtonsArea"></div>
 
-<script src="index.js"></script>
+<script src="i2.js"></script>
 
 <textarea id="z3" style="display: none;">
 layer=layer("f")
@@ -525,6 +527,8 @@ CNC Program:<br>
 <textarea id='CNCround_rect_aux' style="display: none;">
 i3=image("./CNC/round_rect.png","102","103","298","195")
 </textarea>
+
+
 <script>
     function bz26() {
         document.getElementById('t1').value=document.getElementById('z26').value;
@@ -553,7 +557,7 @@ i3=image("./CNC/round_rect.png","102","103","298","195")
         var s2= document.getElementById('CNCround_rect_aux').value;
         var CNClines = editor.parser.CNCsplitter(s);
         var pa = editor.parser.CNCsplitted2pointsArray(CNClines);
-        var ta = editor.parser.CNCpointsArray2paraeditText(pa);
+        var ta = editor.parser.CNCpointsArray2paraeditText('round', pa, '10');
         document.getElementById('t1').value = s2 + ta;
         editor.textAreaChanged();
         editor.textAreaLeave();
@@ -696,8 +700,8 @@ document.getElementById('t1').value = ta0;
     function addP2dp(p, dp) {
         p[0]+=dp[0]; p[1]+=dp[1]; return (p);
     };
-
-    loadCNCpnt2();
+    //editor.showPointTextsToggle();
+    //loadCNCpnt2();
 
 
 

@@ -324,7 +324,7 @@ var Parser = function (doc) {
             s+=pl_string + `)\n`;
             if (isInterval) s+=`pCNC${CNCid}=point("0","10")\npmCNC${CNCid}=point("0","0")\n
 pmCNC${CNCid}=plineMove("plineCNC${CNCid}","pCNC${CNCid}","0")\n
-tCNC${CNCid}=setInterval("10","pCNC${CNCid}","0","myinc2","1")\n
+tCNC${CNCid}=setInterval("10","pCNC${CNCid}","0","myinc2","3")\n
 cCNC${CNCid}=circle("pmCNC${CNCid}","12")\n`;
 
                   //  ')\npCNC=point("0","0")\n'+
