@@ -151,7 +151,6 @@ var Doc = function (elfuncs, doc_obj) {
             }
             var k =5;
             k=4;
-            debugger;
         },
         currentLayer: currentLayer,
         clear: function () {

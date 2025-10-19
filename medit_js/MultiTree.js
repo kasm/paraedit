@@ -622,7 +622,6 @@ var MultiTree = function (initRoot) {
             console.log(ss);
 
 
-            debugger;
             t=2;
         }, // lisp parser
 

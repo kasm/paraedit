@@ -117,7 +117,7 @@ var Parser = function (doc) {
                 'circle': doc.circles
             };
             var obar = elobs[type];
-            var id = type + '00' + obar.length;
+            var id = type + '00' + Object.keys(obar).length;
             this.createElementAndPoints(id, type, params);
 
         },

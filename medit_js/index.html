@@ -105,6 +105,12 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            max-width: 900px;
+        }
+
+        .modal-content > textarea {
+            height: 500px;
+            width: 100%;
         }
 
         /* The Close Button */
@@ -126,10 +132,41 @@
 </head>
 <body>
 <div id = 'gtest'></div>
-<div id="helpModal" class="modal">
+<div id="helpModal" class="modal" style="width: 100%">
     <div class="modal-content">
         <span class="close" onclick="editor.closeHelp()">&times;</span>
-        <textarea style="height: 300px; width: 100%">
+        <textarea >
+            Instructions for working with the editor
+
+Important note: at the moment, the perpendicular is built only between segments.
+
+The editor has two workspaces - a graphic window and a command window. The user can enter data in any of the windows. The status of another window is updated automatically.
+Data entry in the graphics window is performed using the toolbar. The following commands are currently supported:
+Geometric elements - line, line, circle.
+The relationships between the elements: snap to the middle, snap to the intersection, plotting the perpendicular and tangent circle.
+
+The order of construction of primitives:
+User selects primitive from toolbar and chooses one or several points in the graphics area.
+Editing primitives:
+When you hover over an element, control points appear. For editing, you need to click once on the control point with the mouse, move the cursor to required place and left click the mouse a second time.
+
+Work with binding
+1. Snap to the middle of the segment. First, the point to be snapped is selected. It can be the end of a line segment or the center of a circle.
+Then a segment is selected, to which the binding will be made. Control points that are used to set the line and the radius of the circle cannot be snapped.
+2. Snap to the intersection. The point to be snapped is selected. Then a pair of elements is selected, to the intersection of which the binding will be made. If there are several intersections, the nearest intersection to the last mouse click will be selected.
+3. Construction of the prependicular. A segment is selected that becomes a perpendicular, then a segment onto which a perpendicular is dropped.
+4. Snapping a circle. A circle is selected, then two elements (line, line segment, circle) to which the first specified circle will be attached. Then the user selects the placement of the tangent circle.
+Also in the text box mode, the "equality" binding is available. For example, you can make the radius of one circle equal to the radius of another circle as follows:
+c0001 [1] = eq ("c0000 [1]")
+Here c0000, c0001 are respectively independent and dependent circles (more precisely, their names).
+c0000 [1] - access to the second element of the circle data array (this is the radius)
+Circle data structure:
+[[xc, yc], r]
+Having information about the data structure of the element, you can set the dependence of any scalar parameter.
+
+        </textarea>
+
+        <textarea style="height: 300px; width: 100%; display: none;">
             Инструкция по работе с редактором
 
 Важное замечание: на данный момент перпендикуляр строится только между отрезками.
@@ -216,8 +253,8 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </script>
 <div>
     <table border="1" border-color="black">
-        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedittt<br>
-            <span style="font-size:12pt;display: none;"
+        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedit<br>
+            <span style="font-size:12pt;"
             >(c) Dmitry Rukavishnikov</span></td></tr>
 
         <tr>
@@ -238,8 +275,8 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
             <td align = "center">
                 Help<br>
                 <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton"
-                style="display: none">
-                <img src="img/help64x64.png" onclick="editor.showPointTextsToggle()" class="imgButton" id = 'showPointTextsToggle'>
+                >
+                <img src="img/help64x64.png" style="display: none" onclick="editor.showPointTextsToggle()" class="imgButton" id = 'showPointTextsToggle'>
 
             </td>
             <td>
@@ -263,7 +300,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 
 <button class="myButton;" onclick="loadCNCroundrect();">Round Rectangle example</button>
 <button class="myButton;" onclick="loadCNCroundrect();">Shaped halfmuff example</button>
-<div>
+<div style="max-width: 1000px">
 <div style="border-color: black; border: 3px;" class="editor">
     <div>
     Editor working area:<br>
@@ -288,7 +325,7 @@ console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scop
 </div>
 <div id="intervalButtonsArea"></div>
 
-<script src="index.js"></script>
+<script src="bundle.js"></script>
 
 <textarea id="z3" style="display: none;">
 layer=layer("f")
@@ -493,8 +530,7 @@ c1005=tan21("c1001","c1000","7")
     G03
     X300 Y300 I100 J235
 </textarea>
-<br>
-CNC Program:<br>
+
 <textarea id="CNC" style="width: 300px; height: 200px;display: none;">
     G01
     X140 Y110
@@ -527,17 +563,24 @@ CNC Program:<br>
 <textarea id='CNCround_rect_aux' style="display: none;">
 i3=image("./CNC/round_rect.png","102","103","298","195")
 </textarea>
-<br>autolisp
+<div>
 
-<button onclick="LoadLisp();">load lisp</button>
+
+    <div id="lispDiv" style="display: none;">
+        <br>autolisp<br>
+<button class = "btn" onclick="LoadLisp();">load lisp</button>
 <textarea id="a2">
     (
     (setq b (+ 200 100))
     (setq p1 (list b 30))
     (setq p2 (list 100 300))
+    (setq p3 (list 400 400))
     (command lineseg p1 p2)
+    (command lineseg p1 p3)
     )
-</textarea>
+
+</textarea></div>
+</div>
 <script>
     function LoadLisp() {
         var tt;

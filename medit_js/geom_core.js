@@ -60,6 +60,7 @@ var GeomCore = function() {
             rez[1] = p0[1] + dy * ratio;
             return rez;
         },
+    
 
         // rez, start point, center of arc, end point, Rotation (0 - clockwise), n - number of segments
         // c0 - I, J as increments from p0
@@ -129,6 +130,13 @@ var GeomCore = function() {
             //var rez = [];
             rez = this.point_int_line_line(rez, line, l0);
             return rez;
+        },
+
+        'point_line_para': function(rez, line, t) {
+            let pp = [
+                line[1] * line[2],
+                line[0] * line[2]
+            ]
         },
 
 
@@ -694,5 +702,5 @@ var GeomCore = function() {
 }
 
 
-module.exports = GeomCore;
+//module.exports = GeomCore;
 
