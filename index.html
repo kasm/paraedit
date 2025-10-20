@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="969635208938-bp47bbnqslk7h82t3ki92hpgsom0dcsm.apps.googleusercontent.com">
+    -->
+    <title>Paraedit</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .editor {
+            float: left;
+            width: 630px;
+            height: 630px;
+            border: 1px;
+            border-color: black;
+        }
+        .text1 {
+            float: left;
+            width: 300px;
+            height: 400px;
+            border: 1px;
+            background-color:#eee;
+            border-color: black;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+
+        .myButton {
+            -moz-box-shadow: 0px 0px 0px 0px #3dc21b;
+            -webkit-box-shadow: 0px 0px 0px 0px #3dc21b;
+            box-shadow: 0px 0px 0px 0px #3dc21b;
+            background-color:#44c767;
+            -moz-border-radius:7px;
+            -webkit-border-radius:7px;
+            border-radius:7px;
+            border:1px solid #18ab29;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:21px;
+            padding:9px 31px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #2f6627;
+        }
+
+        .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+        .myButton:hover {
+            background-color:#5cbf2a;
+        }
+        .myButton:active {
+            position:relative;
+            top:1px;
+        }
+        .imgButton:active {
+            position:relative;;
+            top: 3px;
+        }
+
+
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 700px; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 900px;
+        }
+
+        .modal-content > textarea {
+            height: 500px;
+            width: 100%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div id = 'gtest'></div>
+<div id="helpModal" class="modal" style="width: 100%">
+    <div class="modal-content">
+        <span class="close" onclick="editor.closeHelp()">&times;</span>
+        <textarea >
+            Instructions for working with the editor
+
+Important note: at the moment, the perpendicular is built only between segments.
+
+The editor has two workspaces - a graphic window and a command window. The user can enter data in any of the windows. The status of another window is updated automatically.
+Data entry in the graphics window is performed using the toolbar. The following commands are currently supported:
+Geometric elements - line, line, circle.
+The relationships between the elements: snap to the middle, snap to the intersection, plotting the perpendicular and tangent circle.
+
+The order of construction of primitives:
+User selects primitive from toolbar and chooses one or several points in the graphics area.
+Editing primitives:
+When you hover over an element, control points appear. For editing, you need to click once on the control point with the mouse, move the cursor to required place and left click the mouse a second time.
+
+Work with binding
+1. Snap to the middle of the segment. First, the point to be snapped is selected. It can be the end of a line segment or the center of a circle.
+Then a segment is selected, to which the binding will be made. Control points that are used to set the line and the radius of the circle cannot be snapped.
+2. Snap to the intersection. The point to be snapped is selected. Then a pair of elements is selected, to the intersection of which the binding will be made. If there are several intersections, the nearest intersection to the last mouse click will be selected.
+3. Construction of the prependicular. A segment is selected that becomes a perpendicular, then a segment onto which a perpendicular is dropped.
+4. Snapping a circle. A circle is selected, then two elements (line, line segment, circle) to which the first specified circle will be attached. Then the user selects the placement of the tangent circle.
+Also in the text box mode, the "equality" binding is available. For example, you can make the radius of one circle equal to the radius of another circle as follows:
+c0001 [1] = eq ("c0000 [1]")
+Here c0000, c0001 are respectively independent and dependent circles (more precisely, their names).
+c0000 [1] - access to the second element of the circle data array (this is the radius)
+Circle data structure:
+[[xc, yc], r]
+Having information about the data structure of the element, you can set the dependence of any scalar parameter.
+
+        </textarea>
+
+        <textarea style="height: 300px; width: 100%; display: none;">
+            Инструкция по работе с редактором
+
+Важное замечание: на данный момент перпендикуляр строится только между отрезками.
+
+Редактор имеет две рабочие области - графическое окно и окно команд. Пользователь может вводить данные в любом из окон. Состояние другого окна обновляется автоматически.
+Ввод данных в графическом окне производится при помощи панели инструментов. В настоящее время поддерживаются следующие команды:
+Геометрические элементы - линия, прямая, окружность.
+Взаимосвязи между элементами: привязка к середине, привязка к пересечению, построение перпендикуляра и касательная окружность.
+
+Порядок построения примитивов:
+В панели инструментов выбирается элемент и указываются точки, необходимые для построения этого элемента.
+Редактирование примитивов:
+При наведении на элемент появляются управляющие точки. Для редактирования нужно один раз щелкнуть мышкой на управляющую точку, переместить курсор в нужном направлении и щелкнуть мышкой второй раз.
+
+Работа с привязкой
+1. Привязка к середине отрезка. Сначала выбирается точка, которая будет привязана. Это может быть конец отрезка или центр окружности.
+Затем выбирается отрезок, к оторому будет производится привязка. Управляющие точки которые используются для задания прямой и радиуса окружности не могут быть привязаны.
+2. Привязка к пересечению. Выбирается точка, которая будет привязана. Затем выбирается пара элементов, к пересечению которых будет производится привязка. Если пересечений несколько, будет выбрана ближайшее пересечение к последнему нажатию мышки.
+3. Построение препендикуляра. Выбирается отрезок, который станет перпендикуляром, затем отрезок, на который будет опущен перпендикуляр.
+4. Привязка окружности. Выбирается окружность, затем два элемента (линия, отрезок, окружность), к которым будет привязана первая указанная окружность. Затем пользователь выбирает вариант размещения касательной окружности.
+Также в режиме текстового окна доступна привязка "равенство". Например, можно сделать радиус одной окружности равным радиусу другой окружности следующим образом:
+c0001[1]=eq("c0000[1]")
+Здесь c0000, c0001 соотвественно независимая и зависимая окружности (точнее их имена).
+c0000[1] - обращение ко второму элементу массива данных окружности (это радиус)
+Структура данных окружности:
+[[xc, yc], r]
+Имея информацию о структуре данных элемента, можно задать зависимость любого скаларного параметра.
+
+
+ls000.p0=point("100","100")
+ls000.p1=point("465","103")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("89","98")
+ls001.p1=point("103","167")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls001.p1=len("-70","ls001.p0","ls001")
+layer=layer("f")
+c1000.c=point("103","167")
+c1000=circle("c1000.c","231")
+c1000.c=coin("ls001.p1")
+ls002.p0=point("103","167")
+ls002.p1=point("324","102")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+ls002.p0=coin("ls001.p1")
+ls002.p1=int("c1000","ls000","0")
+ls003.p0=point("137","394")
+ls003.p1=point("192","477")
+ls003=lineseg("ls003.p0","ls003.p1")
+ls003.p1=len("-100","ls003.p0","ls003")
+layer=layer("f")
+c1001.c=point("333","392")
+c1001=circle("c1001.c","118")
+c1002.c=point("192","477")
+c1002=circle("c1002.c","198")
+c1002.c=coin("ls003.p1")
+layer=layer("0")
+ls004.p0=point("192","477")
+ls004.p1=point("390","496")
+ls004=lineseg("ls004.p0","ls004.p1")
+ls004.p0=coin("ls003.p1")
+ls004.p1=int("c1001","c1002","0")
+ls005.p0=point("333","392")
+ls005.p1=point("390","496")
+ls005=lineseg("ls005.p0","ls005.p1")
+ls005.p0=coin("c1001.c")
+ls005.p1=int("c1001","c1002","0")
+
+    </textarea>
+    </div>
+</div>
+<script>
+function onSignIn(googleUser) {
+var profile = googleUser.getBasicProfile();
+var gt = document.getElementById('gtest');
+console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+console.log('Name: ' + profile.getName());
+console.log('Image URL: ' + profile.getImageUrl());
+console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    var gtt = profile.getName();
+    //debugger;
+    gt.innerHTML = "<img src='" + profile.getImageUrl() + "'>" + gtt;
+};
+</script>
+<div>
+    <table border="1" border-color="black">
+        <tr><td colspan="5" align="center" style="font-size:18pt">Paraedit<br>
+            <span style="font-size:12pt;"
+            >(c) Dmitry Rukavishnikov</span></td></tr>
+
+        <tr>
+            <td align="center">Elements<br>
+                <img src="img/lineseg64x64.png" onclick="editor.lineseg()" class="imgButton">
+                <img src="img/line64x64.png" onclick="editor.line()" class="imgButton" >
+                <img src="img/circle64x64.png" onclick="editor.circle()" class="imgButton">
+                <img src="img/circle64x64.png" onclick="editor.text()" class="imgButton"
+                style="display: none;">
+            </td><td>  </td>
+            <td align="center">
+                Links<br>
+                <img src="img/mid64x64.png" onclick="editor.mid()" class="imgButton">
+                <img src="img/per64x64.png" onclick="editor.per_ls()" class="imgButton">
+                <img src="img/int64x64.png" onclick="editor.int()" class="imgButton">
+                <img src="img/tan64x64.png" onclick="editor.tan2()" class="imgButton">
+        </td><td>  </td>
+            <td align = "center">
+                Help<br>
+                <img src="img/help64x64.png" onclick="editor.showHelp()" class="imgButton"
+                >
+                <img src="img/help64x64.png" style="display: none" onclick="editor.showPointTextsToggle()" class="imgButton" id = 'showPointTextsToggle'>
+
+            </td>
+            <td>
+                <div class="g-signin2" data-onsuccess="onSignIn"
+                style="display: none;">Enter with your google account</div>
+            </td>
+            <td>
+                <div><a href="https://www.youtube.com/watch?v=xYf8ZKfnsjg">VIDEO HOW IT WORKS</a></div>
+            </td>
+        </tr>
+   </table>
+
+</div>
+<div style="display: none;">
+<button onclick="bz3();">get Z3</button>
+<button onclick="bz11();">get Z11</button>
+<button onclick="bz26();">get Z26</button>
+    <button class="btn" onclick="loadCNC();">load CNC</button>
+</div>
+<div style="display: none;"> 
+<button onclick="bzanim00();">animation example</button>
+
+<button class="myButton;" onclick="loadCNCroundrect();">Round Rectangle example</button>
+<button class="myButton;" onclick="loadCNCroundrect();">Shaped halfmuff example</button>
+</div>
+<div style="max-width: 1000px">
+<div style="border-color: black; border: 3px;" class="editor">
+    <div>
+    Editor working area:<br>
+    <canvas id='c1' width="600px" height="600px" style="border: 1px; border-color: green; border-style: solid; width: 600px; height: 600px" ></canvas>
+    </div>
+    Status:<br>
+    <div id="status">
+
+    </div>
+</div>
+    <div style="float: left;">
+        <div>Text area:</div>
+        <div>
+        <textarea title="Editor text area" id="t1" class="text1" style=
+                "border: 1px; border-color: green; border-style: solid;"
+                  onmouseout="editor.textAreaLeave()" onkeyup="editor.textAreaChanged()">
+        </div>
+        </textarea>
+
+    </div>
+
+</div>
+<div id="intervalButtonsArea"></div>
+
+<script src="bundle.js"></script>
+
+<textarea id="z3" style="display: none;">
+layer=layer("f")
+ls000.p0=point("112","215")
+ls000.p1=point("460","215")
+layer=layer("0")
+ls000=lineseg("ls000.p0","ls000.p1")
+layer=layer("f")
+ls001.p0=point("150","275")
+ls001.p1=point("150","36")
+layer=layer("0")
+ls001=lineseg("ls001.p0","ls001.p1")
+layer=layer("f")
+ls002.p0=point("150","215")
+ls002.p1=point("204","259")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+layer=layer("f")
+ls002.p0=int("ls001","ls000","0")
+ls002.p1=len("-70","ls002.p0","ls002")
+ls003.p0=point("204","259")
+ls003.p1=point("365","215")
+layer=layer("0")
+ls003=lineseg("ls003.p0","ls003.p1")
+layer=layer("f")
+c1000.c=point("204","259")
+c1000=circle("c1000.c","166")
+c1000.c=coin("ls002.p1")
+ls003.p0=coin("ls002.p1")
+ls003.p1=int("c1000","ls000","0")
+ls004.p0=point("285","237")
+ls004.p1=point("150","166")
+layer=layer("0")
+ls004=lineseg("ls004.p0","ls004.p1")
+layer=layer("f")
+ls004.p0=mid("ls003")
+c1001.c=point("285","237")
+c1001=circle("c1001.c","152")
+c1001.c=mid("ls003")
+ls004.p1=int("c1001","ls001","0")
+</textarea>
+<script>
+    function bz3() {
+        document.getElementById('t1').value=document.getElementById('z3').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+</script>
+
+<textarea id="z11" style="display: none;">
+layer=layer("0")
+ls000.p0=point("232","333")
+ls000.p1=point("418","335")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("232","333")
+ls001.p1=point("278","280")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls001.p0=coin("ls000.p0")
+ls001.p1=len("-70","ls001.p0","ls001")
+c1000.c=point("278","280")
+layer=layer("f")
+c1000=circle("c1000.c","210")
+c1000.c=coin("ls001.p1")
+c1001.c=point("418","335")
+c1001=circle("c1001.c","101")
+ls002.p0=point("418","335")
+ls002.p1=point("487","262")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+c1001.c=coin("ls000.p1")
+ls002.p0=coin("ls000.p1")
+ls002.p1=int("c1000","c1001","0")
+ls003.p0=point("487","262")
+ls003.p1=point("278","280")
+ls003=lineseg("ls003.p0","ls003.p1")
+ls003.p0=int("c1000","c1001","0")
+ls003.p1=coin("ls001.p1")
+ls004.p0=point("474","214")
+ls004.p1=point("478","44")
+ls004=lineseg("ls004.p0","ls004.p1")
+ls005.p0=point("383","271")
+ls005.p1=point("478","59")
+ls005=lineseg("ls005.p0","ls005.p1")
+c1002.c=point("383","271")
+layer=layer("f")
+c1002=circle("c1002.c","232")
+c1002.c=mid("ls003")
+ls005.p0=mid("ls003")
+ls005.p1=int("c1002","ls004","0")
+</textarea>
+<script>
+    function bz11() {
+        document.getElementById('t1').value=document.getElementById('z11').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+</script>
+<textarea id="z26" style="display: none;">
+layer=layer("0")
+ls000.p0=point("187","315")
+ls000.p1=point("429","314")
+ls000=lineseg("ls000.p0","ls000.p1")
+ls001.p0=point("429","314")
+ls001.p1=point("523","347")
+ls001=lineseg("ls001.p0","ls001.p1")
+ls001.p0=coin("ls000.p1")
+ls001.p1=len("-100","ls001.p0","ls001")
+c1000.c=point("523","347")
+layer=layer("f")
+c1000=circle("c1000.c","216")
+c1001.c=point("319","418")
+c1001=circle("c1001.c","152")
+c1002.c=point("187","315")
+c1002=circle("c1002.c","168")
+c1003.c=point("187","315")
+c1003=circle("c1003.c","111")
+c1000.c=coin("ls001.p1")
+c1002.c=coin("ls000.p0")
+ls002.p0=point("523","347")
+ls002.p1=point("319","418")
+layer=layer("0")
+ls002=lineseg("ls002.p0","ls002.p1")
+ls002.p0=coin("ls001.p1")
+ls002.p1=int("c1000","c1002","0")
+ls003.p0=point("187","315")
+ls003.p1=point("319","418")
+ls003=lineseg("ls003.p0","ls003.p1")
+ls003.p0=coin("ls000.p0")
+ls003.p1=int("c1002","c1000","1")
+c1001.c=coin("ls003.p1")
+c1003.c=coin("ls000.p0")
+ls004.p0=point("187","315")
+ls004.p1=point("288","270")
+ls004=lineseg("ls004.p0","ls004.p1")
+ls005.p0=point("319","418")
+ls005.p1=point("288","270")
+ls005=lineseg("ls005.p0","ls005.p1")
+ls004.p0=coin("ls000.p0")
+ls004.p1=int("c1003","c1001","0")
+ls005.p0=coin("ls003.p1")
+ls005.p1=int("c1003","c1001","0")
+ls006.p0=point("165","354")
+ls006.p1=point("168","72")
+ls006=lineseg("ls006.p0","ls006.p1")
+c1004.c=point("288","270")
+layer=layer("f")
+c1004=circle("c1004.c","195")
+c1004.c=int("c1003","c1001","0")
+ls007.p0=point("288","270")
+ls007.p1=point("168","116")
+layer=layer("0")
+ls007=lineseg("ls007.p0","ls007.p1")
+ls007.p0=int("c1003","c1001","0")
+ls007.p1=int("c1004","ls006","0")
+</textarea>
+<textarea id="anim00" style="display: none;">
+pline01.p00=point("100","100")
+pline01.p01=point("100","450")
+pline01.p02=point("210","310")
+pline01.p03=point("210","480")
+pline01.p04=point("500","500")
+pline01.p05=point("500","100")
+pline01.p06=point("100","100")
+p01=point("595906","20")
+pline01=pline("pline01.p00","pline01.p01","pline01.p02","pline01.p03","pline01.p04","pline01.p05","pline01.p06")
+c1000.c=point("100","358")
+c1000=circle("c1000.c","20")
+c1000.c=plineMove("pline01","p01","0")
+t01=setInterval("10","p01","0","myinc2","1")
+c1001.c=point("326","293")
+c1001=circle("c1001.c","60")
+move_right=setInterval("100","c1001.c","0","myinc2","1")
+move_down=setInterval("100","c1001.c","1","myinc2","1")
+move_left=setInterval("100","c1001.c","0","mydec2","1")
+move_up=setInterval("100","c1001.c","1","mydec2","1")
+bigger=setInterval("100","c1001","1","myinc2","1")
+smaller=setInterval("100","c1001","1","mydec2","1")
+c1002.c=point("272","430")
+c1002=circle("c1002.c","207")
+c1002=tan21("c1001","c1000","4")
+c1003.c=point("410","312")
+c1003=circle("c1003.c","26")
+c1003=tan21("c1002","c1001","1")
+ls000.p0=point("210","458")
+ls000.p1=point("209","135")
+ls000=lineseg("ls000.p0","ls000.p1")
+c1004.c=point("243","191")
+c1004=circle("c1004.c","34")
+c1004=tan21("c1002","ls000","2")
+c1005.c=point("217","439")
+c1005=circle("c1005.c","122")
+c1005=tan21("c1001","c1000","7")
+</textarea>
+<textarea id="CNC1" style="width: 300px; height: 200px;display: none;">
+    G01
+    X10 Y20
+    X30 Y30
+    X10 Y50
+    X100 Y300
+    G03
+    X300 Y300 I100 J235
+</textarea>
+
+<textarea id="CNC" style="width: 300px; height: 200px;display: none;">
+    G01
+    X140 Y110
+    X360 Y110
+    G03 X390 Y140 I0 J30
+    G01
+    X390 Y260
+    G03 X360 Y290 I-30 J0
+    G01 X140 Y290
+    G03 X110 Y260 I0 J-30
+    G01 X110 Y140
+    G03 X140 Y110 I30 J0
+</textarea>
+<textarea id="CNCround_rect" style="width: 300px; height: 200px;">
+    G01
+    X10 Y10
+    X140 Y100
+    X360 Y100
+    G03 X400 Y140 I0 J40
+    G01
+    X400 Y260
+    G03 X360 Y300 I-40 J0
+    G01 X140 Y300
+    G03 X100 Y260 I0 J-40
+    G01 X100 Y140
+    G03 X140 Y100 I40 J0
+    G01 X100 Y10
+    X10 Y10
+</textarea>
+<textarea id='CNCround_rect_aux' style="display: none;">
+i3=image("./CNC/round_rect.png","102","103","298","195")
+</textarea>
+<div>
+
+
+    <div id="lispDiv" style="display: none;">
+        <br>autolisp<br>
+<button class = "btn" onclick="LoadLisp();">load lisp</button>
+<textarea id="a2">
+    (
+    (setq b (+ 200 100))
+    (setq p1 (list b 30))
+    (setq p2 (list 100 300))
+    (setq p3 (list 400 400))
+    (command lineseg p1 p2)
+    (command lineseg p1 p3)
+    )
+
+</textarea></div>
+</div>
+<script>
+    function LoadLisp() {
+        var tt;
+        var ta = document.querySelector('#a2');
+        editor.loadLisp(ta.value);
+
+    }
+</script>
+<script>
+
+
+
+    function bz26() {
+        document.getElementById('t1').value=document.getElementById('z26').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    };
+    function bzanim00() {
+        document.getElementById('t1').value=document.getElementById('anim00').value;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    }
+    function loadCNC2() {
+        var s = document.getElementById('CNC').value;
+        var CNClines = editor.parser.CNCsplitter(s);
+        var pa = editor.parser.CNCsplitted2pointsArray(CNClines);
+        var ta = editor.parser.CNCpointsArray2paraeditText(pa);
+        document.getElementById('t1').value = ta;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    }
+    function loadCNCroundrect() {
+        var s = document.getElementById('CNCround_rect').value;
+        var s2= document.getElementById('CNCround_rect_aux').value;
+        var CNClines = editor.parser.CNCsplitter(s);
+        var pa = editor.parser.CNCsplitted2pointsArray(CNClines);
+        var ta = editor.parser.CNCpointsArray2paraeditText('round', pa, '10');
+        document.getElementById('t1').value = s2 + ta;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+    }
+
+    function getPointsMuff2(alfa) {
+        var rez = {};
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var a1 = 27 * Math.PI / 180.;
+        var a2 = 45 * Math.PI / 180.;
+        var p0 = [R0 * Math.sin(alfa), R0 * Math.cos(alfa)];
+        var p1 = [R1 * Math.sin(alfa+a1), R1 * Math.cos(alfa+a1)];
+        var p2 = [R0 * Math.sin(alfa+a2), R0 * Math.cos(alfa+a2)];
+        var c0 = [p0,Ri];
+        var c1 = [p1,Ri];
+        var c = [[0,0],0];
+
+        //     find center of the circle
+
+        editor.gc.point_int_circle_circle_radius_selector(
+            c,         //   result
+            [p0,Ri],   //   circle at p0 with R = Ri
+            [p1,Ri],   //   circle at p1 with R = Ri
+            0,         //   radius of the "tangent circle"
+            [1, 1, 1]  //   selector
+        );
+
+
+        rez.p0 = p0;
+        rez.p1 = p1;
+        rez.p2 = p2;
+        rez.c = c;
+        return rez;
+    };
+    function addPnt(a, p, d) {
+        a.push([p[0] + d[0], p[1]+d[1]]);
+    };
+    function getPlinePointsCNC(offset) {
+        var n = 8;
+        var a = [];
+        var ps = [];
+        var d = [300,300];
+        var s = '';
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var ps0 = [];
+
+        for (i=0; i<n; i++) {
+            var da = 2 * Math.PI / n;
+            var ci;
+            var p0t = [0, 0];
+            var p1t = [0, 0];
+            a.push(getPointsMuff2(i * da));
+            a[i].ci = [[a[i].c[0], a[i].c[1]], Ri - offset];
+        };
+
+        for (i=0; i<n; i++) {
+            a[i].p0t = [0, 0];
+            var ap = a[(i + n - 1) % n].p1;   //   p1 of prev section
+            //   find point p0t
+            editor.gc.point_int_lineseg_circle_radius_selector(
+                a[i].p0t,         //  result
+                [ap, a[i].p0],    //  line segment with prev p1 and p0
+                [a[i].c, Ri],     //  circle equation
+                offset,           //  tool radius
+                [1, -1, 1]        //  selector
+            );
+            a[i].p1t = [0, 0];
+            //   find point p1t
+            editor.gc.point_int_lineseg_circle_radius_selector(
+                a[i].p1t, [a[i].p1, a[i].p2], [a[i].c, Ri ], offset, [-1, -1, 1]
+            );
+        };
+
+        for (i=0; i<n; i++) {
+            //a[i].ci = [[a[i].c[0], a[i].c[1]], Ri - offset];
+            s+= 'G01 X' + (d[0]+a[i].p0t[0]).toFixed(3) +
+            ' Y' + (d[1] + a[i].p0t[1]).toFixed(3)+'\n';
+
+            s+= 'G02 X' + (d[0]+a[i].p1t[0]).toFixed(3) +
+                ' Y' + (d[1] + a[i].p1t[1]).toFixed(3)+
+                    //'\n';
+                    ' I'+ (a[i].c[0]-a[i].p0t[0]).toFixed(3)+
+                    ' J'+ (a[i].c[1]-a[i].p0t[1]).toFixed(3)+'\n';
+            s+= 'G01 X' + (d[0]+a[(i+1)%n].p0t[0]).toFixed(3) +
+                ' Y' + (d[1] + a[(i+1)%n].p0t[1]).toFixed(3)+'\n';
+
+            //addPnt(ps, a[i].p0, d);
+            //addPnt(ps, a[i].p1, d);
+            addPnt(ps, a[i].p0t, d);
+            addPnt(ps, a[i].p1t, d);
+
+        };
+        var tt = parser.CNCsplitter(s);
+        var tt2 = parser.CNCsplitted2pointsArray(tt);
+
+
+        return {CNC: s, ps: ps, a: a, tt: tt2};
+    };
+    function loadCNCpnt2() {
+        var d0 = getPlinePointsCNC(0);
+        var d1 = getPlinePointsCNC(12);
+        var ps = [];
+        var ta2 = '';
+        var dp = [300, 300];
+
+        var ta0 = editor.parser.CNCpointsArray2paraeditText('t0', d0.tt, false);
+        ta0+='st0=props("lineWidth","3")\n';
+        var ta1 = editor.parser.CNCpointsArray2paraeditText('t1', d1.tt, true);
+        ta0+=ta1;
+        for (i=0; i<8; i++) {
+          //  ta2+=editor.parser.textCircle(
+         //       [addP2dp(d1.a[i].c, dp), 4*18]
+
+            //);
+        }
+        ta0+=ta2;
+        document.getElementById('CNCround_rect').value = d1.CNC;
+document.getElementById('t1').value = ta0;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    }
+
+    function addPA2dp(pa, dp) {
+        for (i=0; i<pa.length; i++) {
+            pa[i][0]+=dp[0]; pa[i][1]+=dp[1];
+        }
+        return (pa);
+    };
+    function addP2dp(p, dp) {
+        p[0]+=dp[0]; p[1]+=dp[1]; return (p);
+    };
+    //editor.showPointTextsToggle();
+    //loadCNCpnt2();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getPointsMuff(alfa) {
+        var rez = {};
+        var scale = 4;
+        var R0 = scale*63;
+        var R1 = scale*69.7;
+        var Rout = scale*73;
+        var Ri = scale*18;
+        var Rt = scale*3;
+        var a1 = 27 * Math.PI / 180.;
+        var a2 = 45 * Math.PI / 180.;
+        var p0 = [R0 * Math.sin(alfa), R0 * Math.cos(alfa)];
+        var p1 = [R1 * Math.sin(alfa+a1), R1 * Math.cos(alfa+a1)];
+        var p2 = [R0 * Math.sin(alfa+a2), R0 * Math.cos(alfa+a2)];
+        var L01 = Math.sqrt( (p1[0] - p0[0]) * (p1[0] - p0[0]) +
+            (p1[1] - p0[1]) * (p1[1] - p0[1]));
+        var h = Math.sqrt( Ri*Ri - L01*L01/4);
+        var pm = [ (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+        var lm = []; editor.gc.line_point_point(lm, p0,p1);
+        var c = [pm[0] - h * lm[0], pm[1] - h * lm[1]];
+        rez.p0 = p0;
+        rez.p1 = p1;
+        rez.p2 = p2;
+        rez.c = c;
+        return rez;
+    };
+
+    function getKeyPointsTool() {
+        var scale = 4;
+        var cx = 00;
+        var cy = 00;
+        var a = []; var ps = [];
+        var Ri = 18*scale; var Rt = 3*scale;
+        var n = 8;
+        var s = '';
+        for (i=0; i<n; i++) {
+            var da = 2 * Math.PI / n;
+            a.push(getPointsMuff2(i * da));
+            var l1 = []; editor.gc.line_point_point(l1, a[i].p1, a[i].p2);
+            var l2 = [l1[0], l1[1], l1[2] + Rt];
+            a[i].l1 = l1;
+            a[i].l2 = l2;
+            a[i].c1 = [[a[i].c[0], a[i].c[1]], Ri];
+        };
+        for (i=0; i<n; i++) {
+            a[i].p0t = [0, 0]; editor.gc.point_int_line_circle_radius_selector(
+                a[i].p0t, a[(i + n -1) % n].l1, a[i].c1, Rt, [1, -1, 1]);
+            a[i].p1t = [0, 0]; editor.gc.point_int_line_circle_radius_selector(
+                a[i].p1t, a[i].l1, a[i].c1, Rt, [-1, -1, 1]);
+            a[i].p0t[0] = Math.trunc(a[i].p0t[0] );
+            a[i].p0t[1] = Math.trunc(a[i].p0t[1] );
+            a[i].p1t[0] = Math.trunc(a[i].p1t[0] );
+            a[i].p1t[1] = Math.trunc(a[i].p1t[1] );
+            ps.push(a[i].p0);
+            ps.push(a[i].p1);
+        };
+        for (i=0; i<n; i++) {
+            ps.push(a[i].p0t);
+            ps.push(a[i].p1t);
+        }
+        return {ps: ps, cs: a[0].cout, csss: s, a: a};
+    };
+    //var ps11 = getKeyPointsTool();
+
+    //loadCNCpnts(ps11);
+
+    function loadCNCpnts(ps1) {
+        var cx = 300; var cy = 300;
+        var s = '';
+        var scnc = 'G01 X0 Y0\n';
+
+        for (i=0; i<ps1.ps.length; i++) {
+            ps1.ps[i][0]=cx + Number(ps1.ps[i][0]);
+            ps1.ps[i][1]=cy + ps1.ps[i][1];
+        };
+        for (i=0; i<ps1.a.length; i++) {
+
+            ps1.a[i].cout = [[ps1.a[i].c1[0][0]+cx, ps1.a[i].c1[0][1]+cy],ps1.a[i].c1[1]];
+            s+=parser.textCircle(ps1.a[i].cout);
+            var II = -(ps1.a[i].p0t[0] - ps1.a[i].cout[0][0]);
+            var IJ = -(ps1.a[i].p0t[1] - ps1.a[i].cout[0][1]);
+            var t = 'G01 X'+ps1.a[i].p0t[0].toString()+' Y'+ps1.a[i].p0t[1].toString()+'\n';
+                    if (i==0) t = 'G01 X210 Y553\n'+t;
+            scnc+=t;
+            scnc+='G02 X';
+            scnc+=ps1.a[i].p1[0].toString()+ ' Y'+ps1.a[i].p1[1].toString()+
+                    ' I'+II.toString()+' J'+IJ.toString()+' \n';
+        };
+        //ps1.ps.length=3;
+        var ta;
+        ta+='i2=image("./CNC/muff.png","0","0","600","600")\n';
+        ta+= editor.parser.CNCpointsArray2paraeditText('id1', ps1.ps, 100);
+        ta+='c00.p0=point("300","300")\nc00=circle("c00.p0","5")\n';
+        ta+=s;
+
+        document.getElementById('CNCround_rect').value = scnc;
+
+        var taCNC=parser.CNCsplitter(scnc);
+        var taPA=parser.CNCsplitted2pointsArray(taCNC);
+
+        ta+= parser.CNCpointsArray2paraeditText('id2', taPA, 100);
+        document.getElementById('t1').value = ta;
+        editor.textAreaChanged();
+        editor.textAreaLeave();
+
+    }
+</script>
+</body>
+
+</html>
